@@ -16,9 +16,9 @@ const siteUrl = (
 ).replace(/\/$/, "");
 const socialImageUrl = `${siteUrl}/og.png`;
 const archiveAudioOrigins = [
-  "https://ia800408.us.archive.org",
   "https://ia600408.us.archive.org",
   "https://archive.org",
+  "https://*.archive.org",
 ];
 const contentSecurityPolicy = [
   "default-src 'self'",

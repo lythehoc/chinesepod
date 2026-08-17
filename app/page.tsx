@@ -65,9 +65,8 @@ const EPISODE_COUNT_BY_LEVEL = new Map(
 );
 const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 const DEFAULT_AUDIO_BASE =
-  "https://ia800408.us.archive.org/10/items/englishpod_all";
+  "https://ia600408.us.archive.org/10/items/englishpod_all";
 const ARCHIVE_AUDIO_FALLBACKS = [
-  "https://ia600408.us.archive.org/10/items/englishpod_all",
   "https://archive.org/download/englishpod_all",
 ];
 const EXTERNAL_AUDIO_BASES = [
@@ -90,6 +89,8 @@ const COMPLETION_FILTERS: CompletionFilter[] = [
 const PLAYBACK_RATES = [0.75, 1, 1.25, 1.5, 2];
 const SLEEP_TIMER_OPTIONS = [0, 15, 30, 45, 60] as const;
 const POSITION_SAVE_INTERVAL_MS = 1_000;
+const AUDIO_RECOVERY_TIMEOUT_MS = 12_000;
+const FINAL_AUDIO_RECOVERY_TIMEOUT_MS = 30_000;
 
 type MediaIconName =
   | "replay10"
@@ -345,6 +346,8 @@ export default function Home() {
   const sidebarSwipeStartRef = useRef<{ x: number; y: number } | null>(null);
   const playerSwipeStartRef = useRef<{ x: number; y: number } | null>(null);
   const pendingAutoplayRef = useRef(false);
+  const playbackIntentRef = useRef(false);
+  const fallbackPositionRef = useRef<number | null>(null);
   const lastPositionWriteRef = useRef(0);
   const resumeCheckpointRef = useRef<ResumeRecord | null>(null);
   const [currentId, setCurrentId] = useState(5);
@@ -371,6 +374,7 @@ export default function Home() {
   const [completedIds, setCompletedIds] = useState<number[]>([]);
   const [helpOpen, setHelpOpen] = useState(false);
   const [audioSourceIndex, setAudioSourceIndex] = useState(0);
+  const [audioFailed, setAudioFailed] = useState(false);
   const [settingsLoaded, setSettingsLoaded] = useState(false);
 
   const currentEpisode = EPISODE_BY_ID.get(currentId) ?? episodes[0];
@@ -452,9 +456,13 @@ export default function Home() {
         audioRef.current.pause();
       }
       resumeCheckpointRef.current = null;
+      fallbackPositionRef.current = null;
       savePosition(episode.id, 0);
       pendingAutoplayRef.current = autoplay;
+      playbackIntentRef.current = autoplay;
       setAudioSourceIndex(0);
+      setAudioFailed(false);
+      setIsBuffering(autoplay);
       setCurrentId(episode.id);
       setCurrentTime(0);
       setDuration(0);
@@ -538,25 +546,27 @@ export default function Home() {
     [],
   );
 
-  const togglePlayback = useCallback(async () => {
+  const togglePlayback = useCallback(() => {
     const audio = audioRef.current;
     if (!audio) return;
     if (audio.paused) {
-      setIsBuffering(true);
-      try {
-        await audio.play();
-        setIsPlaying(true);
-      } catch {
-        setIsPlaying(false);
-      } finally {
-        setIsBuffering(false);
+      playbackIntentRef.current = true;
+      if (audioFailed) {
+        pendingAutoplayRef.current = true;
+        setAudioFailed(false);
+        setAudioSourceIndex(0);
+        setIsBuffering(true);
+        return;
       }
+      setIsBuffering(true);
+      void audio.play().catch(() => setIsPlaying(false));
     } else {
+      playbackIntentRef.current = false;
       savePosition(currentId, audio.currentTime);
       audio.pause();
       setIsPlaying(false);
     }
-  }, [currentId, savePosition]);
+  }, [audioFailed, currentId, savePosition]);
 
   const seek = useCallback(
     (seconds: number) => {
@@ -571,6 +581,26 @@ export default function Home() {
     },
     [currentId, savePosition],
   );
+
+  const handleAudioFailure = useCallback(() => {
+    const audio = audioRef.current;
+    const failedAt = audio?.currentTime ?? 0;
+    fallbackPositionRef.current =
+      Number.isFinite(failedAt) && failedAt > 0 ? failedAt : null;
+    setIsPlaying(false);
+
+    if (audioSourceIndex < EXTERNAL_AUDIO_BASES.length - 1) {
+      pendingAutoplayRef.current = playbackIntentRef.current;
+      setAudioSourceIndex(audioSourceIndex + 1);
+      setIsBuffering(true);
+      return;
+    }
+
+    pendingAutoplayRef.current = false;
+    playbackIntentRef.current = false;
+    setAudioFailed(true);
+    setIsBuffering(false);
+  }, [audioSourceIndex]);
 
   const cycleSleepTimer = useCallback(() => {
     const index = SLEEP_TIMER_OPTIONS.indexOf(
@@ -742,6 +772,7 @@ export default function Home() {
         savePosition(currentId, audio.currentTime);
         audio.pause();
       }
+      playbackIntentRef.current = false;
       setIsPlaying(false);
       setIsBuffering(false);
       setSleepTimerMinutes(0);
@@ -818,6 +849,28 @@ export default function Home() {
   }, [playbackRate]);
 
   useEffect(() => {
+    if (!settingsLoaded || !isBuffering || audioFailed) return;
+    const timeoutId = window.setTimeout(() => {
+      const audio = audioRef.current;
+      if (
+        !audio ||
+        audio.readyState < HTMLMediaElement.HAVE_FUTURE_DATA
+      ) {
+        handleAudioFailure();
+      }
+    }, audioSourceIndex < EXTERNAL_AUDIO_BASES.length - 1
+      ? AUDIO_RECOVERY_TIMEOUT_MS
+      : FINAL_AUDIO_RECOVERY_TIMEOUT_MS);
+    return () => window.clearTimeout(timeoutId);
+  }, [
+    audioFailed,
+    audioSourceIndex,
+    handleAudioFailure,
+    isBuffering,
+    settingsLoaded,
+  ]);
+
+  useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       const target = event.target as HTMLElement | null;
       if (
@@ -858,6 +911,7 @@ export default function Home() {
         savePosition(currentId, audio.currentTime);
         audio.pause();
       }
+      playbackIntentRef.current = false;
       setIsPlaying(false);
     });
     navigator.mediaSession.setActionHandler("seekbackward", () => seek(-10));
@@ -900,8 +954,22 @@ export default function Home() {
     if (!audio) return;
     setDuration(audio.duration || 0);
     audio.playbackRate = playbackRate;
+    const fallbackPosition = fallbackPositionRef.current;
     const savedResume = readResumeRecord();
     if (
+      fallbackPosition !== null &&
+      fallbackPosition > 0 &&
+      audio.duration > 0
+    ) {
+      const resumeTime = Math.min(
+        fallbackPosition,
+        Math.max(0, audio.duration - 0.25),
+      );
+      fallbackPositionRef.current = null;
+      resumeCheckpointRef.current = null;
+      audio.currentTime = resumeTime;
+      setCurrentTime(resumeTime);
+    } else if (
       savedResume?.episodeId === currentId &&
       savedResume.position > 0 &&
       audio.duration > 0
@@ -916,7 +984,7 @@ export default function Home() {
     } else {
       resumeCheckpointRef.current = null;
     }
-    if (pendingAutoplayRef.current) {
+    if (pendingAutoplayRef.current || playbackIntentRef.current) {
       pendingAutoplayRef.current = false;
       void audio
         .play()
@@ -941,13 +1009,17 @@ export default function Home() {
 
   const onEnded = () => {
     resumeCheckpointRef.current = null;
+    fallbackPositionRef.current = null;
     savePosition(currentId, 0);
     setIsPlaying(false);
     if (loop && audioRef.current) {
+      playbackIntentRef.current = true;
       audioRef.current.currentTime = 0;
       void audioRef.current.play().then(() => setIsPlaying(true));
     } else if (autoplayNext) {
       nextEpisode(true);
+    } else {
+      playbackIntentRef.current = false;
     }
   };
 
@@ -974,18 +1046,17 @@ export default function Home() {
         loop={false}
         onLoadedMetadata={onLoadedMetadata}
         onTimeUpdate={onTimeUpdate}
-        onPlay={() => setIsPlaying(true)}
+        onPlay={() => {
+          playbackIntentRef.current = true;
+          setAudioFailed(false);
+          setIsBuffering(false);
+          setIsPlaying(true);
+        }}
         onPause={() => setIsPlaying(false)}
         onWaiting={() => setIsBuffering(true)}
         onCanPlay={() => setIsBuffering(false)}
-        onError={() => {
-          if (audioSourceIndex < EXTERNAL_AUDIO_BASES.length - 1) {
-            setAudioSourceIndex((index) => index + 1);
-          } else {
-            setIsBuffering(false);
-            setIsPlaying(false);
-          }
-        }}
+        onStalled={() => setIsBuffering(true)}
+        onError={handleAudioFailure}
         onEnded={onEnded}
       />
 

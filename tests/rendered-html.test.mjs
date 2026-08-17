@@ -92,8 +92,9 @@ test("uses redundant HTTPS Internet Archive audio sources", async () => {
   const root = new URL("../", import.meta.url);
   const page = await readFile(new URL("app/page.tsx", root), "utf8");
 
-  assert.match(page, /ia800408\.us\.archive\.org\/10\/items\/englishpod_all/);
   assert.match(page, /ia600408\.us\.archive\.org\/10\/items\/englishpod_all/);
+  assert.match(page, /archive\.org\/download\/englishpod_all/);
+  assert.doesNotMatch(page, /ia800408\.us\.archive\.org/);
   assert.doesNotMatch(page, /\/audio\/\$\{audioFileName\}/);
 });
 
@@ -115,6 +116,16 @@ test("auto-plays selections and safely persists player preferences", async () =>
   assert.match(page, /Math\.max\(safePosition, checkpoint\.position\)/);
   assert.match(page, /savedResume\.position - 10/);
   assert.match(page, /POSITION_SAVE_INTERVAL_MS = 1_000/);
+  assert.match(page, /AUDIO_RECOVERY_TIMEOUT_MS = 12_000/);
+  assert.match(page, /FINAL_AUDIO_RECOVERY_TIMEOUT_MS = 30_000/);
+  assert.match(page, /ia600408\.us\.archive\.org\/10\/items\/englishpod_all/);
+  assert.match(page, /archive\.org\/download\/englishpod_all/);
+  assert.doesNotMatch(page, /ia800408\.us\.archive\.org/);
+  assert.match(page, /const handleAudioFailure = useCallback/);
+  assert.match(page, /audio\.readyState < HTMLMediaElement\.HAVE_FUTURE_DATA/);
+  assert.match(page, /fallbackPositionRef\.current/);
+  assert.match(page, /onStalled=\{\(\) => setIsBuffering\(true\)\}/);
+  assert.match(page, /onError=\{handleAudioFailure\}/);
   assert.match(page, /src=\{settingsLoaded \? audioUrl : undefined\}/);
   assert.match(page, /if \(!audio \|\| !settingsLoaded\) return;/);
   assert.match(page, /if \(!settingsLoaded\) return;\s*if \(audioRef\.current\)/);
@@ -266,6 +277,7 @@ test("auto-plays selections and safely persists player preferences", async () =>
   assert.match(styles, /grid-template-columns: max-content minmax\(0, 1fr\)/);
   assert.match(styles, /\.speaker \{[\s\S]*?min-width: 32px;[\s\S]*?max-width: min\(126px, 32vw\);/);
   assert.match(layout, /Content-Security-Policy/);
+  assert.match(layout, /https:\/\/\*\.archive\.org/);
   assert.match(layout, /PatrickHand-Regular\.ttf/);
   assert.doesNotMatch(workflow, /AUDIO_BASE_URL/);
   assert.match(dependabot, /package-ecosystem: npm/);
