@@ -226,7 +226,7 @@ p { line-height: 1.6; }
   .line { grid-template-columns: minmax(0, 1fr) 32px; gap: 6px 8px; padding: 12px; }
   .line-meta { grid-column: 1; flex-direction: row; gap: 8px; padding: 0; }
   .line-copy { grid-column: 1; grid-row: 2; }
-  .sentence-play { grid-column: 2; grid-row: 1 / span 2; }
+  .line > .sentence-play { grid-column: 2; grid-row: 1 / span 2; }
   .hanzi { font-size: 23px; line-height: 1.65; }
   .pinyin { font-size: 14px; }
   .translation { font-size: 12px; }
@@ -351,5 +351,49 @@ p { line-height: 1.6; }
 @media (max-width: 760px) { .public-study-lines { padding: 8px 16px; } .public-study-line { gap: 8px; grid-template-columns: 18px minmax(0, 1fr) 32px; } }
 
 .course-tabs { display: flex; align-items: center; gap: 8px; }
-.recorded-player .player-options button { font-size: 12px; min-height: 34px; }
+.recorded-player .player-options > button { font-size: 12px; min-height: 34px; }
 .public-study .study-tabs button[aria-pressed="true"] { color: var(--accent-strong); }
+
+/* Keep public reader columns independent of the starter dialogue layout. */
+.public-study-line > .public-line-number { grid-column: 1; grid-row: 1; }
+.public-study-line > div { grid-column: 2; grid-row: 1; min-width: 0; }
+.public-study-line > .sentence-play { grid-column: 3; grid-row: 1; }
+.public-study-line .pinyin, .public-study-line .translation { overflow-wrap: anywhere; }
+.recorded-player .progress-wrap { grid-template-columns: 34px minmax(0, 1fr) 34px; }
+.sleep-dialog { width: min(360px, calc(100vw - 32px)); margin: auto; padding: 22px; border: 1px solid var(--line); border-radius: 20px; background: var(--surface); color: var(--text); box-shadow: var(--shadow); }
+.sleep-dialog::backdrop { background: #0008; }
+.sleep-dialog-heading { display: flex; align-items: center; justify-content: space-between; }
+.sleep-dialog-heading h2 { font-size: 20px; font-weight: 600; }
+.sleep-dialog-heading button { width: 44px; height: 44px; font-size: 25px; border: 0; border-radius: 10px; background: var(--bg); }
+.sleep-dialog p { margin: 12px 0 18px; font-size: 14px; color: var(--muted); }
+.sleep-choices { display: grid; gap: 8px; }
+.sleep-choices button { min-height: 44px; border: 1px solid var(--line); border-radius: 10px; background: var(--bg); color: var(--text); }
+.sleep-choices button:hover { background: var(--accent-soft); }
+.ori-episode-picker { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; font-size: 14px; }
+.ori-episode-picker select { flex: 1; min-width: 0; min-height: 44px; padding: 8px 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); color: var(--text); }
+@media (max-width: 660px) {
+  .course-switcher { min-height: 44px; padding: 0 8px; }
+  .course-tabs { width: 100%; justify-content: center; gap: 0; }
+  .course-switcher button { min-height: 44px; padding: 6px 12px; font-size: 12px; }
+  .content-panel { grid-template-rows: 48px minmax(0, 1fr) auto; }
+  .topbar { grid-template-columns: auto 1fr; padding: 0 12px; }
+  .topbar > p { display: none; }
+  .topbar-actions { justify-self: end; }
+  .menu-button { display: inline-flex; align-items: center; gap: 7px; min-height: 44px; border: 0; background: transparent; padding: 0 8px 0 0; color: var(--text); font-size: 13px; }
+  .menu-button .ui-icon { width: 21px; height: 21px; }
+  .topbar-actions button { min-height: 44px; border: 0; background: transparent; }
+  .lesson-heading { padding: 16px 2px; }
+  .lesson-heading h2 { font-size: clamp(24px, 7vw, 30px); line-height: 1.2; }
+  .eyebrow { margin-bottom: 8px; }
+  .podcast-shell .recording-badge { display: none; }
+  .public-study .study-toolbar { flex-wrap: wrap; gap: 0 8px; padding: 4px 12px; }
+  .public-study .study-tabs button, .public-study .reading-toggles button { min-height: 44px; }
+  .public-study .reading-toggles { margin-left: auto; }
+  .public-study-line { grid-template-columns: 20px minmax(0, 1fr) 44px; padding: 14px 0; }
+  .public-study-line > .sentence-play { width: 44px; height: 44px; padding: 12px; }
+  .recorded-player .player-options { gap: 4px; padding: 0; flex-wrap: wrap; }
+  .recorded-player .player-options > button, .recorded-player .player-options select { min-height: 44px; }
+  .ori-page { padding: 16px 12px; }
+  .ori-intro { margin-bottom: 16px; }
+  .ori-intro h1 { font-size: 28px; }
+}

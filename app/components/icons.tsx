@@ -5,7 +5,7 @@ type MediaIconName =
   | "pause"
   | "next"
   | "forward10";
-type UiIconName = "help" | "close" | "sun" | "moon";
+type UiIconName = "menu" | "help" | "close" | "sun" | "moon";
 
 // Google Material Symbols Rounded, Apache 2.0:
 // https://github.com/google/material-design-icons
@@ -45,6 +45,7 @@ export function UiIcon({ name }: { name: UiIconName }) {
       aria-hidden="true"
       focusable="false"
     >
+      {name === "menu" && <path d="M4 6h16M4 12h16M4 18h16" />}
       {name === "help" && (
         <>
           <path d="M9.1 9a3.15 3.15 0 1 1 4.3 2.94c-.86.34-1.4 1.03-1.4 1.81v.35" />
