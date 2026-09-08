@@ -160,7 +160,7 @@ test("loop repeats the lesson and auto next runs when loop is disabled", (t) => 
 test("loading failures surface an error and can be retried", (t) => {
   const h = harness(t);
   h.hook.play(); h.expire();
-  assert.match(h.hook.error, /Không tải được/);
+  assert.match(h.hook.error, /could not load/);
   assert.equal(h.media.paused, true);
   h.hook.play(); h.media.onplaying();
   assert.equal(h.hook.error, null);

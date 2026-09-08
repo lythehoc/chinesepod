@@ -1,7 +1,7 @@
 {
-  "name": "Mandarin Steps — A little Chinese, every day.",
+  "name": "Mandarin Steps \u2014 A little Chinese, every day.",
   "short_name": "Mandarin Steps",
-  "description": "Học tiếng Trung mỗi ngày cùng pinyin, nghĩa tiếng Việt và âm thanh.",
+  "description": "Learn Chinese with pinyin, English translations and recorded audio.",
   "start_url": "./",
   "display": "standalone",
   "background_color": "#0d0e0f",
@@ -14,5 +14,5 @@
       "purpose": "any"
     }
   ],
-  "lang": "vi"
+  "lang": "en"
 }

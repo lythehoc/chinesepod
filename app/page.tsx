@@ -6,7 +6,7 @@ import { MediaIcon, UiIcon } from "./components/icons";
 import { lessons, LEVELS, matchesLesson, type Lesson } from "./lib/lessons";
 import { useStarterAudio } from "./lib/use-starter-audio";
 import OriLibrary from "./components/ori-library";
-import PodcastLibrary, { PODCAST_COUNT } from "./components/podcast-library";
+import PodcastLibrary from "./components/podcast-library";
 
 type CompletionFilter = "all" | "unfinished" | "finished";
 type Preferences = {
@@ -15,8 +15,8 @@ type Preferences = {
 };
 type SleepTimer = { until: number | null; remaining: number };
 type Session = { lessonId: number; initialLine: number; autoplay: boolean; revision: number };
-const DEFAULTS: Preferences = { theme: "light", pinyin: true, english: true, rate: 0.85, loop: false, autoplayNext: false, level: "All", completion: "all" };
-const STORAGE = { settings: "mandarinsteps:settings-v1", completed: "mandarinsteps:completed-v1", resume: "mandarinsteps:resume-v1" };
+const DEFAULTS: Preferences = { theme: "light", pinyin: true, english: true, rate: 1, loop: false, autoplayNext: false, level: "All", completion: "all" };
+const STORAGE = { settings: "mandarinsteps:settings-v2", completed: "mandarinsteps:completed-v1", resume: "mandarinsteps:resume-v1" };
 const RATES = [0.65, 0.85, 1, 1.15];
 
 function readStored(key: string): unknown {
@@ -31,7 +31,7 @@ function record(value: unknown): Record<string, unknown> {
 
 export default function Home() {
   const [mode, setMode] = useState<"recordings" | "practice" | "ori">("recordings");
-  return <div className="workspace"><nav className="course-switcher" aria-label="Thư viện học tiếng Trung"><div className="course-tabs"><button aria-pressed={mode === "recordings"} onClick={() => setMode("recordings")}>Podcast <span>{PODCAST_COUNT.toLocaleString("vi-VN")}</span></button><button aria-pressed={mode === "practice"} onClick={() => setMode("practice")}>Bài nhập môn <span>24</span></button><button aria-pressed={mode === "ori"} onClick={() => setMode("ori")}>Công chúa Ori <span>104</span></button></div><div className="github-links"><a href="https://github.com/lythehoc/chinesepod" target="_blank" rel="noreferrer">GitHub ↗</a><a href="https://github.com/lythehoc" target="_blank" rel="noreferrer" aria-label="Theo dõi lythehoc trên GitHub">Theo dõi @lythehoc ↗</a></div></nav>{mode === "recordings" ? <PodcastLibrary /> : mode === "practice" ? <StarterCourse /> : <OriLibrary />}</div>;
+  return <div className="workspace"><nav className="course-switcher" aria-label="Chinese learning library"><div className="course-tabs"><button aria-pressed={mode === "recordings"} onClick={() => setMode("recordings")}>Podcast</button><button aria-pressed={mode === "practice"} onClick={() => setMode("practice")}>Starter lessons</button><button aria-pressed={mode === "ori"} onClick={() => setMode("ori")}>Ori Princess</button></div></nav>{mode === "recordings" ? <PodcastLibrary /> : mode === "practice" ? <StarterCourse /> : <OriLibrary />}</div>;
 }
 
 function StarterCourse() {
@@ -117,51 +117,51 @@ function StarterCourse() {
 
   return (
     <main className={`app-shell ${sidebarOpen ? "drawer-open" : ""}`}>
-      {sidebarOpen && <button className="mobile-scrim" aria-label="Đóng danh sách bài học" onClick={() => { setSidebarOpen(false); menuRef.current?.focus(); }} />}
-      <aside className={`library-panel ${sidebarOpen ? "is-open" : ""}`} aria-label="Danh sách bài học" ref={sidebarRef}>
+      {sidebarOpen && <button className="mobile-scrim" aria-label="Close lesson library" onClick={() => { setSidebarOpen(false); menuRef.current?.focus(); }} />}
+      <aside className={`library-panel ${sidebarOpen ? "is-open" : ""}`} aria-label="Lesson library" ref={sidebarRef}>
         <div className="brand-block">
           <div className="brand-row">
             <span className="brand-mark" lang="zh-Hans" aria-hidden="true">中</span>
-            <div className="brand-name"><h1>Mandarin<span> Steps</span></h1><p>LUYỆN TIẾNG TRUNG MỖI NGÀY</p></div>
-            <button className="guide-icon-button" onClick={() => guideRef.current?.showModal()} aria-label="Mở hướng dẫn"><UiIcon name="help" /></button>
-            <button className="mobile-close" onClick={() => { setSidebarOpen(false); menuRef.current?.focus(); }} aria-label="Đóng danh sách bài học"><UiIcon name="close" /></button>
+            <div className="brand-name"><h1>Mandarin<span> Steps</span></h1><p>YOUR DAILY CHINESE PRACTICE</p></div>
+            <button className="guide-icon-button" onClick={() => guideRef.current?.showModal()} aria-label="Open quick guide"><UiIcon name="help" /></button>
+            <button className="mobile-close" onClick={() => { setSidebarOpen(false); menuRef.current?.focus(); }} aria-label="Close lesson library"><UiIcon name="close" /></button>
           </div>
-          <div className="course-progress"><span>{completedIds.length} / {lessons.length} bài đã xong</span><progress value={completedIds.length} max={lessons.length} aria-label="Tiến độ học" /></div>
+          <div className="course-progress"><span>{completedIds.length} / {lessons.length} lessons finished</span><progress value={completedIds.length} max={lessons.length} aria-label="Course completion" /></div>
         </div>
         <div className="library-tools">
-          <label className="search-field"><span aria-hidden="true">⌕</span><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Tìm chữ Hán, pinyin hoặc tiếng Việt" aria-label="Tìm bài học" />{query && <button onClick={() => setQuery("")} aria-label="Xóa tìm kiếm">×</button>}</label>
-          <div className="level-filters" role="group" aria-label="Lọc trình độ">
+          <label className="search-field"><span aria-hidden="true">⌕</span><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search Chinese, pinyin, or English" aria-label="Search lessons" />{query && <button onClick={() => setQuery("")} aria-label="Clear search">×</button>}</label>
+          <div className="level-filters" role="group" aria-label="Filter by level">
             {["All", ...LEVELS].map((level) => <button key={level} className={preferences.level === level ? "is-selected" : ""} onClick={() => updatePreference("level", level)} aria-pressed={preferences.level === level}>{levelLabel(level)}</button>)}
           </div>
-          <div className="completion-filters" role="group" aria-label="Lọc tiến độ">
+          <div className="completion-filters" role="group" aria-label="Filter by completion">
             {([["all", "All"], ["unfinished", "To learn"], ["finished", "Finished"]] as const).map(([value, label]) => <button key={value} className={preferences.completion === value ? "is-selected" : ""} onClick={() => updatePreference("completion", value)} aria-pressed={preferences.completion === value}>{levelLabel(label)}<span>{counts[value]}</span></button>)}
           </div>
         </div>
         <div className="episode-list">
-          <div className="results-line" aria-live="polite"><span>{visible.length} bài học</span><span>Tiếng Trung giản thể</span></div>
+          <div className="results-line" aria-live="polite"><span>{visible.length} lessons</span><span>Simplified Mandarin</span></div>
           {visible.map((item) => <div className={`episode-row ${item.id === lesson.id ? "is-active" : ""}`} key={item.id}>
             <button className="episode-select" onClick={() => selectLesson(item)} aria-current={item.id === lesson.id ? "true" : undefined}>
               <span className="episode-number" aria-hidden="true">{String(item.id).padStart(2, "0")}</span><span className="episode-copy"><strong>{item.title}</strong><span lang="zh-Hans">{item.hanzi}</span><small>{levelLabel(item.level)}</small></span>
             </button>
-            <button className={`episode-complete ${completed.has(item.id) ? "is-finished" : ""}`} onClick={() => toggleCompleted(item.id)} aria-label={`Đánh dấu ${item.title}: ${completed.has(item.id) ? "chưa học" : "đã xong"}`} aria-pressed={completed.has(item.id)}><span aria-hidden="true">✓</span></button>
+            <button className={`episode-complete ${completed.has(item.id) ? "is-finished" : ""}`} onClick={() => toggleCompleted(item.id)} aria-label={`Mark ${item.title}: ${completed.has(item.id) ? "unfinished" : "finished"}`} aria-pressed={completed.has(item.id)}><span aria-hidden="true">✓</span></button>
           </div>)}
-          {!visible.length && <div className="empty-state"><strong>Không tìm thấy bài học</strong><p>Thử tìm 你好, ni hao hoặc xin chào.</p><button onClick={() => { setQuery(""); setPreferences((previous) => ({ ...previous, level: "All", completion: "all" })); }}>Xóa bộ lọc</button></div>}
+          {!visible.length && <div className="empty-state"><strong>No lessons found</strong><p>Try a word like 你好 or ni hao.</p><button onClick={() => { setQuery(""); setPreferences((previous) => ({ ...previous, level: "All", completion: "all" })); }}>Clear filters</button></div>}
         </div>
       </aside>
       <section className="content-panel">
         <header className="topbar">
-          <button ref={menuRef} className="menu-button" onClick={() => setSidebarOpen(true)} aria-label="Mở danh sách bài học" aria-expanded={sidebarOpen}>☰</button>
-          <p>Mỗi ngày một chút tiếng Trung.</p>
-          <div className="topbar-actions"><button onClick={randomLesson} title="Mở bài ngẫu nhiên"><span aria-hidden="true">🎲</span> <span className="topbar-label">Ngẫu nhiên</span></button><button className="theme-toggle" onClick={() => updatePreference("theme", preferences.theme === "light" ? "dark" : "light")} aria-label={`Chuyển giao diện ${preferences.theme === "light" ? "tối" : "sáng"}`}><UiIcon name={preferences.theme === "light" ? "moon" : "sun"} /><span>{preferences.theme === "light" ? "Tối" : "Sáng"}</span></button></div>
+          <button ref={menuRef} className="menu-button" onClick={() => setSidebarOpen(true)} aria-label="Open lesson library" aria-expanded={sidebarOpen}>☰</button>
+          <p>A little Chinese, every day.</p>
+          <div className="topbar-actions"><button onClick={randomLesson} title="Open a random lesson"><span aria-hidden="true">🎲</span> <span className="topbar-label">Random</span></button><button className="theme-toggle" onClick={() => updatePreference("theme", preferences.theme === "light" ? "dark" : "light")} aria-label={`Switch theme to ${preferences.theme === "light" ? "dark" : "light"}`}><UiIcon name={preferences.theme === "light" ? "moon" : "sun"} /><span>{preferences.theme === "light" ? "Dark" : "Light"}</span></button></div>
         </header>
         <LessonView key={`${lesson.id}-${session.revision}`} lesson={lesson} session={session} preferences={preferences} ready={ready} completed={completed.has(lesson.id)} onCompleted={() => toggleCompleted(lesson.id)} onPreference={updatePreference} onNavigate={navigate} sleepTimer={sleepTimer} onSleepTimer={setSleepTimer} onLevel={() => { updatePreference("level", lesson.level); if (window.matchMedia("(max-width: 980px)").matches) setSidebarOpen(true); }} />
       </section>
       <dialog className="guide-modal" ref={guideRef} aria-labelledby="guide-title" onClick={(event) => { if (event.target === event.currentTarget) guideRef.current?.close(); }}>
-        <span className="section-kicker">HƯỚNG DẪN NHANH</span><h2 id="guide-title">Tạo thói quen học tiếng Trung</h2>
-        <ol><li><strong>Lắng nghe thanh điệu</strong><span>Nghe từng câu rồi đọc lại thành tiếng. Tiếng Trung có bốn thanh điệu và thanh nhẹ.</span></li><li><strong>Đọc cùng gợi ý</strong><span>Pinyin giúp bạn phát âm. Hãy ẩn pinyin hoặc tiếng Việt khi muốn tự kiểm tra.</span></li><li><strong>Ôn lại để nhớ lâu</strong><span>Ôn từ vựng và ghi chú, sau đó đánh dấu hoàn thành bài học.</span></li></ol>
-        <p className="guide-note">Âm thanh luyện tập tiếng Trung có sẵn trong ứng dụng, không cần cài giọng đọc. Khi tiếp tục sau khi tạm dừng, câu hiện tại sẽ được đọc lại từ đầu.</p>
-        <p className="guide-note">Phím cách: phát hoặc dừng; ← / →: chuyển câu. Tiến độ được lưu trong trình duyệt này.</p>
-        <button className="primary-button" onClick={() => guideRef.current?.close()}>Bắt đầu học</button>
+        <span className="section-kicker">QUICK GUIDE</span><h2 id="guide-title">Build your Mandarin habit</h2>
+        <ol><li><strong>Listen to the tones</strong><span>Play a sentence, then repeat it aloud. Mandarin uses four tones and a light neutral tone.</span></li><li><strong>Read with support</strong><span>Pinyin shows pronunciation. Hide pinyin or English when you are ready to test yourself.</span></li><li><strong>Make it stick</strong><span>Review the vocabulary and language note, then mark the lesson finished.</span></li></ol>
+        <p className="guide-note">Practice audio is included with the app as pre-generated Mandarin speech. No voice installation is needed. Pause restarts the current sentence when you resume.</p>
+        <p className="guide-note">Keyboard: Space to play or pause; ← / → to move between sentences. Your progress is saved in this browser.</p>
+        <button className="primary-button" onClick={() => guideRef.current?.close()}>Start learning</button>
       </dialog>
     </main>
   );
@@ -209,31 +209,31 @@ function LessonView({ lesson, session, preferences, ready, completed, onComplete
     <div className="lesson-scroll" ref={scrollRef}>
       <div className="lesson">
         <div className="lesson-heading">
-          <div><div className="eyebrow"><button className="level-shortcut" onClick={onLevel} aria-label={`Open ${levelLabel(lesson.level)} lessons`}>{levelLabel(lesson.level)}</button><span>Bài {String(lesson.id).padStart(2, "0")} / {lessons.length}</span></div><h2 id="lesson-title" tabIndex={-1}>{lesson.title}</h2><p className="lesson-hanzi" lang="zh-Hans">{lesson.hanzi}</p>{preferences.pinyin && <p className="lesson-pinyin" lang="zh-Latn-pinyin">{lesson.pinyin}</p>}<p className="lesson-description">{lesson.description}</p></div>
-          <button className={`heading-complete ${completed ? "is-finished" : ""}`} onClick={onCompleted} aria-label={`Đánh dấu ${completed ? "chưa học" : "đã xong"}`} aria-pressed={completed} title={completed ? "Đã xong" : "Đánh dấu hoàn thành"}><span aria-hidden="true">✓</span></button>
+          <div><div className="eyebrow"><button className="level-shortcut" onClick={onLevel} aria-label={`Open ${levelLabel(lesson.level)} lessons`}>{levelLabel(lesson.level)}</button><span>Lesson {String(lesson.id).padStart(2, "0")} / {lessons.length}</span></div><h2 id="lesson-title" tabIndex={-1}>{lesson.title}</h2><p className="lesson-hanzi" lang="zh-Hans">{lesson.hanzi}</p>{preferences.pinyin && <p className="lesson-pinyin" lang="zh-Latn-pinyin">{lesson.pinyin}</p>}<p className="lesson-description">{lesson.description}</p></div>
+          <button className={`heading-complete ${completed ? "is-finished" : ""}`} onClick={onCompleted} aria-label={`Mark ${completed ? "unfinished" : "finished"}`} aria-pressed={completed} title={completed ? "Finished" : "Mark as finished"}><span aria-hidden="true">✓</span></button>
         </div>
-        <section className="transcript-card" aria-label="Nội dung bài học">
-          <div className="card-heading"><div><span className="section-kicker">NGHE · ĐỌC · NHẮC LẠI</span><h3>Luyện nói từng câu</h3></div><span className="lesson-size">{lesson.dialogue.length} câu</span></div>
-          <div className="study-toolbar"><div className="study-tabs" role="tablist" aria-label="Phần học">{(["dialogue", "vocabulary"] as const).map((value) => <button id={`${value}-tab`} key={value} role="tab" aria-selected={tab === value} aria-controls="study-panel" tabIndex={tab === value ? 0 : -1} className={tab === value ? "is-selected" : ""} onClick={() => setTab(value)} onKeyDown={(event) => { if (["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) { event.preventDefault(); const next = event.key === "Home" ? "dialogue" : event.key === "End" ? "vocabulary" : tab === "dialogue" ? "vocabulary" : "dialogue"; setTab(next); document.getElementById(`${next}-tab`)?.focus(); } }}>{value === "dialogue" ? "Hội thoại" : "Từ vựng"}</button>)}</div><div className="reading-toggles" role="group" aria-label="Gợi ý khi đọc"><button aria-pressed={preferences.pinyin} onClick={() => onPreference("pinyin", !preferences.pinyin)}>Pinyin <span aria-hidden="true">{preferences.pinyin ? "✓" : "+"}</span></button><button aria-pressed={preferences.english} onClick={() => onPreference("english", !preferences.english)}>Tiếng Việt <span aria-hidden="true">{preferences.english ? "✓" : "+"}</span></button></div></div>
+        <section className="transcript-card" aria-label="Lesson study material">
+          <div className="card-heading"><div><span className="section-kicker">LISTEN · READ · REPEAT</span><h3>Make yourself understood</h3></div><span className="lesson-size">{lesson.dialogue.length} sentences</span></div>
+          <div className="study-toolbar"><div className="study-tabs" role="tablist" aria-label="Study section">{(["dialogue", "vocabulary"] as const).map((value) => <button id={`${value}-tab`} key={value} role="tab" aria-selected={tab === value} aria-controls="study-panel" tabIndex={tab === value ? 0 : -1} className={tab === value ? "is-selected" : ""} onClick={() => setTab(value)} onKeyDown={(event) => { if (["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) { event.preventDefault(); const next = event.key === "Home" ? "dialogue" : event.key === "End" ? "vocabulary" : tab === "dialogue" ? "vocabulary" : "dialogue"; setTab(next); document.getElementById(`${next}-tab`)?.focus(); } }}>{value === "dialogue" ? "Conversation" : "Vocabulary"}</button>)}</div><div className="reading-toggles" role="group" aria-label="Reading support"><button aria-pressed={preferences.pinyin} onClick={() => onPreference("pinyin", !preferences.pinyin)}>Pinyin <span aria-hidden="true">{preferences.pinyin ? "✓" : "+"}</span></button><button aria-pressed={preferences.english} onClick={() => onPreference("english", !preferences.english)}>English <span aria-hidden="true">{preferences.english ? "✓" : "+"}</span></button></div></div>
           <div className="transcript-content" id="study-panel" role="tabpanel" aria-labelledby={`${tab}-tab`} tabIndex={0}>
             {tab === "dialogue" ? <div className="dialogue-block">{lesson.dialogue.map((line, index) => <div className={`line ${speech.activeLine === index ? "is-current" : ""}`} key={index} data-line={index}>
               <div className="line-meta"><span className="speaker">{line.speaker}</span><span className="line-number">{String(index + 1).padStart(2, "0")}</span></div>
-              <div className="line-copy"><p className="hanzi" lang="zh-Hans">{line.hanzi}</p>{preferences.pinyin && <p className="pinyin" lang="zh-Latn-pinyin">{line.pinyin}</p>}{preferences.english && <p className="translation">{line.vietnamese}</p>}</div>
-              <button className="sentence-play" disabled={!canSpeak} onClick={() => speech.playLine(index)} aria-label={`Nghe câu ${index + 1}: ${line.hanzi}`} title="Nghe từ câu này"><MediaIcon name="play" /></button>
-            </div>)}</div> : <div className="vocab-block">{lesson.vocabulary.map((word) => <article className="vocab-item" key={word.hanzi}><div className="vocab-top"><h4 className="hanzi" lang="zh-Hans">{word.hanzi}</h4><button className="sentence-play" disabled={!canSpeak} onClick={() => speech.speakText(word.hanzi)} aria-label={`Nghe ${word.hanzi}`}><MediaIcon name="play" /></button></div>{preferences.pinyin && <p className="pinyin" lang="zh-Latn-pinyin">{word.pinyin}</p>}{preferences.english && <p className="translation">{word.vietnamese}</p>}</article>)}</div>}
+              <div className="line-copy"><p className="hanzi" lang="zh-Hans">{line.hanzi}</p>{preferences.pinyin && <p className="pinyin" lang="zh-Latn-pinyin">{line.pinyin}</p>}{preferences.english && <p className="translation">{line.english}</p>}</div>
+              <button className="sentence-play" disabled={!canSpeak} onClick={() => speech.playLine(index)} aria-label={`Listen to sentence ${index + 1}: ${line.hanzi}`} title="Listen from this sentence"><MediaIcon name="play" /></button>
+            </div>)}</div> : <div className="vocab-block">{lesson.vocabulary.map((word) => <article className="vocab-item" key={word.hanzi}><div className="vocab-top"><h4 className="hanzi" lang="zh-Hans">{word.hanzi}</h4><button className="sentence-play" disabled={!canSpeak} onClick={() => speech.speakText(word.hanzi)} aria-label={`Listen to ${word.hanzi}`}><MediaIcon name="play" /></button></div>{preferences.pinyin && <p className="pinyin" lang="zh-Latn-pinyin">{word.pinyin}</p>}{preferences.english && <p className="translation">{word.english}</p>}</article>)}</div>}
           </div>
         </section>
-        <aside className="language-note"><span className="note-symbol" lang="zh-Hans" aria-hidden="true">记</span><div><span className="section-kicker">GHI CHÚ NGÔN NGỮ</span><h3>{lesson.note.title}</h3><p>{lesson.note.body}</p></div></aside>
-        <div className="lesson-footer"><p>Nghe, đọc thành tiếng, rồi thử bỏ gợi ý.</p><button className={`finish-button ${completed ? "is-finished" : ""}`} onClick={onCompleted} aria-pressed={completed}>{completed ? "✓ Đã hoàn thành" : "Đánh dấu hoàn thành"}</button></div>
+        <aside className="language-note"><span className="note-symbol" lang="zh-Hans" aria-hidden="true">记</span><div><span className="section-kicker">LANGUAGE NOTE</span><h3>{lesson.note.title}</h3><p>{lesson.note.body}</p></div></aside>
+        <div className="lesson-footer"><p>Listen, say it aloud, then try without the hints.</p><button className={`finish-button ${completed ? "is-finished" : ""}`} onClick={onCompleted} aria-pressed={completed}>{completed ? "✓ Lesson finished" : "Mark as finished"}</button></div>
       </div>
     </div>
-    <section className="player" aria-label="Trình phát câu tiếng Trung">
+    <section className="player" aria-label="Mandarin sentence player">
       {audioMessage && <p className="speech-notice" role="status">{audioMessage}</p>}
-      <div className="progress-wrap"><span className="progress-time">{speech.activeLine + 1}</span><input type="range" min={0} max={lesson.dialogue.length - 1} step={1} value={speech.activeLine} onChange={(event) => speech.seekLine(Number(event.target.value))} aria-label="Tiến độ câu" aria-valuetext={`Câu ${speech.activeLine + 1} / ${lesson.dialogue.length}`} style={{ "--progress": `${speech.activeLine / Math.max(1, lesson.dialogue.length - 1) * 100}%` } as CSSProperties} /><span className="progress-time">{lesson.dialogue.length}</span></div>
-      <div className="player-main"><div className="transport"><button className="track-button" onClick={() => onNavigate(-1, speech.isPlaying)} aria-label="Bài trước"><MediaIcon name="previous" /></button><button className="sentence-step" onClick={() => speech.seekLine(speech.activeLine - 1)} disabled={speech.activeLine === 0} aria-label="Câu trước">‹</button><button className="play-button" onClick={speech.toggle} disabled={!canSpeak} aria-label={speech.isPlaying ? "Tạm dừng" : "Nghe tiếng Trung"}><MediaIcon name={speech.isPlaying ? "pause" : "play"} /></button><button className="sentence-step" onClick={() => speech.seekLine(speech.activeLine + 1)} disabled={speech.activeLine === lesson.dialogue.length - 1} aria-label="Câu tiếp">›</button><button className="track-button" onClick={() => onNavigate(1, speech.isPlaying)} aria-label="Bài tiếp"><MediaIcon name="next" /></button></div>
-        <div className="player-options"><button className={preferences.autoplayNext ? "is-on" : ""} aria-pressed={preferences.autoplayNext} onClick={() => onPreference("autoplayNext", !preferences.autoplayNext)}><span className="control-label">Tự chuyển</span></button><button className={preferences.loop ? "is-on" : ""} aria-pressed={preferences.loop} onClick={() => onPreference("loop", !preferences.loop)}><span aria-hidden="true">↻</span><span className="control-label">Lặp lại</span></button><button className={sleepUntil ? "is-on" : ""} aria-pressed={sleepUntil !== null} onClick={() => { onSleepTimer({ until: sleepUntil ? null : Date.now() + 15 * 60 * 1000, remaining: sleepUntil ? 0 : 900 }); }} title="Dừng phát sau 15 phút"><span className="control-label">{sleepUntil ? `${Math.floor(sleepRemaining / 60)}:${String(sleepRemaining % 60).padStart(2, "0")}` : "Hẹn giờ"}</span></button><button className="speed-button" onClick={() => onPreference("rate", RATES[(RATES.indexOf(preferences.rate) + 1) % RATES.length])} aria-label={`Tốc độ phát ${preferences.rate}, đổi tốc độ`}><span className="speed-value">{preferences.rate}×</span><span className="control-label">Tốc độ</span></button></div>
+      <div className="progress-wrap"><span className="progress-time">{speech.activeLine + 1}</span><input type="range" min={0} max={lesson.dialogue.length - 1} step={1} value={speech.activeLine} onChange={(event) => speech.seekLine(Number(event.target.value))} aria-label="Sentence progress" aria-valuetext={`Sentence ${speech.activeLine + 1} / ${lesson.dialogue.length}`} style={{ "--progress": `${speech.activeLine / Math.max(1, lesson.dialogue.length - 1) * 100}%` } as CSSProperties} /><span className="progress-time">{lesson.dialogue.length}</span></div>
+      <div className="player-main"><div className="transport"><button className="track-button" onClick={() => onNavigate(-1, speech.isPlaying)} aria-label="Previous lesson"><MediaIcon name="previous" /></button><button className="sentence-step" onClick={() => speech.seekLine(speech.activeLine - 1)} disabled={speech.activeLine === 0} aria-label="Previous sentence">‹</button><button className="play-button" onClick={speech.toggle} disabled={!canSpeak} aria-label={speech.isPlaying ? "Pause" : "Play Mandarin"}><MediaIcon name={speech.isPlaying ? "pause" : "play"} /></button><button className="sentence-step" onClick={() => speech.seekLine(speech.activeLine + 1)} disabled={speech.activeLine === lesson.dialogue.length - 1} aria-label="Next sentence">›</button><button className="track-button" onClick={() => onNavigate(1, speech.isPlaying)} aria-label="Next lesson"><MediaIcon name="next" /></button></div>
+        <div className="player-options"><button className={preferences.autoplayNext ? "is-on" : ""} aria-pressed={preferences.autoplayNext} onClick={() => onPreference("autoplayNext", !preferences.autoplayNext)}><span className="control-label">Auto next</span></button><button className={preferences.loop ? "is-on" : ""} aria-pressed={preferences.loop} onClick={() => onPreference("loop", !preferences.loop)}><span aria-hidden="true">↻</span><span className="control-label">Loop</span></button><button className={sleepUntil ? "is-on" : ""} aria-pressed={sleepUntil !== null} onClick={() => { onSleepTimer({ until: sleepUntil ? null : Date.now() + 15 * 60 * 1000, remaining: sleepUntil ? 0 : 900 }); }} title="Stop playback after 15 minutes"><span className="control-label">{sleepUntil ? `${Math.floor(sleepRemaining / 60)}:${String(sleepRemaining % 60).padStart(2, "0")}` : "Sleep"}</span></button><button className="speed-button" onClick={() => onPreference("rate", RATES[(RATES.indexOf(preferences.rate) + 1) % RATES.length])} aria-label={`Playback speed ${preferences.rate}, change speed`}><span className="speed-value">{preferences.rate}×</span><span className="control-label">Speed</span></button></div>
       </div>
-      <div className="voice-row"><span>Âm thanh tiếng Trung có sẵn · Câu {speech.activeLine + 1} / {lesson.dialogue.length}</span></div>
+      <div className="voice-row"><span>Bundled Mandarin audio · Sentence {speech.activeLine + 1} / {lesson.dialogue.length}</span></div>
     </section>
   </>;
 }

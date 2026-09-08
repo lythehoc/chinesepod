@@ -58,14 +58,14 @@ export function useStarterAudio(options: Options) {
     const audio = audioRef.current;
     if (!audio || !mountedRef.current) return;
     const source = recordings[text];
-    if (!source) { setError("Thiếu tệp phát âm. Hãy thử câu khác."); return; }
+    if (!source) { setError("This pronunciation file is missing. Please try another sentence."); return; }
     if (line !== null) setPosition(line);
     const generation = generationRef.current;
     const isCurrent = () => mountedRef.current && generation === generationRef.current;
     const fail = () => {
       if (!isCurrent()) return;
       stop();
-      setError("Không tải được âm thanh. Kiểm tra kết nối và nhấn Phát để thử lại.");
+      setError("Audio could not load. Check your connection and press Play to retry.");
     };
     const watch = () => {
       clearTimer();
@@ -95,8 +95,8 @@ export function useStarterAudio(options: Options) {
       if (!isCurrent()) return;
       stop();
       setError(reason instanceof DOMException && reason.name === "NotAllowedError"
-        ? "Nhấn Phát để bật âm thanh trong trình duyệt."
-        : "Chưa phát được âm thanh. Nhấn Phát để thử lại.");
+        ? "Tap Play to enable audio in this browser."
+        : "Audio could not start. Press Play to retry.");
     });
   }, [clearTimer, setPosition, stop]);
   const playLine = useCallback((index: number) => {

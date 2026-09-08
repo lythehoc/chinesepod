@@ -1,57 +1,51 @@
 # chinesepod 🎧
 
-Mỗi ngày một chút tiếng Trung.
+A little Chinese, every day.
 
-[![Học ngay](https://img.shields.io/badge/Học_ngay-GitHub_Pages-16796b)](https://lythehoc.github.io/chinesepod/)
-[![Follow lythehoc](https://img.shields.io/github/followers/lythehoc?label=Follow%20lythehoc&style=social)](https://github.com/lythehoc)
+[Learn online](https://lythehoc.github.io/chinesepod/)
 
-`chinesepod` là thư viện học tiếng Trung dành cho người Việt, dùng trên điện thoại
-và máy tính. Nghe, đọc pinyin, ôn từ vựng và tiếp tục từ vị trí đã dừng.
+`chinesepod` is a phone-friendly Mandarin listening library with recorded
+podcasts, starter lessons, and Ori Princess episodes. Read Chinese and pinyin,
+learn with English explanations, and pick up where you left off.
 
-## Điểm nổi bật
+## Highlights
 
-- **24 bài nhập môn** với chữ Hán giản thể, pinyin, nghĩa và hướng dẫn tiếng Việt.
-- **288 đoạn phát âm có sẵn**, không cần cài giọng đọc trên thiết bị.
-- **1.920 tập ChinesePod** ở 5 trình độ, có tìm kiếm, phát ngẫu nhiên và lọc tiến độ.
-- **Công chúa Ori — 甜心格格**: trailer tiếng Quan thoại chính thức và liên kết 104 tập trên CCTV.
-- Tốc độ phát, lặp lại, tự chuyển bài, hẹn giờ và lưu tiến độ trong trình duyệt.
-- Không cần tài khoản; giao diện sáng/tối, nút GitHub và theo dõi tác giả.
+- Browse **1,920 ChinesePod episodes** across five levels, with search and completion filters.
+- Use the engpod-style player: central Play/Pause, previous/next, ±10 seconds, seeking, speed, loop and sleep timer.
+- Read public dialogue and vocabulary previews inside each episode, with pronunciation clips.
+- Practise **24 original starter lessons** with English translations, pinyin and **288 included pronunciation clips**, starting at 1× speed.
+- Watch **47 full Mandarin Ori Princess episodes** from Asia Animation Channel without leaving the app; keep a listening notebook for each episode.
+- Save progress locally, with light/dark themes and no app account needed.
 
-Bản thu ChinesePod giữ nguyên hội thoại tiếng Trung và lời giảng tiếng Anh;
-tên tập, tài liệu ngoài giữ theo nguồn. Phần nhập môn dùng nghĩa tiếng Việt.
-Phim đầy đủ mở trên CCTV; khả năng xem phụ thuộc nguồn phát và khu vực.
+ChinesePod audio includes Mandarin conversations and English teaching. Public study previews and YouTube videos are served by their publishers and depend on
+source availability. The app does not unlock or bundle private study materials.
 
-## Chạy tại máy
+## Run locally
 
-Cài Node.js 24 trở lên:
+Install Node.js 24 or newer:
 
 ```bash
 npm install
 npm run dev
 ```
 
-Mở http://localhost:3000. Kiểm tra bằng `npm run lint` và `npm test`.
+Open http://localhost:3000. Run `npm run lint` and `npm test` to validate changes.
 
 ## GitHub Pages
 
-Trang chính: **https://lythehoc.github.io/chinesepod/**.
+Published at **https://lythehoc.github.io/chinesepod/**.
+Pushes to `main` run checks and deploy `out/` through GitHub Actions.
+The build automatically uses the repository’s base path. No backend or API key is required.
 
-Push vào `main` sẽ chạy kiểm tra và xuất bản qua GitHub Actions.
-Ứng dụng xuất tĩnh vào `out/`, tự nhận đường dẫn `/chinesepod` khi build trên
-GitHub. Không cần máy chủ, khóa API hay dịch vụ hosting khác.
+## Credits
 
-## Nguồn và ghi nhận
+- Recorded audio and public lesson previews: [ChinesePod](https://www.chinesepod.com).
+  Podcast metadata comes from its public [beginner](https://anchor.fm/s/109bf914/podcast/rss)
+  and [intermediate](https://anchor.fm/s/317bc3a8/podcast/rss) feeds.
+- Ori Princess: [Asia Animation Channel’s Mandarin playlist](https://www.youtube.com/playlist?list=PLfyJ-JCO9sSmsJxDSd1aATOSE2sUX2BBr).
+- Original starter lessons use pre-generated Tingting Mandarin speech.
+- [Patrick Hand](https://fonts.google.com/specimen/Patrick+Hand), under the included
+  [SIL Open Font License](public/fonts/PatrickHand-OFL.txt).
 
-- Podcast phát trực tiếp từ các nguồn RSS công khai của [ChinesePod](https://www.chinesepod.com):
-  [cơ bản](https://anchor.fm/s/109bf914/podcast/rss),
-  [trung cấp](https://anchor.fm/s/317bc3a8/podcast/rss).
-  Bản thu và tài liệu thuộc ChinesePod; một số tài liệu yêu cầu tài khoản.
-- Công chúa Ori: [CCTV](https://tv.cctv.com/2013/04/19/VIDA1366343828951330.shtml)
-  và [Asia Animation Channel](https://www.youtube.com/watch?v=lhXTHGTJwJk).
-- Bài nhập môn biên soạn riêng; âm thanh tạo sẵn bằng giọng Mandarin Tingting.
-- Phông [Patrick Hand](https://fonts.google.com/specimen/Patrick+Hand),
-  theo [SIL Open Font License](public/fonts/PatrickHand-OFL.txt).
-
-Cập nhật podcast bằng `scripts/import-podcasts.py` với hai tệp RSS đã tải.
-`scripts/check-podcast-audio.py` kiểm tra mẫu 50 tập (`--all` để kiểm tra toàn bộ).
-`scripts/generate-starter-audio.py` tạo và kiểm tra âm thanh nhập môn trên macOS.
+Maintenance tools are in `scripts/`: import podcast metadata from local RSS files,
+check publisher audio URLs, and regenerate starter audio on macOS.

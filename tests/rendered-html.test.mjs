@@ -53,11 +53,11 @@ function assertText(value, label) {
 }
 
 function assertBilingual(item, label) {
-  for (const key of ["hanzi", "pinyin", "vietnamese"]) assertText(item[key], `${label}.${key}`);
+  for (const key of ["hanzi", "pinyin", "english"]) assertText(item[key], `${label}.${key}`);
   assert.match(item.hanzi, han, `${label} needs Chinese characters`);
   assert.doesNotMatch(item.pinyin, han, `${label} needs a separate pinyin reading`);
   assert.match(item.pinyin, /[a-zü]/i, `${label} needs readable pinyin`);
-  assert.match(item.vietnamese, /[a-z]/i, `${label} needs a Vietnamese translation`);
+  assert.match(item.english, /[a-z]/i, `${label} needs a English translation`);
 }
 
 test("contains 24 complete original Mandarin lessons across all three learning levels", () => {
@@ -91,7 +91,7 @@ test("contains 24 complete original Mandarin lessons across all three learning l
     // nevertheless include tone-marked vocabulary for pronunciation practice.
     assert.ok(lesson.vocabulary.some(({ pinyin }) => tone.test(pinyin)));
   }
-  assert.doesNotMatch(JSON.stringify(catalog), /archive\.org|vietnamesepod|transcript_id|"mp3"/i);
+  assert.doesNotMatch(JSON.stringify(catalog), /archive\.org|englishpod|transcript_id|"mp3"/i);
 });
 
 test("search normalizes tone marks, capitalization, punctuation, and Mandarin ü input", () => {
@@ -105,7 +105,7 @@ test("search normalizes tone marks, capitalization, punctuation, and Mandarin ü
   assert.equal(normalizeSearch("Điện thoại"), normalizeSearch("dien thoai"));
 });
 
-test("search finds Chinese, pinyin, Vietnamese, vocabulary, dialogue, levels, and lesson numbers", () => {
+test("search finds Chinese, pinyin, English, vocabulary, dialogue, levels, and lesson numbers", () => {
   const lesson = {
     id: 91,
     title: "Walking home",
@@ -114,11 +114,11 @@ test("search finds Chinese, pinyin, Vietnamese, vocabulary, dialogue, levels, an
     level: "Beginner",
     description: "A short walk after class.",
     dialogue: [
-      { speaker: "A", hanzi: "你好吗？", pinyin: "Nǐ hǎo ma?", vietnamese: "How are you?" },
+      { speaker: "A", hanzi: "你好吗？", pinyin: "Nǐ hǎo ma?", english: "How are you?" },
     ],
     vocabulary: [
-      { hanzi: "女孩", pinyin: "nǚhái", vietnamese: "girl" },
-      { hanzi: "绿茶", pinyin: "lǜchá", vietnamese: "green tea" },
+      { hanzi: "女孩", pinyin: "nǚhái", english: "girl" },
+      { hanzi: "绿茶", pinyin: "lǜchá", english: "green tea" },
     ],
     note: { title: "Greetings", body: "Use a question to greet someone." },
   };
@@ -135,7 +135,7 @@ test("search finds Chinese, pinyin, Vietnamese, vocabulary, dialogue, levels, an
   for (const lesson of catalog) {
     assert.equal(matchesLesson(lesson, lesson.hanzi), true);
     assert.equal(matchesLesson(lesson, normalizeSearch(lesson.pinyin)), true);
-    assert.equal(matchesLesson(lesson, lesson.vocabulary[0].vietnamese), true);
+    assert.equal(matchesLesson(lesson, lesson.vocabulary[0].english), true);
   }
 });
 
@@ -146,15 +146,18 @@ test("exports the recorded podcast library with a real audio player", async () =
   const visibleText = decodeEntities(rendered.replace(/<[^>]+>/g, " ")).replace(/\s+/g, " ");
   assert.match(visibleText, /Mandarin Steps/);
   assert.match(visibleText, /Podcast/);
-  assert.match(visibleText, /Bài nhập môn/);
-  assert.match(visibleText, /1\.920/);
-  assert.match(visibleText, /Podcast do người thật thu âm/);
-  assert.match(visibleText, /Mở tài liệu bài học/);
+  assert.match(visibleText, /Starter lessons/);
+  assert.match(visibleText, /1,920/);
+  assert.doesNotMatch(visibleText, /YOUR NEXT LISTEN|Learn Chinese in context|recorded episodes ·/);
+  assert.match(rendered, /aria-label="Episode study material"/);
+  assert.match(rendered, /Loading public study material/);
   const player = htmlTags(rendered, "audio")[0];
   assert.ok(player?.src.startsWith("https://anchor.fm/"));
   assert.ok(catalog.some((item) => item.audioUrl === player.src));
-  assert.match(rendered, /<audio[^>]*controls/);
-  assert.doesNotMatch(html, /vietnamesepod|Mandarin device voice|voice installation is required/i);
+  assert.doesNotMatch(rendered, /<audio[^>]*controls/);
+  assert.match(rendered, /aria-label="Play podcast"/);
+  assert.match(rendered, /aria-label="Episode progress"/);
+  assert.doesNotMatch(html, /englishpod|Mandarin device voice|voice installation is required/i);
 });
 
 test("the catalog contains unique episodes and valid publisher audio links across five levels", async () => {
@@ -208,7 +211,7 @@ test("exports safe local icons and metadata for both local and GitHub Pages buil
 
   const metas = htmlTags(html, "meta");
   const meta = (name) => metas.find((item) => item.name === name || item.property === name)?.content;
-  assert.match(meta("description"), /Học tiếng Trung/);
+  assert.match(meta("description"), /Learn Mandarin/);
   assert.match(meta("og:title"), /Mandarin Steps/);
   assert.equal(meta("twitter:card"), "summary");
   assert.equal(meta("og:image"), undefined);
@@ -217,7 +220,7 @@ test("exports safe local icons and metadata for both local and GitHub Pages buil
   const csp = metas.find((item) => item["http-equiv"]?.toLowerCase() === "content-security-policy")?.content;
   assert.ok(csp, "The exported page must retain its content security policy");
   const directives = csp.split(";").map((directive) => directive.trim());
-  for (const directive of ["default-src 'self'", "object-src 'none'", "form-action 'none'", "media-src 'self' https:", "connect-src 'self'"]) {
+  for (const directive of ["default-src 'self'", "object-src 'none'", "form-action 'none'", "media-src 'self' https:", "connect-src 'self' https://www.chinesepod.com https://chinesepod.com"]) {
     assert.ok(directives.includes(directive), `Missing CSP directive: ${directive}`);
   }
 });
@@ -226,24 +229,30 @@ test("the current app no longer references the previous audio and transcript sou
   for (const file of ["app/page.tsx", "app/layout.tsx", "app/lib/lessons.ts"]) {
     assert.doesNotMatch(
       await read(file),
-      /archive\.org|vietnamesepod|engpod|\/transcripts\/|\.mp3\b|episodes\.json|logo\.jpg|og\.png/i,
+      /archive\.org|englishpod|engpod|\/transcripts\/|\.mp3\b|episodes\.json|logo\.jpg|og\.png/i,
       `${file} should use the Mandarin course and local app assets`,
     );
   }
 });
 
- test("Vietnamese locale, GitHub links and official Ori catalog are present", async () => {
-  const html = await read("out/index.html");
-  assert.match(html, /<html[^>]*lang="vi"/);
-  for (const url of ["https://github.com/lythehoc/chinesepod", "https://github.com/lythehoc"]) {
-    assert.ok(htmlTags(html, "a").some((link) => link.href === url));
-  }
+test("English interface has name-only tabs and embedded Mandarin Ori episodes", async () => {
+  const html = (await read("out/index.html")).replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, "");
+  assert.match(html, /<html[^>]*lang="en"/);
+  assert.ok(!htmlTags(html, "a").some((link) => link.href?.startsWith("https://github.com/lythehoc")));
+  const nav = html.match(/<nav[^>]*>[\s\S]*?<\/nav>/)?.[0];
+  assert.ok(nav);
+  assert.doesNotMatch(nav, /\d/);
+  for (const label of ["Podcast", "Starter lessons", "Ori Princess"]) assert.ok(nav.includes(label));
   const ori = JSON.parse(await read("app/data/ori.json"));
-  assert.equal(ori.length, 104);
-  assert.equal(new Set(ori.map((item) => item.url)).size, 104);
-  for (const item of ori) assert.equal(new URL(item.url).hostname, "tv.cctv.com");
+  assert.ok(ori.length >= 40);
+  assert.equal(new Set(ori.map((item) => item.videoId)).size, ori.length);
+  for (const item of ori) {
+    assert.match(item.videoId, /^[a-zA-Z0-9_-]{11}$/);
+    assert.ok(item.title.includes("国语版"));
+    assert.equal(new URL(item.url).hostname, "www.youtube.com");
+  }
   for (const lesson of catalog) for (const item of [...lesson.dialogue, ...lesson.vocabulary]) {
-    assert.ok(item.vietnamese.trim());
-    assert.equal(item.english, undefined);
+    assert.ok(item.english.trim());
+    assert.equal(item.vietnamese, undefined);
   }
 });

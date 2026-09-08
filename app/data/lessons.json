@@ -1,1976 +1,1976 @@
 [
   {
     "id": 1,
-    "title": "Xin chào, tiếng Trung",
+    "title": "Hello, Mandarin",
     "hanzi": "你好",
     "pinyin": "Nǐ hǎo",
     "level": "Foundations",
-    "description": "Bắt đầu cuộc trò chuyện thân thiện và chào tạm biệt.",
+    "description": "Start a friendly conversation and say goodbye.",
     "dialogue": [
       {
         "speaker": "Lin",
         "hanzi": "你好！",
         "pinyin": "Nǐ hǎo!",
-        "vietnamese": "Xin chào!"
+        "english": "Hello!"
       },
       {
         "speaker": "An",
         "hanzi": "你好！你好吗？",
         "pinyin": "Nǐ hǎo! Nǐ hǎo ma?",
-        "vietnamese": "Xin chào! Bạn có khỏe không?"
+        "english": "Hello! How are you?"
       },
       {
         "speaker": "Lin",
         "hanzi": "我很好，谢谢。你呢？",
         "pinyin": "Wǒ hěn hǎo, xièxie. Nǐ ne?",
-        "vietnamese": "Tôi khỏe, cảm ơn. Và bạn?"
+        "english": "I’m well, thanks. And you?"
       },
       {
         "speaker": "An",
         "hanzi": "我也很好。",
         "pinyin": "Wǒ yě hěn hǎo.",
-        "vietnamese": "Tôi cũng khỏe."
+        "english": "I’m well too."
       },
       {
         "speaker": "Lin",
         "hanzi": "再见！",
         "pinyin": "Zàijiàn!",
-        "vietnamese": "Tạm biệt!"
+        "english": "Goodbye!"
       },
       {
         "speaker": "An",
         "hanzi": "再见！",
         "pinyin": "Zàijiàn!",
-        "vietnamese": "Tạm biệt!"
+        "english": "Goodbye!"
       }
     ],
     "vocabulary": [
       {
         "hanzi": "你好",
         "pinyin": "nǐ hǎo",
-        "vietnamese": "xin chào"
+        "english": "hello"
       },
       {
         "hanzi": "谢谢",
         "pinyin": "xièxie",
-        "vietnamese": "cảm ơn bạn"
+        "english": "thank you"
       },
       {
         "hanzi": "再见",
         "pinyin": "zàijiàn",
-        "vietnamese": "tạm biệt"
+        "english": "goodbye"
       },
       {
         "hanzi": "我",
         "pinyin": "wǒ",
-        "vietnamese": "tôi"
+        "english": "I; me"
       },
       {
         "hanzi": "你",
         "pinyin": "nǐ",
-        "vietnamese": "bạn"
+        "english": "you"
       },
       {
         "hanzi": "也",
         "pinyin": "yě",
-        "vietnamese": "cũng"
+        "english": "also; too"
       }
     ],
     "note": {
-      "title": "Hai thanh ba đứng cạnh nhau",
-      "body": "Trong 你好 (nǐ hǎo), thanh ba ở âm tiết đầu được đọc thành thanh hai vì phía sau cũng là thanh ba. Các bài học vẫn ghi dấu thanh ba theo từ điển. Âm tiết thứ hai của 谢谢 (xièxie) đọc nhẹ và không ghi dấu: đó là thanh nhẹ."
+      "title": "Two third tones together",
+      "body": "In 你好 (nǐ hǎo), the first third tone is pronounced like a rising second tone because another third tone follows. We keep the dictionary tone marks for third tones throughout the lessons. The second syllable of 谢谢 (xièxie) is light and unmarked: a neutral tone."
     }
   },
   {
     "id": 2,
-    "title": "Bạn tên là gì?",
+    "title": "What’s your name?",
     "hanzi": "你叫什么名字",
     "pinyin": "Nǐ jiào shénme míngzi",
     "level": "Foundations",
-    "description": "Giới thiệu bản thân và hỏi tên ai đó.",
+    "description": "Introduce yourself and ask someone’s name.",
     "dialogue": [
       {
         "speaker": "Lin",
         "hanzi": "你好！我叫林安。",
         "pinyin": "Nǐ hǎo! Wǒ jiào Lín Ān.",
-        "vietnamese": "Xin chào! Tôi tên là Lâm An."
+        "english": "Hello! My name is Lin An."
       },
       {
         "speaker": "Mei",
         "hanzi": "我叫李美。",
         "pinyin": "Wǒ jiào Lǐ Měi.",
-        "vietnamese": "Tên tôi là Lý Mai."
+        "english": "My name is Li Mei."
       },
       {
         "speaker": "Lin",
         "hanzi": "你可以叫我小林。",
         "pinyin": "Nǐ kěyǐ jiào wǒ Xiǎo Lín.",
-        "vietnamese": "Bạn có thể gọi tôi là Tiểu Lâm."
+        "english": "You can call me Xiao Lin."
       },
       {
         "speaker": "Mei",
         "hanzi": "好的，小林。",
         "pinyin": "Hǎo de, Xiǎo Lín.",
-        "vietnamese": "Được rồi, Tiểu Lâm."
+        "english": "Okay, Xiao Lin."
       },
       {
         "speaker": "Lin",
         "hanzi": "很高兴认识你。",
         "pinyin": "Hěn gāoxìng rènshi nǐ.",
-        "vietnamese": "Rất vui được gặp bạn."
+        "english": "Nice to meet you."
       },
       {
         "speaker": "Mei",
         "hanzi": "我也很高兴。",
         "pinyin": "Wǒ yě hěn gāoxìng.",
-        "vietnamese": "Tôi cũng rất vui."
+        "english": "I’m very happy too."
       }
     ],
     "vocabulary": [
       {
         "hanzi": "叫",
         "pinyin": "jiào",
-        "vietnamese": "được gọi; gọi"
+        "english": "to be called; to call"
       },
       {
         "hanzi": "什么",
         "pinyin": "shénme",
-        "vietnamese": "cái gì"
+        "english": "what"
       },
       {
         "hanzi": "名字",
         "pinyin": "míngzi",
-        "vietnamese": "tên"
+        "english": "name"
       },
       {
         "hanzi": "认识",
         "pinyin": "rènshi",
-        "vietnamese": "quen biết; làm quen"
+        "english": "to know; to meet"
       },
       {
         "hanzi": "高兴",
         "pinyin": "gāoxìng",
-        "vietnamese": "vui"
+        "english": "happy"
       },
       {
         "hanzi": "可以",
         "pinyin": "kěyǐ",
-        "vietnamese": "có thể; được phép"
+        "english": "can; may"
       }
     ],
     "note": {
-      "title": "Hỏi với 什么",
-      "body": "你叫什么名字？ có nghĩa là “Tên bạn là gì?” Từ để hỏi 什么 giữ nguyên vị trí câu trả lời: 我叫林安。 Không cần thêm 吗 vào câu hỏi đã sử dụng từ để hỏi."
+      "title": "Ask with 什么",
+      "body": "你叫什么名字？ means “What’s your name?” The question word 什么 stays where the answer would go: 我叫林安。 Don’t add 吗 to a question that already uses a question word."
     }
   },
   {
     "id": 3,
-    "title": "Làm quen với bốn thanh điệu",
+    "title": "Meet the four tones",
     "hanzi": "四个声调",
     "pinyin": "Sì ge shēngdiào",
     "level": "Foundations",
-    "description": "Chú ý cao độ thay đổi ý nghĩa của một âm tiết như thế nào.",
+    "description": "Hear how pitch changes a syllable’s meaning.",
     "dialogue": [
       {
         "speaker": "Teacher",
         "hanzi": "请听：妈、麻、马、骂。",
         "pinyin": "Qǐng tīng: mā, má, mǎ, mà.",
-        "vietnamese": "Xin hãy lắng nghe: mẹ, gai, ngựa, mắng."
+        "english": "Please listen: mother, hemp, horse, scold."
       },
       {
         "speaker": "An",
         "hanzi": "声调不一样。",
         "pinyin": "Shēngdiào bù yíyàng.",
-        "vietnamese": "Các thanh điệu khác nhau."
+        "english": "The tones are different."
       },
       {
         "speaker": "Teacher",
         "hanzi": "对。请再说一遍。",
         "pinyin": "Duì. Qǐng zài shuō yí biàn.",
-        "vietnamese": "Đúng. Xin hãy nói lại một lần nữa."
+        "english": "Right. Please say it again."
       },
       {
         "speaker": "An",
         "hanzi": "妈、麻、马、骂。",
         "pinyin": "Mā, má, mǎ, mà.",
-        "vietnamese": "Mẹ, gai, ngựa, mắng."
+        "english": "Mother, hemp, horse, scold."
       },
       {
         "speaker": "Teacher",
         "hanzi": "很好！",
         "pinyin": "Hěn hǎo!",
-        "vietnamese": "Rất tốt!"
+        "english": "Very good!"
       },
       {
         "speaker": "An",
         "hanzi": "谢谢老师！",
         "pinyin": "Xièxie lǎoshī!",
-        "vietnamese": "Cảm ơn thầy!"
+        "english": "Thank you, teacher!"
       }
     ],
     "vocabulary": [
       {
         "hanzi": "妈",
         "pinyin": "mā",
-        "vietnamese": "mẹ"
+        "english": "mother"
       },
       {
         "hanzi": "麻",
         "pinyin": "má",
-        "vietnamese": "cây gai dầu"
+        "english": "hemp"
       },
       {
         "hanzi": "马",
         "pinyin": "mǎ",
-        "vietnamese": "ngựa"
+        "english": "horse"
       },
       {
         "hanzi": "骂",
         "pinyin": "mà",
-        "vietnamese": "la mắng"
+        "english": "to scold"
       },
       {
         "hanzi": "声调",
         "pinyin": "shēngdiào",
-        "vietnamese": "thanh điệu"
+        "english": "tone"
       },
       {
         "hanzi": "听",
         "pinyin": "tīng",
-        "vietnamese": "nghe"
+        "english": "to listen"
       }
     ],
     "note": {
-      "title": "Nghe và phân biệt thanh điệu",
-      "body": "Bốn thanh được ghi là mā (cao và ngang), má (đi lên), mǎ (hạ xuống rồi lên khi đọc riêng), mà (đi xuống mạnh). Trong lời nói liên tục, thanh ba thường đọc thấp mà không đi lên. Âm tiết không có dấu là thanh nhẹ, đọc ngắn và nhẹ. Phiên âm trong các cụm từ thể hiện biến điệu của 一 và 不."
+      "title": "Listen for the four tones",
+      "body": "The marks show four tones: mā stays high, má rises, mǎ dips and rises when spoken alone, and mà falls sharply. In connected speech, a third tone often stays low without rising. Unmarked syllables have a short, light neutral tone. Within phrases, our pinyin shows the spoken tone changes of 一 and 不."
     }
   },
   {
     "id": 4,
-    "title": "Xin nói chậm một chút",
+    "title": "A little more slowly",
     "hanzi": "请说慢一点",
     "pinyin": "Qǐng shuō màn yìdiǎn",
     "level": "Foundations",
-    "description": "Yêu cầu tốc độ chậm hơn khi bạn luyện nghe.",
+    "description": "Ask for a slower pace when you practise listening.",
     "dialogue": [
       {
         "speaker": "Teacher",
         "hanzi": "你听懂了吗？",
         "pinyin": "Nǐ tīngdǒng le ma?",
-        "vietnamese": "Bạn nghe hiểu chưa?"
+        "english": "Did you understand what you heard?"
       },
       {
         "speaker": "An",
         "hanzi": "我没听懂。",
         "pinyin": "Wǒ méi tīngdǒng.",
-        "vietnamese": "Tôi chưa nghe hiểu."
+        "english": "I didn’t understand."
       },
       {
         "speaker": "An",
         "hanzi": "请说慢一点。",
         "pinyin": "Qǐng shuō màn yìdiǎn.",
-        "vietnamese": "Xin hãy nói chậm lại một chút."
+        "english": "Please speak a little more slowly."
       },
       {
         "speaker": "Teacher",
         "hanzi": "好的。请听。",
         "pinyin": "Hǎo de. Qǐng tīng.",
-        "vietnamese": "Được rồi. Xin hãy lắng nghe."
+        "english": "Okay. Please listen."
       },
       {
         "speaker": "An",
         "hanzi": "现在我懂了。谢谢！",
         "pinyin": "Xiànzài wǒ dǒng le. Xièxie!",
-        "vietnamese": "Bây giờ tôi đã hiểu. Cảm ơn!"
+        "english": "Now I understand. Thank you!"
       },
       {
         "speaker": "Teacher",
         "hanzi": "不客气。",
         "pinyin": "Bú kèqi.",
-        "vietnamese": "Không có chi."
+        "english": "You’re welcome."
       }
     ],
     "vocabulary": [
       {
         "hanzi": "请",
         "pinyin": "qǐng",
-        "vietnamese": "làm ơn"
+        "english": "please"
       },
       {
         "hanzi": "说",
         "pinyin": "shuō",
-        "vietnamese": "nói"
+        "english": "to speak; to say"
       },
       {
         "hanzi": "慢",
         "pinyin": "màn",
-        "vietnamese": "chậm"
+        "english": "slow"
       },
       {
         "hanzi": "一点",
         "pinyin": "yìdiǎn",
-        "vietnamese": "một chút"
+        "english": "a little"
       },
       {
         "hanzi": "听懂",
         "pinyin": "tīngdǒng",
-        "vietnamese": "nghe hiểu"
+        "english": "to understand what you hear"
       },
       {
         "hanzi": "不客气",
         "pinyin": "bú kèqi",
-        "vietnamese": "không có gì"
+        "english": "you’re welcome"
       }
     ],
     "note": {
-      "title": "Đưa ra yêu cầu lịch sự",
-      "body": "Đặt 请 trước hành động: 请听 nghĩa là “Xin hãy lắng nghe.” 慢一点 có nghĩa là “chậm hơn một chút.” Trong 不客气, 不 đổi từ bù sang bú trước thanh thứ tư trong 客 (kè). Sự thay đổi này được thể hiện trong bính âm."
+      "title": "Make a polite request",
+      "body": "Put 请 before the action: 请听 means “Please listen.” 慢一点 means “a little more slowly.” In 不客气, 不 changes from bù to bú before the fourth tone in 客 (kè). This change is shown in the pinyin."
     }
   },
   {
     "id": 5,
-    "title": "Đếm từ một đến mười",
+    "title": "Count to ten",
     "hanzi": "从一数到十",
     "pinyin": "Cóng yī shǔ dào shí",
     "level": "Foundations",
-    "description": "Luyện số đếm và đếm những đồ vật xung quanh.",
+    "description": "Build numbers and count things around you.",
     "dialogue": [
       {
         "speaker": "Teacher",
         "hanzi": "请从一数到十。",
         "pinyin": "Qǐng cóng yī shǔ dào shí.",
-        "vietnamese": "Hãy đếm từ một đến mười."
+        "english": "Please count from one to ten."
       },
       {
         "speaker": "An",
         "hanzi": "一、二、三、四、五。",
         "pinyin": "Yī, èr, sān, sì, wǔ.",
-        "vietnamese": "Một, hai, ba, bốn, năm."
+        "english": "One, two, three, four, five."
       },
       {
         "speaker": "An",
         "hanzi": "六、七、八、九、十。",
         "pinyin": "Liù, qī, bā, jiǔ, shí.",
-        "vietnamese": "Sáu, bảy, tám, chín, mười."
+        "english": "Six, seven, eight, nine, ten."
       },
       {
         "speaker": "Teacher",
         "hanzi": "很好！这里有几个杯子？",
         "pinyin": "Hěn hǎo! Zhèlǐ yǒu jǐ ge bēizi?",
-        "vietnamese": "Rất tốt! Có bao nhiêu cốc ở đây?"
+        "english": "Very good! How many cups are here?"
       },
       {
         "speaker": "An",
         "hanzi": "有三个杯子。",
         "pinyin": "Yǒu sān ge bēizi.",
-        "vietnamese": "Có ba cái cốc."
+        "english": "There are three cups."
       },
       {
         "speaker": "Teacher",
         "hanzi": "对，有三个。",
         "pinyin": "Duì, yǒu sān ge.",
-        "vietnamese": "Đúng, có ba."
+        "english": "Right, there are three."
       }
     ],
     "vocabulary": [
       {
         "hanzi": "一、二、三",
         "pinyin": "yī, èr, sān",
-        "vietnamese": "một, hai, ba"
+        "english": "one, two, three"
       },
       {
         "hanzi": "四、五、六",
         "pinyin": "sì, wǔ, liù",
-        "vietnamese": "bốn, năm, sáu"
+        "english": "four, five, six"
       },
       {
         "hanzi": "七、八、九",
         "pinyin": "qī, bā, jiǔ",
-        "vietnamese": "bảy, tám, chín"
+        "english": "seven, eight, nine"
       },
       {
         "hanzi": "十",
         "pinyin": "shí",
-        "vietnamese": "mười"
+        "english": "ten"
       },
       {
         "hanzi": "几个",
         "pinyin": "jǐ ge",
-        "vietnamese": "bao nhiêu"
+        "english": "how many"
       },
       {
         "hanzi": "杯子",
         "pinyin": "bēizi",
-        "vietnamese": "cốc"
+        "english": "cup"
       }
     ],
     "note": {
-      "title": "Số đếm và lượng từ",
-      "body": "Để đếm nhiều đồ vật thông dụng, dùng số + 个 + danh từ: 三个杯子 nghĩa là ba chiếc cốc. 个 là lượng từ phổ biến; một số danh từ cần lượng từ riêng. 一 đọc là yī khi đếm. Mười một là 十一 (shíyī); hai mươi là 二十 (èrshí)."
+      "title": "Numbers and measure words",
+      "body": "To count many everyday objects, use a number + 个 + noun: 三个杯子 means “three cups.” 个 is a common measure word, but other nouns use different ones. 一 is yī when counting. Eleven is 十一 (shíyī); twenty is 二十 (èrshí)."
     }
   },
   {
     "id": 6,
-    "title": "Hôm nay ngày mấy?",
+    "title": "What’s the date?",
     "hanzi": "今天几月几号",
     "pinyin": "Jīntiān jǐ yuè jǐ hào",
     "level": "Foundations",
-    "description": "Nói về hôm nay, ngày mai và ngày sinh nhật.",
+    "description": "Talk about today, tomorrow, and birthdays.",
     "dialogue": [
       {
         "speaker": "An",
         "hanzi": "今天几月几号？",
         "pinyin": "Jīntiān jǐ yuè jǐ hào?",
-        "vietnamese": "Hôm nay là ngày bao nhiêu?"
+        "english": "What’s today’s date?"
       },
       {
         "speaker": "Mei",
         "hanzi": "今天九月六号。",
         "pinyin": "Jīntiān jiǔ yuè liù hào.",
-        "vietnamese": "Hôm nay là ngày sáu tháng chín."
+        "english": "Today is September sixth."
       },
       {
         "speaker": "An",
         "hanzi": "明天是我的生日。",
         "pinyin": "Míngtiān shì wǒ de shēngrì.",
-        "vietnamese": "Ngày mai là sinh nhật của tôi."
+        "english": "Tomorrow is my birthday."
       },
       {
         "speaker": "Mei",
         "hanzi": "你的生日是九月七号？",
         "pinyin": "Nǐ de shēngrì shì jiǔ yuè qī hào?",
-        "vietnamese": "Sinh nhật của bạn là ngày 7 tháng 9?"
+        "english": "Your birthday is September seventh?"
       },
       {
         "speaker": "An",
         "hanzi": "对！",
         "pinyin": "Duì!",
-        "vietnamese": "Đúng vậy!"
+        "english": "Right!"
       },
       {
         "speaker": "Mei",
         "hanzi": "生日快乐！",
         "pinyin": "Shēngrì kuàilè!",
-        "vietnamese": "Chúc mừng sinh nhật!"
+        "english": "Happy birthday!"
       }
     ],
     "vocabulary": [
       {
         "hanzi": "今天",
         "pinyin": "jīntiān",
-        "vietnamese": "hôm nay"
+        "english": "today"
       },
       {
         "hanzi": "明天",
         "pinyin": "míngtiān",
-        "vietnamese": "ngày mai"
+        "english": "tomorrow"
       },
       {
         "hanzi": "月",
         "pinyin": "yuè",
-        "vietnamese": "tháng"
+        "english": "month"
       },
       {
         "hanzi": "号",
         "pinyin": "hào",
-        "vietnamese": "ngày trong tháng"
+        "english": "day of the month"
       },
       {
         "hanzi": "生日",
         "pinyin": "shēngrì",
-        "vietnamese": "sinh nhật"
+        "english": "birthday"
       },
       {
         "hanzi": "快乐",
         "pinyin": "kuàilè",
-        "vietnamese": "vui vẻ"
+        "english": "happy"
       }
     ],
     "note": {
-      "title": "Nói tháng trước, ngày sau",
-      "body": "Nói tháng trước, ngày sau: 九月七号 là ngày 7 tháng 9. Tháng dùng số + 月: 一月 là tháng 1, 十二月 là tháng 12. 号 thường dùng khi nói ngày trong tháng. Ngày trong hội thoại chỉ là ví dụ."
+      "title": "Month before day",
+      "body": "Say the month before the day: 九月七号 is September seventh. Months use a number + 月, so 一月 is January and 十二月 is December. 号 is common when saying dates. The dates in this dialogue are examples."
     }
   },
   {
     "id": 7,
-    "title": "Bạn đến từ đâu?",
+    "title": "Where are you from?",
     "hanzi": "你是哪国人",
     "pinyin": "Nǐ shì nǎ guó rén",
     "level": "Foundations",
-    "description": "Nói rõ bạn đến từ đâu và đang học gì.",
+    "description": "Say where you’re from and what you’re learning.",
     "dialogue": [
       {
         "speaker": "Mei",
         "hanzi": "你是哪国人？",
         "pinyin": "Nǐ shì nǎ guó rén?",
-        "vietnamese": "Bạn đến từ nước nào?"
+        "english": "Which country are you from?"
       },
       {
         "speaker": "An",
         "hanzi": "我是越南人。你呢？",
         "pinyin": "Wǒ shì Yuènán rén. Nǐ ne?",
-        "vietnamese": "Tôi là người Việt Nam. Và bạn?"
+        "english": "I’m Vietnamese. And you?"
       },
       {
         "speaker": "Mei",
         "hanzi": "我是中国人。",
         "pinyin": "Wǒ shì Zhōngguó rén.",
-        "vietnamese": "Tôi là người Trung Quốc."
+        "english": "I’m Chinese."
       },
       {
         "speaker": "An",
         "hanzi": "我在学中文。",
         "pinyin": "Wǒ zài xué Zhōngwén.",
-        "vietnamese": "Tôi đang học tiếng Trung."
+        "english": "I’m learning Chinese."
       },
       {
         "speaker": "Mei",
         "hanzi": "我们可以一起练习。",
         "pinyin": "Wǒmen kěyǐ yìqǐ liànxí.",
-        "vietnamese": "Chúng ta có thể luyện tập cùng nhau."
+        "english": "We can practise together."
       },
       {
         "speaker": "An",
         "hanzi": "太好了！",
         "pinyin": "Tài hǎo le!",
-        "vietnamese": "Tuyệt quá!"
+        "english": "Great!"
       }
     ],
     "vocabulary": [
       {
         "hanzi": "哪",
         "pinyin": "nǎ",
-        "vietnamese": "cái nào"
+        "english": "which"
       },
       {
         "hanzi": "越南",
         "pinyin": "Yuènán",
-        "vietnamese": "Việt Nam"
+        "english": "Vietnam"
       },
       {
         "hanzi": "中国",
         "pinyin": "Zhōngguó",
-        "vietnamese": "Trung Quốc"
+        "english": "China"
       },
       {
         "hanzi": "中文",
         "pinyin": "Zhōngwén",
-        "vietnamese": "Tiếng Trung"
+        "english": "Chinese language"
       },
       {
         "hanzi": "学",
         "pinyin": "xué",
-        "vietnamese": "học"
+        "english": "to learn; to study"
       },
       {
         "hanzi": "一起",
         "pinyin": "yìqǐ",
-        "vietnamese": "cùng nhau"
+        "english": "together"
       }
     ],
     "note": {
-      "title": "Giới thiệu với 是",
-      "body": "Mẫu người + 是 + danh tính cho biết ai đó là ai: 我是越南人。 Thêm 人 sau tên quốc gia để mô tả một người đến từ quốc gia đó. Trong 我在学中文, 在 đứng trước động từ đánh dấu một hành động đang diễn ra."
+      "title": "Introduce with 是",
+      "body": "The pattern person + 是 + identity says who someone is: 我是越南人。 Add 人 after a country’s name to describe a person from that country. In 我在学中文, 在 before the verb marks an ongoing action."
     }
   },
   {
     "id": 8,
-    "title": "Đây là cái gì?",
+    "title": "What is this?",
     "hanzi": "这是什么",
     "pinyin": "Zhè shì shénme",
     "level": "Foundations",
-    "description": "Kể tên những thứ ở gần và hỏi về những thứ ở xa hơn.",
+    "description": "Name things nearby and ask about things farther away.",
     "dialogue": [
       {
         "speaker": "An",
         "hanzi": "这是什么？",
         "pinyin": "Zhè shì shénme?",
-        "vietnamese": "Đây là cái gì vậy?"
+        "english": "What is this?"
       },
       {
         "speaker": "Mei",
         "hanzi": "这是书。",
         "pinyin": "Zhè shì shū.",
-        "vietnamese": "Đây là một cuốn sách."
+        "english": "This is a book."
       },
       {
         "speaker": "An",
         "hanzi": "那是什么？",
         "pinyin": "Nà shì shénme?",
-        "vietnamese": "Đó là gì vậy?"
+        "english": "What is that?"
       },
       {
         "speaker": "Mei",
         "hanzi": "那是我的手机。",
         "pinyin": "Nà shì wǒ de shǒujī.",
-        "vietnamese": "Đó là điện thoại của tôi."
+        "english": "That is my phone."
       },
       {
         "speaker": "An",
         "hanzi": "这是你的笔吗？",
         "pinyin": "Zhè shì nǐ de bǐ ma?",
-        "vietnamese": "Đây có phải là cây bút của bạn không?"
+        "english": "Is this your pen?"
       },
       {
         "speaker": "Mei",
         "hanzi": "是的，谢谢！",
         "pinyin": "Shì de, xièxie!",
-        "vietnamese": "Vâng, cảm ơn bạn!"
+        "english": "Yes, thank you!"
       }
     ],
     "vocabulary": [
       {
         "hanzi": "这",
         "pinyin": "zhè",
-        "vietnamese": "cái này"
+        "english": "this"
       },
       {
         "hanzi": "那",
         "pinyin": "nà",
-        "vietnamese": "cái đó"
+        "english": "that"
       },
       {
         "hanzi": "书",
         "pinyin": "shū",
-        "vietnamese": "cuốn sách"
+        "english": "book"
       },
       {
         "hanzi": "手机",
         "pinyin": "shǒujī",
-        "vietnamese": "điện thoại di động"
+        "english": "mobile phone"
       },
       {
         "hanzi": "笔",
         "pinyin": "bǐ",
-        "vietnamese": "bút"
+        "english": "pen"
       },
       {
         "hanzi": "的",
         "pinyin": "de",
-        "vietnamese": "trợ từ chỉ sở hữu"
+        "english": "possessive particle"
       }
     ],
     "note": {
-      "title": "Chỉ sở hữu với 的",
-      "body": "Đặt 的 giữa người và vật: 我的手机 có nghĩa là “điện thoại của tôi”; 你的笔 có nghĩa là “bút của bạn.” Thêm 吗 vào cuối câu để biến nó thành câu hỏi có hoặc không: 这是你的笔吗？"
+      "title": "Show possession with 的",
+      "body": "Put 的 between the person and the object: 我的手机 means “my phone”; 你的笔 means “your pen.” Add 吗 at the end to make a yes-or-no question: 这是你的笔吗？"
     }
   },
   {
     "id": 9,
-    "title": "Gia đình tôi",
+    "title": "My family",
     "hanzi": "我的家人",
     "pinyin": "Wǒ de jiārén",
     "level": "Beginner",
-    "description": "Giới thiệu các thành viên trong gia đình và cho biết có bao nhiêu người ở nhà.",
+    "description": "Introduce family members and say how many people live at home.",
     "dialogue": [
       {
         "speaker": "Mei",
         "hanzi": "你家有几口人？",
         "pinyin": "Nǐ jiā yǒu jǐ kǒu rén?",
-        "vietnamese": "Gia đình bạn có bao nhiêu người?"
+        "english": "How many people are in your family?"
       },
       {
         "speaker": "An",
         "hanzi": "我家有四口人。",
         "pinyin": "Wǒ jiā yǒu sì kǒu rén.",
-        "vietnamese": "Gia đình tôi có bốn người."
+        "english": "There are four people in my family."
       },
       {
         "speaker": "Mei",
         "hanzi": "你有兄弟姐妹吗？",
         "pinyin": "Nǐ yǒu xiōngdì jiěmèi ma?",
-        "vietnamese": "Bạn có anh chị em ruột không?"
+        "english": "Do you have any siblings?"
       },
       {
         "speaker": "An",
         "hanzi": "我有一个姐姐。",
         "pinyin": "Wǒ yǒu yí ge jiějie.",
-        "vietnamese": "Tôi có một người chị gái."
+        "english": "I have an older sister."
       },
       {
         "speaker": "Mei",
         "hanzi": "她也住在这里吗？",
         "pinyin": "Tā yě zhù zài zhèlǐ ma?",
-        "vietnamese": "Cô ấy cũng sống ở đây phải không?"
+        "english": "Does she live here too?"
       },
       {
         "speaker": "An",
         "hanzi": "不，她和爸爸妈妈住在一起。",
         "pinyin": "Bù, tā hé bàba māma zhù zài yìqǐ.",
-        "vietnamese": "Không, cô ấy sống với bố mẹ chúng tôi."
+        "english": "No, she lives with our parents."
       }
     ],
     "vocabulary": [
       {
         "hanzi": "家人",
         "pinyin": "jiārén",
-        "vietnamese": "thành viên gia đình"
+        "english": "family members"
       },
       {
         "hanzi": "爸爸",
         "pinyin": "bàba",
-        "vietnamese": "bố"
+        "english": "dad"
       },
       {
         "hanzi": "妈妈",
         "pinyin": "māma",
-        "vietnamese": "mẹ"
+        "english": "mum"
       },
       {
         "hanzi": "姐姐",
         "pinyin": "jiějie",
-        "vietnamese": "chị gái"
+        "english": "older sister"
       },
       {
         "hanzi": "兄弟姐妹",
         "pinyin": "xiōngdì jiěmèi",
-        "vietnamese": "anh chị em"
+        "english": "siblings"
       },
       {
         "hanzi": "住",
         "pinyin": "zhù",
-        "vietnamese": "sống; ở"
+        "english": "to live; to stay"
       }
     ],
     "note": {
-      "title": "Lượng từ 口 cho người trong gia đình",
-      "body": "Khi đếm người trong gia đình, dùng 口: 四口人 nghĩa là bốn người. 有 nghĩa là có. Dùng 没有 (méiyǒu) để nói không có, như 我没有姐姐: Tôi không có chị gái."
+      "title": "Count family members with 口",
+      "body": "When counting people in a household, use 口: 四口人 means “four people.” 有 means “to have” or “there is.” To say you don’t have something, use 没有 (méiyǒu), as in 我没有姐姐: “I don’t have an older sister.”"
     }
   },
   {
     "id": 10,
-    "title": "Công việc và học tập",
+    "title": "Work and study",
     "hanzi": "你做什么工作",
     "pinyin": "Nǐ zuò shénme gōngzuò",
     "level": "Beginner",
-    "description": "Hỏi về công việc và mô tả một ngày của học sinh.",
+    "description": "Ask about work and describe a student’s routine.",
     "dialogue": [
       {
         "speaker": "An",
         "hanzi": "你做什么工作？",
         "pinyin": "Nǐ zuò shénme gōngzuò?",
-        "vietnamese": "Bạn làm nghề gì?"
+        "english": "What do you do for work?"
       },
       {
         "speaker": "Mei",
         "hanzi": "我是老师。你呢？",
         "pinyin": "Wǒ shì lǎoshī. Nǐ ne?",
-        "vietnamese": "Tôi là giáo viên. Và bạn?"
+        "english": "I’m a teacher. And you?"
       },
       {
         "speaker": "An",
         "hanzi": "我是学生。",
         "pinyin": "Wǒ shì xuésheng.",
-        "vietnamese": "Tôi là sinh viên."
+        "english": "I’m a student."
       },
       {
         "speaker": "Mei",
         "hanzi": "你每天都上课吗？",
         "pinyin": "Nǐ měitiān dōu shàngkè ma?",
-        "vietnamese": "Bạn có lớp mỗi ngày không?"
+        "english": "Do you have classes every day?"
       },
       {
         "speaker": "An",
         "hanzi": "我星期一到星期五上课。",
         "pinyin": "Wǒ xīngqīyī dào xīngqīwǔ shàngkè.",
-        "vietnamese": "Tôi có lớp học từ thứ Hai đến thứ Sáu."
+        "english": "I have classes from Monday to Friday."
       },
       {
         "speaker": "Mei",
         "hanzi": "周末可以休息。",
         "pinyin": "Zhōumò kěyǐ xiūxi.",
-        "vietnamese": "Bạn có thể nghỉ ngơi vào cuối tuần."
+        "english": "You can rest on the weekend."
       }
     ],
     "vocabulary": [
       {
         "hanzi": "工作",
         "pinyin": "gōngzuò",
-        "vietnamese": "công việc; làm việc"
+        "english": "work; to work"
       },
       {
         "hanzi": "老师",
         "pinyin": "lǎoshī",
-        "vietnamese": "giáo viên"
+        "english": "teacher"
       },
       {
         "hanzi": "学生",
         "pinyin": "xuésheng",
-        "vietnamese": "học sinh; sinh viên"
+        "english": "student"
       },
       {
         "hanzi": "每天",
         "pinyin": "měitiān",
-        "vietnamese": "mỗi ngày"
+        "english": "every day"
       },
       {
         "hanzi": "上课",
         "pinyin": "shàngkè",
-        "vietnamese": "học; lên lớp"
+        "english": "to attend or teach a class"
       },
       {
         "hanzi": "休息",
         "pinyin": "xiūxi",
-        "vietnamese": "nghỉ ngơi"
+        "english": "to rest"
       }
     ],
     "note": {
-      "title": "Các ngày trong tuần",
-      "body": "Từ thứ Hai đến thứ Bảy dùng 星期 + một số: 星期一 là thứ Hai, 星期五 là thứ Sáu. Chủ Nhật là 星期天 hay 星期日. Đặt thời gian trước hành động: 我星期一上课 có nghĩa là “Thứ Hai tôi có lớp.”"
+      "title": "Days of the week",
+      "body": "Monday through Saturday use 星期 + a number: 星期一 is Monday and 星期五 is Friday. Sunday is 星期天 or 星期日. Put time before the action: 我星期一上课 means “I have class on Monday.”"
     }
   },
   {
     "id": 11,
-    "title": "Bây giờ là mấy giờ?",
+    "title": "What time is it?",
     "hanzi": "现在几点",
     "pinyin": "Xiànzài jǐ diǎn",
     "level": "Beginner",
-    "description": "Đọc đồng hồ và sắp xếp thời gian vào lớp.",
+    "description": "Read the clock and work out when class starts.",
     "dialogue": [
       {
         "speaker": "An",
         "hanzi": "现在几点？",
         "pinyin": "Xiànzài jǐ diǎn?",
-        "vietnamese": "Bây giờ là mấy giờ?"
+        "english": "What time is it now?"
       },
       {
         "speaker": "Mei",
         "hanzi": "现在八点半。",
         "pinyin": "Xiànzài bā diǎn bàn.",
-        "vietnamese": "Bây giờ là tám giờ rưỡi."
+        "english": "It’s eight thirty."
       },
       {
         "speaker": "An",
         "hanzi": "我们几点上课？",
         "pinyin": "Wǒmen jǐ diǎn shàngkè?",
-        "vietnamese": "Lớp học của chúng ta bắt đầu lúc mấy giờ?"
+        "english": "What time does our class start?"
       },
       {
         "speaker": "Mei",
         "hanzi": "九点上课。",
         "pinyin": "Jiǔ diǎn shàngkè.",
-        "vietnamese": "Lớp học bắt đầu lúc chín giờ."
+        "english": "Class starts at nine."
       },
       {
         "speaker": "An",
         "hanzi": "还有半个小时。",
         "pinyin": "Hái yǒu bàn ge xiǎoshí.",
-        "vietnamese": "Vẫn còn nửa tiếng nữa."
+        "english": "There’s still half an hour."
       },
       {
         "speaker": "Mei",
         "hanzi": "我们先喝杯茶吧。",
         "pinyin": "Wǒmen xiān hē bēi chá ba.",
-        "vietnamese": "Chúng ta hãy uống một tách trà trước đã."
+        "english": "Let’s have a cup of tea first."
       }
     ],
     "vocabulary": [
       {
         "hanzi": "现在",
         "pinyin": "xiànzài",
-        "vietnamese": "bây giờ"
+        "english": "now"
       },
       {
         "hanzi": "几点",
         "pinyin": "jǐ diǎn",
-        "vietnamese": "mấy giờ rồi"
+        "english": "what time"
       },
       {
         "hanzi": "半",
         "pinyin": "bàn",
-        "vietnamese": "một nửa"
+        "english": "half"
       },
       {
         "hanzi": "小时",
         "pinyin": "xiǎoshí",
-        "vietnamese": "giờ"
+        "english": "hour"
       },
       {
         "hanzi": "还有",
         "pinyin": "hái yǒu",
-        "vietnamese": "vẫn còn; còn có"
+        "english": "still have; also have"
       },
       {
         "hanzi": "先",
         "pinyin": "xiān",
-        "vietnamese": "đầu tiên; trước khi làm việc khác"
+        "english": "first; before doing something else"
       }
     ],
     "note": {
-      "title": "Giờ và khoảng thời gian",
-      "body": "Dùng 点 cho giờ trên đồng hồ: 八点 là 8 giờ, 八点半 là 8 giờ rưỡi. Dùng 小时 cho khoảng thời gian: 半个小时 là nửa tiếng. Mốc 2 giờ là 两点 (liǎng diǎn), còn khoảng thời gian hai tiếng là 两个小时."
+      "title": "Clock time and duration",
+      "body": "Use 点 for clock time: 八点 is eight o’clock, and 八点半 is eight thirty. Use 小时 for a duration: 半个小时 is half an hour. “Two o’clock” is 两点 (liǎng diǎn), while “two hours” is 两个小时."
     }
   },
   {
     "id": 12,
-    "title": "Sở thích của bạn",
+    "title": "Things you enjoy",
     "hanzi": "你喜欢什么",
     "pinyin": "Nǐ xǐhuan shénme",
     "level": "Beginner",
-    "description": "Chia sẻ sở thích và tìm ra điều gì đó mà cả hai cùng thích.",
+    "description": "Share your interests and find something you both enjoy.",
     "dialogue": [
       {
         "speaker": "Mei",
         "hanzi": "你喜欢做什么？",
         "pinyin": "Nǐ xǐhuan zuò shénme?",
-        "vietnamese": "Bạn thích làm gì?"
+        "english": "What do you like doing?"
       },
       {
         "speaker": "An",
         "hanzi": "我喜欢听音乐，也喜欢看书。",
         "pinyin": "Wǒ xǐhuan tīng yīnyuè, yě xǐhuan kàn shū.",
-        "vietnamese": "Tôi thích nghe nhạc và đọc sách."
+        "english": "I like listening to music and reading."
       },
       {
         "speaker": "Mei",
         "hanzi": "你喜欢运动吗？",
         "pinyin": "Nǐ xǐhuan yùndòng ma?",
-        "vietnamese": "Bạn có thích tập thể dục không?"
+        "english": "Do you like exercise?"
       },
       {
         "speaker": "An",
         "hanzi": "喜欢。我常常跑步。",
         "pinyin": "Xǐhuan. Wǒ chángcháng pǎobù.",
-        "vietnamese": "Vâng. Tôi thường xuyên chạy bộ."
+        "english": "Yes. I often go running."
       },
       {
         "speaker": "Mei",
         "hanzi": "我也喜欢跑步。",
         "pinyin": "Wǒ yě xǐhuan pǎobù.",
-        "vietnamese": "Tôi cũng thích chạy bộ."
+        "english": "I like running too."
       },
       {
         "speaker": "An",
         "hanzi": "我们明天一起跑步吧！",
         "pinyin": "Wǒmen míngtiān yìqǐ pǎobù ba!",
-        "vietnamese": "Ngày mai chúng ta cùng nhau chạy nhé!"
+        "english": "Let’s go running together tomorrow!"
       }
     ],
     "vocabulary": [
       {
         "hanzi": "喜欢",
         "pinyin": "xǐhuan",
-        "vietnamese": "thích"
+        "english": "to like"
       },
       {
         "hanzi": "音乐",
         "pinyin": "yīnyuè",
-        "vietnamese": "âm nhạc"
+        "english": "music"
       },
       {
         "hanzi": "看书",
         "pinyin": "kàn shū",
-        "vietnamese": "đọc sách"
+        "english": "to read books"
       },
       {
         "hanzi": "运动",
         "pinyin": "yùndòng",
-        "vietnamese": "vận động; thể thao"
+        "english": "exercise; sport"
       },
       {
         "hanzi": "跑步",
         "pinyin": "pǎobù",
-        "vietnamese": "chạy bộ"
+        "english": "to run"
       },
       {
         "hanzi": "常常",
         "pinyin": "chángcháng",
-        "vietnamese": "thường xuyên"
+        "english": "often"
       }
     ],
     "note": {
-      "title": "Thích làm gì đó",
-      "body": "Đặt hoạt động ngay sau 喜欢: 我喜欢听音乐 có nghĩa là “Tôi thích nghe nhạc.” 也 đứng trước động từ hoặc cụm động từ: 我也喜欢跑步。 Dùng 吧 ở cuối để đưa ra lời đề nghị thân thiện."
+      "title": "Say what you like doing",
+      "body": "Put the activity right after 喜欢: 我喜欢听音乐 means “I like listening to music.” 也 goes before the verb or verb phrase: 我也喜欢跑步。 Use 吧 at the end to make a friendly suggestion."
     }
   },
   {
     "id": 13,
-    "title": "Điện thoại của tôi ở đâu?",
+    "title": "Where is my phone?",
     "hanzi": "我的手机在哪里",
     "pinyin": "Wǒ de shǒujī zài nǎlǐ",
     "level": "Beginner",
-    "description": "Tìm đồ vật hàng ngày bằng các từ chỉ vị trí đơn giản.",
+    "description": "Find everyday objects with simple location words.",
     "dialogue": [
       {
         "speaker": "An",
         "hanzi": "我的手机在哪里？",
         "pinyin": "Wǒ de shǒujī zài nǎlǐ?",
-        "vietnamese": "Điện thoại của tôi đâu rồi?"
+        "english": "Where is my phone?"
       },
       {
         "speaker": "Mei",
         "hanzi": "在桌子上吗？",
         "pinyin": "Zài zhuōzi shàng ma?",
-        "vietnamese": "Nó ở trên bàn à?"
+        "english": "Is it on the table?"
       },
       {
         "speaker": "An",
         "hanzi": "不在。桌子上只有一本书。",
         "pinyin": "Bú zài. Zhuōzi shàng zhǐ yǒu yì běn shū.",
-        "vietnamese": "Không. Trên bàn chỉ có một cuốn sách thôi."
+        "english": "No. There’s only a book on the table."
       },
       {
         "speaker": "Mei",
         "hanzi": "看看你的包。",
         "pinyin": "Kànkan nǐ de bāo.",
-        "vietnamese": "Hãy nhìn vào túi xách của bạn."
+        "english": "Look in your bag."
       },
       {
         "speaker": "An",
         "hanzi": "找到了！在包里。",
         "pinyin": "Zhǎodào le! Zài bāo lǐ.",
-        "vietnamese": "Tìm thấy rồi! Nó ở trong túi."
+        "english": "Found it! It’s in the bag."
       },
       {
         "speaker": "Mei",
         "hanzi": "太好了。",
         "pinyin": "Tài hǎo le.",
-        "vietnamese": "Tuyệt vời."
+        "english": "Great."
       }
     ],
     "vocabulary": [
       {
         "hanzi": "哪里",
         "pinyin": "nǎlǐ",
-        "vietnamese": "ở đâu"
+        "english": "where"
       },
       {
         "hanzi": "桌子",
         "pinyin": "zhuōzi",
-        "vietnamese": "bàn"
+        "english": "table"
       },
       {
         "hanzi": "上",
         "pinyin": "shàng",
-        "vietnamese": "trên"
+        "english": "on; above"
       },
       {
         "hanzi": "里",
         "pinyin": "lǐ",
-        "vietnamese": "bên trong"
+        "english": "inside"
       },
       {
         "hanzi": "包",
         "pinyin": "bāo",
-        "vietnamese": "túi"
+        "english": "bag"
       },
       {
         "hanzi": "找到",
         "pinyin": "zhǎodào",
-        "vietnamese": "tìm thấy"
+        "english": "to find"
       }
     ],
     "note": {
-      "title": "Đặt vị trí sau 在",
-      "body": "Dùng đồ vật + 在 + địa điểm: 手机在包里 nghĩa là “Điện thoại ở trong túi.” Các từ chỉ vị trí theo sau danh từ nên 桌子上 có nghĩa là “trên bàn”. Để hỏi địa điểm, thay địa điểm bằng 哪里: 手机在哪里？"
+      "title": "Put the location after 在",
+      "body": "Use object + 在 + place: 手机在包里 means “The phone is in the bag.” Location words follow the noun, so 桌子上 means “on the table.” To ask where, replace the place with 哪里: 手机在哪里？"
     }
   },
   {
     "id": 14,
-    "title": "Bao nhiêu tiền?",
+    "title": "How much is it?",
     "hanzi": "多少钱",
     "pinyin": "Duōshao qián",
     "level": "Beginner",
-    "description": "Hỏi giá và mua một ít trái cây.",
+    "description": "Ask the price and buy some fruit.",
     "dialogue": [
       {
         "speaker": "An",
         "hanzi": "请问，苹果多少钱一斤？",
         "pinyin": "Qǐngwèn, píngguǒ duōshao qián yì jīn?",
-        "vietnamese": "Xin lỗi, táo bao nhiêu tiền một nửa ký?"
+        "english": "Excuse me, how much are the apples per jin?"
       },
       {
         "speaker": "Seller",
         "hanzi": "六块钱一斤。",
         "pinyin": "Liù kuài qián yì jīn.",
-        "vietnamese": "Sáu nhân dân tệ một nửa kg."
+        "english": "Six yuan per jin."
       },
       {
         "speaker": "An",
         "hanzi": "我要两斤。",
         "pinyin": "Wǒ yào liǎng jīn.",
-        "vietnamese": "Tôi muốn một kg."
+        "english": "I’d like two jin."
       },
       {
         "speaker": "Seller",
         "hanzi": "一共十二块钱。",
         "pinyin": "Yígòng shí'èr kuài qián.",
-        "vietnamese": "Tổng cộng là 12 nhân dân tệ."
+        "english": "Twelve yuan altogether."
       },
       {
         "speaker": "An",
         "hanzi": "可以扫码吗？",
         "pinyin": "Kěyǐ sǎomǎ ma?",
-        "vietnamese": "Tôi có thể thanh toán bằng cách quét mã QR được không?"
+        "english": "Can I pay by scanning a QR code?"
       },
       {
         "speaker": "Seller",
         "hanzi": "可以。谢谢！",
         "pinyin": "Kěyǐ. Xièxie!",
-        "vietnamese": "Vâng. Cảm ơn!"
+        "english": "Yes. Thank you!"
       }
     ],
     "vocabulary": [
       {
         "hanzi": "多少钱",
         "pinyin": "duōshao qián",
-        "vietnamese": "bao nhiêu tiền"
+        "english": "how much"
       },
       {
         "hanzi": "苹果",
         "pinyin": "píngguǒ",
-        "vietnamese": "táo"
+        "english": "apple"
       },
       {
         "hanzi": "斤",
         "pinyin": "jīn",
-        "vietnamese": "nửa kg ở Trung Quốc đại lục"
+        "english": "jin: 500 grams in mainland China"
       },
       {
         "hanzi": "块",
         "pinyin": "kuài",
-        "vietnamese": "nhân dân tệ, trong lời nói hàng ngày"
+        "english": "yuan, in everyday speech"
       },
       {
         "hanzi": "两",
         "pinyin": "liǎng",
-        "vietnamese": "hai, dùng trước phần lớn lượng từ"
+        "english": "two, before most measure words"
       },
       {
         "hanzi": "一共",
         "pinyin": "yígòng",
-        "vietnamese": "tổng cộng"
+        "english": "altogether"
       }
     ],
     "note": {
-      "title": "Hai: 二 hay 两?",
-      "body": "Dùng 两 trước phần lớn lượng từ: 两斤 là hai cân Trung Quốc. Ở Trung Quốc đại lục, một 斤 bằng 500 gam, nên 两斤 bằng một kilôgam. Dùng 二 trong các số như 十二 (mười hai), 二十 (hai mươi). 块 là cách nói thông dụng của đơn vị nhân dân tệ."
+      "title": "Two: 二 or 两?",
+      "body": "Use 两 before most measure words: 两斤 means two jin. In mainland China, one 斤 is 500 grams, so 两斤 is one kilogram. Use 二 inside numbers such as 十二 (twelve) and 二十 (twenty). 块 is an everyday way to say yuan."
     }
   },
   {
     "id": 15,
-    "title": "Cùng gọi bữa trưa",
+    "title": "Let’s order lunch",
     "hanzi": "我们点菜吧",
     "pinyin": "Wǒmen diǎn cài ba",
     "level": "Beginner",
-    "description": "Gọi một bữa ăn đơn giản và cho người phục vụ biết sở thích của bạn.",
+    "description": "Order a simple meal and explain your preferences.",
     "dialogue": [
       {
         "speaker": "Server",
         "hanzi": "你们想吃什么？",
         "pinyin": "Nǐmen xiǎng chī shénme?",
-        "vietnamese": "Các bạn muốn ăn gì?"
+        "english": "What would you like to eat?"
       },
       {
         "speaker": "An",
         "hanzi": "我要一碗面条。",
         "pinyin": "Wǒ yào yì wǎn miàntiáo.",
-        "vietnamese": "Tôi muốn một tô mì."
+        "english": "I’d like a bowl of noodles."
       },
       {
         "speaker": "Mei",
         "hanzi": "我要一碗米饭和一份炒青菜。",
         "pinyin": "Wǒ yào yì wǎn mǐfàn hé yí fèn chǎo qīngcài.",
-        "vietnamese": "Tôi muốn một bát cơm và một phần rau xào."
+        "english": "I’d like a bowl of rice and a portion of stir-fried greens."
       },
       {
         "speaker": "Server",
         "hanzi": "面条要辣的吗？",
         "pinyin": "Miàntiáo yào là de ma?",
-        "vietnamese": "Mì có muốn ăn cay không?"
+        "english": "Would you like the noodles spicy?"
       },
       {
         "speaker": "An",
         "hanzi": "不要辣，谢谢。",
         "pinyin": "Bú yào là, xièxie.",
-        "vietnamese": "Không cay nhé, cảm ơn."
+        "english": "Not spicy, thank you."
       },
       {
         "speaker": "Server",
         "hanzi": "好的，请稍等。",
         "pinyin": "Hǎo de, qǐng shāoděng.",
-        "vietnamese": "Được rồi, xin vui lòng đợi một lát."
+        "english": "Okay, please wait a moment."
       }
     ],
     "vocabulary": [
       {
         "hanzi": "吃",
         "pinyin": "chī",
-        "vietnamese": "ăn"
+        "english": "to eat"
       },
       {
         "hanzi": "面条",
         "pinyin": "miàntiáo",
-        "vietnamese": "mì"
+        "english": "noodles"
       },
       {
         "hanzi": "米饭",
         "pinyin": "mǐfàn",
-        "vietnamese": "cơm chín"
+        "english": "cooked rice"
       },
       {
         "hanzi": "碗",
         "pinyin": "wǎn",
-        "vietnamese": "bát; lượng từ cho một bát thức ăn"
+        "english": "bowl; measure word for a bowlful"
       },
       {
         "hanzi": "辣",
         "pinyin": "là",
-        "vietnamese": "vị cay"
+        "english": "spicy"
       },
       {
         "hanzi": "青菜",
         "pinyin": "qīngcài",
-        "vietnamese": "rau lá xanh"
+        "english": "leafy green vegetables"
       }
     ],
     "note": {
-      "title": "Gọi món với 我要",
-      "body": "我要 + đồ ăn là cách gọi món phổ biến: 我要一碗面条。 Dùng 碗 cho một bát đầy và 份 cho một phần ăn. 一 đổi thanh điệu trước một âm tiết khác: yì trước thanh thứ ba 碗, nhưng yí trước thanh thứ tư 份."
+      "title": "Order with 我要",
+      "body": "我要 + food is a common way to order: 我要一碗面条。 Use 碗 for a bowlful and 份 for a serving. 一 changes tone before another syllable: yì before third-tone 碗, but yí before fourth-tone 份."
     }
   },
   {
     "id": 16,
-    "title": "Trà hay cà phê?",
+    "title": "Tea or coffee?",
     "hanzi": "喝点什么",
     "pinyin": "Hē diǎn shénme",
     "level": "Beginner",
-    "description": "Chọn đồ uống, yêu cầu ít đường và mang đi.",
+    "description": "Choose a drink, ask for less sugar, and take it away.",
     "dialogue": [
       {
         "speaker": "Server",
         "hanzi": "您想喝点什么？",
         "pinyin": "Nín xiǎng hē diǎn shénme?",
-        "vietnamese": "Bạn muốn uống gì?"
+        "english": "What would you like to drink?"
       },
       {
         "speaker": "An",
         "hanzi": "我想要一杯绿茶。",
         "pinyin": "Wǒ xiǎng yào yì bēi lǜchá.",
-        "vietnamese": "Tôi muốn một tách trà xanh."
+        "english": "I’d like a cup of green tea."
       },
       {
         "speaker": "Server",
         "hanzi": "热的还是冰的？",
         "pinyin": "Rè de háishi bīng de?",
-        "vietnamese": "Nóng hay đá?"
+        "english": "Hot or iced?"
       },
       {
         "speaker": "An",
         "hanzi": "热的，少糖。",
         "pinyin": "Rè de, shǎo táng.",
-        "vietnamese": "Nóng, ít đường."
+        "english": "Hot, with less sugar."
       },
       {
         "speaker": "Server",
         "hanzi": "在这里喝还是带走？",
         "pinyin": "Zài zhèlǐ hē háishi dàizǒu?",
-        "vietnamese": "Uống ở đây hay mang đi?"
+        "english": "For here or to take away?"
       },
       {
         "speaker": "An",
         "hanzi": "带走，谢谢。",
         "pinyin": "Dàizǒu, xièxie.",
-        "vietnamese": "Mang đi, cảm ơn."
+        "english": "To take away, thank you."
       }
     ],
     "vocabulary": [
       {
         "hanzi": "喝",
         "pinyin": "hē",
-        "vietnamese": "uống"
+        "english": "to drink"
       },
       {
         "hanzi": "绿茶",
         "pinyin": "lǜchá",
-        "vietnamese": "trà xanh"
+        "english": "green tea"
       },
       {
         "hanzi": "咖啡",
         "pinyin": "kāfēi",
-        "vietnamese": "cà phê"
+        "english": "coffee"
       },
       {
         "hanzi": "热",
         "pinyin": "rè",
-        "vietnamese": "nóng"
+        "english": "hot"
       },
       {
         "hanzi": "少糖",
         "pinyin": "shǎo táng",
-        "vietnamese": "ít đường"
+        "english": "less sugar"
       },
       {
         "hanzi": "带走",
         "pinyin": "dàizǒu",
-        "vietnamese": "mang đi"
+        "english": "to take away"
       }
     ],
     "note": {
-      "title": "Đưa ra sự lựa chọn với 还是",
-      "body": "Dùng A + 还是 + B để yêu cầu người khác lựa chọn: 热的还是冰的？ nghĩa là “Nóng hay đá?”的 để tính từ thay thế cho đồ uống. Trong 绿 (lǜ), giữ lưỡi của bạn như thể đang nói “ee” và cong môi để tạo thành ü."
+      "title": "Offer a choice with 还是",
+      "body": "Use A + 还是 + B to ask someone to choose: 热的还是冰的？ means “Hot or iced?” 的 lets an adjective stand in for the drink. In 绿 (lǜ), keep your tongue as if saying “ee” and round your lips to make ü."
     }
   },
   {
     "id": 17,
-    "title": "Hỏi đường",
+    "title": "Finding your way",
     "hanzi": "请问怎么走",
     "pinyin": "Qǐngwèn zěnme zǒu",
     "level": "Everyday",
-    "description": "Hỏi đường và đi theo một con đường ngắn.",
+    "description": "Ask for directions and follow a short route.",
     "dialogue": [
       {
         "speaker": "An",
         "hanzi": "请问，地铁站怎么走？",
         "pinyin": "Qǐngwèn, dìtiězhàn zěnme zǒu?",
-        "vietnamese": "Xin lỗi, tôi đến ga tàu điện ngầm bằng cách nào?"
+        "english": "Excuse me, how do I get to the subway station?"
       },
       {
         "speaker": "Mei",
         "hanzi": "先一直往前走。",
         "pinyin": "Xiān yìzhí wǎng qián zǒu.",
-        "vietnamese": "Đầu tiên, hãy cứ thẳng tiến về phía trước."
+        "english": "First, keep walking straight ahead."
       },
       {
         "speaker": "An",
         "hanzi": "然后呢？",
         "pinyin": "Ránhòu ne?",
-        "vietnamese": "Và sau đó?"
+        "english": "And then?"
       },
       {
         "speaker": "Mei",
         "hanzi": "到路口右转。地铁站在左边。",
         "pinyin": "Dào lùkǒu yòu zhuǎn. Dìtiězhàn zài zuǒbian.",
-        "vietnamese": "Đến ngã tư rẽ phải. Ga tàu điện ngầm ở bên trái."
+        "english": "Turn right at the intersection. The subway station is on the left."
       },
       {
         "speaker": "An",
         "hanzi": "走路要多久？",
         "pinyin": "Zǒulù yào duōjiǔ?",
-        "vietnamese": "Đi bộ mất bao lâu?"
+        "english": "How long does it take to walk there?"
       },
       {
         "speaker": "Mei",
         "hanzi": "大概五分钟。",
         "pinyin": "Dàgài wǔ fēnzhōng.",
-        "vietnamese": "Khoảng năm phút."
+        "english": "About five minutes."
       }
     ],
     "vocabulary": [
       {
         "hanzi": "怎么走",
         "pinyin": "zěnme zǒu",
-        "vietnamese": "cách đi đến đó"
+        "english": "how to get there"
       },
       {
         "hanzi": "一直",
         "pinyin": "yìzhí",
-        "vietnamese": "thẳng; liên tục"
+        "english": "straight on; continuously"
       },
       {
         "hanzi": "路口",
         "pinyin": "lùkǒu",
-        "vietnamese": "giao lộ"
+        "english": "intersection"
       },
       {
         "hanzi": "右转",
         "pinyin": "yòu zhuǎn",
-        "vietnamese": "rẽ phải"
+        "english": "to turn right"
       },
       {
         "hanzi": "左边",
         "pinyin": "zuǒbian",
-        "vietnamese": "bên trái"
+        "english": "left side"
       },
       {
         "hanzi": "分钟",
         "pinyin": "fēnzhōng",
-        "vietnamese": "phút"
+        "english": "minute"
       }
     ],
     "note": {
-      "title": "Sắp xếp một lộ trình",
-      "body": "先 có nghĩa là “đầu tiên” và 然后 có nghĩa là “sau đó”. 往 đánh dấu phương hướng: 往前走 có nghĩa là “đi về phía trước”. Để hỏi về thời gian thực hiện một hành động, dùng 要多久: 走路要多久？"
+      "title": "Put directions in order",
+      "body": "先 means “first,” and 然后 means “then.” 往 marks a direction: 往前走 means “walk forward.” To ask how long an action takes, use 要多久: 走路要多久？"
     }
   },
   {
     "id": 18,
-    "title": "Đi tàu điện ngầm",
+    "title": "Take the subway",
     "hanzi": "坐地铁",
     "pinyin": "Zuò dìtiě",
     "level": "Everyday",
-    "description": "Chọn đúng tuyến và kiểm tra điểm xuống.",
+    "description": "Find the right line and check where to get off.",
     "dialogue": [
       {
         "speaker": "An",
         "hanzi": "去火车站坐几号线？",
         "pinyin": "Qù huǒchēzhàn zuò jǐ hào xiàn?",
-        "vietnamese": "Đi tuyến tàu điện ngầm nào để đến ga tàu hỏa?"
+        "english": "Which subway line goes to the train station?"
       },
       {
         "speaker": "Mei",
         "hanzi": "坐二号线。",
         "pinyin": "Zuò èr hào xiàn.",
-        "vietnamese": "Đi tuyến số 2."
+        "english": "Take Line 2."
       },
       {
         "speaker": "An",
         "hanzi": "需要换车吗？",
         "pinyin": "Xūyào huàn chē ma?",
-        "vietnamese": "Có cần đổi tàu không?"
+        "english": "Do I need to change trains?"
       },
       {
         "speaker": "Mei",
         "hanzi": "不用，坐三站就到了。",
         "pinyin": "Bú yòng, zuò sān zhàn jiù dào le.",
-        "vietnamese": "Không cần, chỉ ba trạm là đến."
+        "english": "No, it’s just three stops away."
       },
       {
         "speaker": "An",
         "hanzi": "我在火车站下车，对吗？",
         "pinyin": "Wǒ zài huǒchēzhàn xià chē, duì ma?",
-        "vietnamese": "Tôi xuống ở ga tàu hỏa, đúng không?"
+        "english": "I get off at the train station, right?"
       },
       {
         "speaker": "Mei",
         "hanzi": "对，别坐过站了。",
         "pinyin": "Duì, bié zuòguò zhàn le.",
-        "vietnamese": "Đúng rồi. Đừng đi quá trạm nhé."
+        "english": "Right. Don’t miss your stop."
       }
     ],
     "vocabulary": [
       {
         "hanzi": "地铁",
         "pinyin": "dìtiě",
-        "vietnamese": "tàu điện ngầm"
+        "english": "subway"
       },
       {
         "hanzi": "火车站",
         "pinyin": "huǒchēzhàn",
-        "vietnamese": "ga tàu hỏa"
+        "english": "train station"
       },
       {
         "hanzi": "号线",
         "pinyin": "hào xiàn",
-        "vietnamese": "số tuyến"
+        "english": "line number"
       },
       {
         "hanzi": "换车",
         "pinyin": "huàn chē",
-        "vietnamese": "đổi tàu hoặc xe"
+        "english": "to change trains or vehicles"
       },
       {
         "hanzi": "站",
         "pinyin": "zhàn",
-        "vietnamese": "trạm; ga"
+        "english": "stop; station"
       },
       {
         "hanzi": "下车",
         "pinyin": "xià chē",
-        "vietnamese": "xuống xe"
+        "english": "to get off a vehicle"
       }
     ],
     "note": {
-      "title": "Dùng 坐 khi nói về phương tiện",
-      "body": "坐 có nghĩa là đi bằng một phương tiện: 坐地铁 là đi tàu điện ngầm. Tuyến số 2 dùng 二: 二号线. 不用 nghĩa là không cần; 别 + hành động dùng để nhắc đừng làm điều đó. Lộ trình này là ví dụ luyện tập."
+      "title": "Use 坐 for transport",
+      "body": "坐 can mean “to take” a form of transport: 坐地铁 means “take the subway.” With numbered lines, use 二: 二号线 is Line 2. 不用 means “there’s no need”; 别 + action tells someone not to do it. This route is a practice example."
     }
   },
   {
     "id": 19,
-    "title": "Một ngày thường nhật",
+    "title": "A typical day",
     "hanzi": "我的一天",
     "pinyin": "Wǒ de yì tiān",
     "level": "Everyday",
-    "description": "Kể về buổi sáng và giờ đi làm của bạn.",
+    "description": "Describe your morning and when you head to work.",
     "dialogue": [
       {
         "speaker": "Mei",
         "hanzi": "你每天几点起床？",
         "pinyin": "Nǐ měitiān jǐ diǎn qǐchuáng?",
-        "vietnamese": "Hằng ngày bạn thức dậy lúc mấy giờ?"
+        "english": "What time do you get up every day?"
       },
       {
         "speaker": "An",
         "hanzi": "我七点起床。",
         "pinyin": "Wǒ qī diǎn qǐchuáng.",
-        "vietnamese": "Tôi thức dậy lúc bảy giờ."
+        "english": "I get up at seven."
       },
       {
         "speaker": "Mei",
         "hanzi": "起床以后做什么？",
         "pinyin": "Qǐchuáng yǐhòu zuò shénme?",
-        "vietnamese": "Sau khi thức dậy bạn làm gì?"
+        "english": "What do you do after getting up?"
       },
       {
         "speaker": "An",
         "hanzi": "先洗脸，然后吃早饭。",
         "pinyin": "Xiān xǐ liǎn, ránhòu chī zǎofàn.",
-        "vietnamese": "Đầu tiên tôi rửa mặt, sau đó ăn sáng."
+        "english": "First I wash my face, then I have breakfast."
       },
       {
         "speaker": "Mei",
         "hanzi": "你几点出门？",
         "pinyin": "Nǐ jǐ diǎn chūmén?",
-        "vietnamese": "Bạn ra khỏi nhà lúc mấy giờ?"
+        "english": "What time do you leave home?"
       },
       {
         "speaker": "An",
         "hanzi": "八点出门，坐公交车去上班。",
         "pinyin": "Bā diǎn chūmén, zuò gōngjiāochē qù shàngbān.",
-        "vietnamese": "Tôi ra khỏi nhà lúc tám giờ và đi xe buýt đến chỗ làm."
+        "english": "I leave at eight and take the bus to work."
       }
     ],
     "vocabulary": [
       {
         "hanzi": "起床",
         "pinyin": "qǐchuáng",
-        "vietnamese": "thức dậy"
+        "english": "to get up"
       },
       {
         "hanzi": "以后",
         "pinyin": "yǐhòu",
-        "vietnamese": "sau khi; về sau"
+        "english": "after; later"
       },
       {
         "hanzi": "洗脸",
         "pinyin": "xǐ liǎn",
-        "vietnamese": "rửa mặt"
+        "english": "to wash one’s face"
       },
       {
         "hanzi": "早饭",
         "pinyin": "zǎofàn",
-        "vietnamese": "bữa sáng"
+        "english": "breakfast"
       },
       {
         "hanzi": "出门",
         "pinyin": "chūmén",
-        "vietnamese": "ra ngoài; ra khỏi nhà"
+        "english": "to go out; to leave home"
       },
       {
         "hanzi": "上班",
         "pinyin": "shàngbān",
-        "vietnamese": "đi làm"
+        "english": "to go to work"
       }
     ],
     "note": {
-      "title": "Nói về việc xảy ra sau đó",
-      "body": "Đặt 以后 sau hành động để nói sau khi làm việc đó: 起床以后 nghĩa là sau khi thức dậy. Mẫu thường dùng là thời gian + hành động: 七点起床，八点出门。 Động từ tiếng Trung không biến đổi theo chủ ngữ."
+      "title": "Say what happens afterward",
+      "body": "Put 以后 after an action to mean “after doing it”: 起床以后 means “after getting up.” A useful pattern is time + action: 七点起床，八点出门。 Mandarin verbs do not change their form for different subjects."
     }
   },
   {
     "id": 20,
-    "title": "Thời tiết thế nào?",
+    "title": "What’s the weather like?",
     "hanzi": "今天天气怎么样",
     "pinyin": "Jīntiān tiānqì zěnmeyàng",
     "level": "Everyday",
-    "description": "Nói về trời mưa và lên kế hoạch cho buổi chiều.",
+    "description": "Talk about rain and make a plan for the afternoon.",
     "dialogue": [
       {
         "speaker": "An",
         "hanzi": "今天天气怎么样？",
         "pinyin": "Jīntiān tiānqì zěnmeyàng?",
-        "vietnamese": "Hôm nay thời tiết thế nào?"
+        "english": "What’s the weather like today?"
       },
       {
         "speaker": "Mei",
         "hanzi": "有点冷，还在下雨。",
         "pinyin": "Yǒudiǎn lěng, hái zài xià yǔ.",
-        "vietnamese": "Hơi lạnh, trời vẫn đang mưa."
+        "english": "It’s a little cold, and it’s still raining."
       },
       {
         "speaker": "An",
         "hanzi": "下午也会下雨吗？",
         "pinyin": "Xiàwǔ yě huì xià yǔ ma?",
-        "vietnamese": "Buổi chiều cũng mưa à?"
+        "english": "Will it rain in the afternoon too?"
       },
       {
         "speaker": "Mei",
         "hanzi": "天气预报说下午有太阳。",
         "pinyin": "Tiānqì yùbào shuō xiàwǔ yǒu tàiyáng.",
-        "vietnamese": "Dự báo nói buổi chiều sẽ có nắng."
+        "english": "The forecast says it’ll be sunny in the afternoon."
       },
       {
         "speaker": "An",
         "hanzi": "那我们下午出去吧。",
         "pinyin": "Nà wǒmen xiàwǔ chūqù ba.",
-        "vietnamese": "Vậy chiều chúng ta ra ngoài nhé."
+        "english": "Then let’s go out in the afternoon."
       },
       {
         "speaker": "Mei",
         "hanzi": "好，带上雨伞。",
         "pinyin": "Hǎo, dài shàng yǔsǎn.",
-        "vietnamese": "Được, nhớ mang ô nhé."
+        "english": "Okay, bring an umbrella."
       }
     ],
     "vocabulary": [
       {
         "hanzi": "天气",
         "pinyin": "tiānqì",
-        "vietnamese": "thời tiết"
+        "english": "weather"
       },
       {
         "hanzi": "冷",
         "pinyin": "lěng",
-        "vietnamese": "lạnh"
+        "english": "cold"
       },
       {
         "hanzi": "下雨",
         "pinyin": "xià yǔ",
-        "vietnamese": "mưa"
+        "english": "to rain"
       },
       {
         "hanzi": "下午",
         "pinyin": "xiàwǔ",
-        "vietnamese": "buổi chiều"
+        "english": "afternoon"
       },
       {
         "hanzi": "太阳",
         "pinyin": "tàiyáng",
-        "vietnamese": "mặt trời"
+        "english": "sun"
       },
       {
         "hanzi": "雨伞",
         "pinyin": "yǔsǎn",
-        "vietnamese": "ô; dù"
+        "english": "umbrella"
       }
     ],
     "note": {
-      "title": "Miêu tả với 有点",
-      "body": "有点 + tính từ nghĩa là hơi, thường chỉ điều không mong muốn: 有点冷 là hơi lạnh. 会 có thể diễn đạt khả năng trong tương lai: 下午会下雨 nghĩa là chiều nay sẽ mưa. Thời tiết ở đây chỉ là tình huống luyện tập."
+      "title": "Describe with 有点",
+      "body": "有点 + adjective means “a little,” often for something unwelcome: 有点冷 means “a little cold.” 会 can express a future possibility: 下午会下雨 means “It will rain this afternoon.” The weather here is part of the practice dialogue."
     }
   },
   {
     "id": 21,
-    "title": "Hẹn cuối tuần",
+    "title": "Make weekend plans",
     "hanzi": "周末有空吗",
     "pinyin": "Zhōumò yǒu kòng ma",
     "level": "Everyday",
-    "description": "Mời một người bạn và thống nhất nơi, giờ gặp.",
+    "description": "Invite a friend and agree on a place and time.",
     "dialogue": [
       {
         "speaker": "Mei",
         "hanzi": "你周末有空吗？",
         "pinyin": "Nǐ zhōumò yǒu kòng ma?",
-        "vietnamese": "Cuối tuần này bạn có rảnh không?"
+        "english": "Are you free this weekend?"
       },
       {
         "speaker": "An",
         "hanzi": "有空。怎么了？",
         "pinyin": "Yǒu kòng. Zěnme le?",
-        "vietnamese": "Có. Có chuyện gì vậy?"
+        "english": "Yes. What’s up?"
       },
       {
         "speaker": "Mei",
         "hanzi": "我们一起去公园吧。",
         "pinyin": "Wǒmen yìqǐ qù gōngyuán ba.",
-        "vietnamese": "Chúng ta cùng đi công viên nhé."
+        "english": "Let’s go to the park together."
       },
       {
         "speaker": "An",
         "hanzi": "好啊！几点见？",
         "pinyin": "Hǎo a! Jǐ diǎn jiàn?",
-        "vietnamese": "Được! Mấy giờ gặp nhau?"
+        "english": "Sure! What time shall we meet?"
       },
       {
         "speaker": "Mei",
         "hanzi": "星期六上午十点，在公园门口见。",
         "pinyin": "Xīngqīliù shàngwǔ shí diǎn, zài gōngyuán ménkǒu jiàn.",
-        "vietnamese": "Mười giờ sáng thứ Bảy gặp ở cổng công viên nhé."
+        "english": "Let’s meet at the park entrance at ten on Saturday morning."
       },
       {
         "speaker": "An",
         "hanzi": "没问题，到时候见！",
         "pinyin": "Méi wèntí, dào shíhou jiàn!",
-        "vietnamese": "Không vấn đề gì. Hẹn gặp lúc đó!"
+        "english": "No problem. See you then!"
       }
     ],
     "vocabulary": [
       {
         "hanzi": "周末",
         "pinyin": "zhōumò",
-        "vietnamese": "cuối tuần"
+        "english": "weekend"
       },
       {
         "hanzi": "有空",
         "pinyin": "yǒu kòng",
-        "vietnamese": "có thời gian rảnh"
+        "english": "to have free time"
       },
       {
         "hanzi": "公园",
         "pinyin": "gōngyuán",
-        "vietnamese": "công viên"
+        "english": "park"
       },
       {
         "hanzi": "上午",
         "pinyin": "shàngwǔ",
-        "vietnamese": "buổi sáng; trước buổi trưa"
+        "english": "morning; before noon"
       },
       {
         "hanzi": "门口",
         "pinyin": "ménkǒu",
-        "vietnamese": "cổng; cửa ra vào"
+        "english": "entrance; doorway"
       },
       {
         "hanzi": "没问题",
         "pinyin": "méi wèntí",
-        "vietnamese": "không vấn đề gì"
+        "english": "no problem"
       }
     ],
     "note": {
-      "title": "Thời gian, địa điểm, rồi hành động",
-      "body": "Trật tự thường dùng là thời gian + 在 + địa điểm + hành động: 星期六上午十点，在公园门口见。 空 đọc là kòng trong 有空 (có thời gian rảnh). Khi mang nghĩa trống, như 空杯子 (cốc rỗng), chữ này đọc là kōng."
+      "title": "Time, place, then action",
+      "body": "A common order is time + 在 + place + action: 星期六上午十点，在公园门口见。 空 is pronounced kòng in 有空, “to have free time.” It is kōng when it means “empty,” as in 空杯子, “an empty cup.”"
     }
   },
   {
     "id": 22,
-    "title": "Thử quần áo",
+    "title": "Try something on",
     "hanzi": "买衣服",
     "pinyin": "Mǎi yīfu",
     "level": "Everyday",
-    "description": "Chọn màu và hỏi cỡ khác.",
+    "description": "Choose a color and ask for a different size.",
     "dialogue": [
       {
         "speaker": "An",
         "hanzi": "这件衣服有蓝色的吗？",
         "pinyin": "Zhè jiàn yīfu yǒu lánsè de ma?",
-        "vietnamese": "Mẫu áo này có màu xanh dương không?"
+        "english": "Does this item of clothing come in blue?"
       },
       {
         "speaker": "Seller",
         "hanzi": "有。您穿多大号？",
         "pinyin": "Yǒu. Nín chuān duō dà hào?",
-        "vietnamese": "Có. Bạn mặc cỡ nào?"
+        "english": "Yes. What size do you wear?"
       },
       {
         "speaker": "An",
         "hanzi": "中号。我可以试一下吗？",
         "pinyin": "Zhōng hào. Wǒ kěyǐ shì yíxià ma?",
-        "vietnamese": "Cỡ vừa. Tôi thử được không?"
+        "english": "Medium. May I try it on?"
       },
       {
         "speaker": "Seller",
         "hanzi": "当然可以。试衣间在那边。",
         "pinyin": "Dāngrán kěyǐ. Shìyījiān zài nàbian.",
-        "vietnamese": "Được chứ. Phòng thử đồ ở bên kia."
+        "english": "Of course. The fitting room is over there."
       },
       {
         "speaker": "An",
         "hanzi": "有点小。有大一点的吗？",
         "pinyin": "Yǒudiǎn xiǎo. Yǒu dà yìdiǎn de ma?",
-        "vietnamese": "Hơi nhỏ. Có cái lớn hơn không?"
+        "english": "It’s a little small. Do you have a larger one?"
       },
       {
         "speaker": "Seller",
         "hanzi": "有，我给您拿大号。",
         "pinyin": "Yǒu, wǒ gěi nín ná dà hào.",
-        "vietnamese": "Có, tôi lấy cho bạn cỡ lớn."
+        "english": "Yes, I’ll get you a large."
       }
     ],
     "vocabulary": [
       {
         "hanzi": "衣服",
         "pinyin": "yīfu",
-        "vietnamese": "quần áo"
+        "english": "clothes"
       },
       {
         "hanzi": "件",
         "pinyin": "jiàn",
-        "vietnamese": "lượng từ cho quần áo"
+        "english": "measure word for items of clothing"
       },
       {
         "hanzi": "蓝色",
         "pinyin": "lánsè",
-        "vietnamese": "màu xanh dương"
+        "english": "blue"
       },
       {
         "hanzi": "中号",
         "pinyin": "zhōng hào",
-        "vietnamese": "cỡ vừa"
+        "english": "medium size"
       },
       {
         "hanzi": "试",
         "pinyin": "shì",
-        "vietnamese": "thử"
+        "english": "to try"
       },
       {
         "hanzi": "试衣间",
         "pinyin": "shìyījiān",
-        "vietnamese": "phòng thử đồ"
+        "english": "fitting room"
       }
     ],
     "note": {
-      "title": "Làm lời đề nghị nhẹ nhàng với 一下",
-      "body": "Động từ + 一下 diễn tả làm thử hoặc làm trong chốc lát: 试一下 là thử một chút. 大一点 nghĩa là lớn hơn một chút. Trong 有大一点的吗, 的 thay cho món quần áo nên không cần lặp lại 衣服."
+      "title": "Soften an action with 一下",
+      "body": "Verb + 一下 suggests trying or doing something briefly: 试一下 means “give it a try.” 大一点 means “a little bigger.” In 有大一点的吗, 的 stands in for the clothing, so you don’t need to repeat 衣服."
     }
   },
   {
     "id": 23,
-    "title": "Nhận phòng khách sạn",
+    "title": "Check into a hotel",
     "hanzi": "住酒店",
     "pinyin": "Zhù jiǔdiàn",
     "level": "Everyday",
-    "description": "Xác nhận đặt phòng và hỏi về bữa sáng.",
+    "description": "Check a reservation and ask about breakfast.",
     "dialogue": [
       {
         "speaker": "Receptionist",
         "hanzi": "您好，请问您有预订吗？",
         "pinyin": "Nín hǎo, qǐngwèn nín yǒu yùdìng ma?",
-        "vietnamese": "Xin chào. Bạn đã đặt phòng chưa?"
+        "english": "Hello. Do you have a reservation?"
       },
       {
         "speaker": "An",
         "hanzi": "有，我叫林安。",
         "pinyin": "Yǒu, wǒ jiào Lín Ān.",
-        "vietnamese": "Rồi. Tôi tên là Lâm An."
+        "english": "Yes. My name is Lin An."
       },
       {
         "speaker": "Receptionist",
         "hanzi": "您住两晚，对吗？",
         "pinyin": "Nín zhù liǎng wǎn, duì ma?",
-        "vietnamese": "Bạn ở hai đêm, đúng không?"
+        "english": "You’re staying for two nights, correct?"
       },
       {
         "speaker": "An",
         "hanzi": "对。请问，早餐几点开始？",
         "pinyin": "Duì. Qǐngwèn, zǎocān jǐ diǎn kāishǐ?",
-        "vietnamese": "Đúng rồi. Bữa sáng bắt đầu lúc mấy giờ?"
+        "english": "Correct. What time does breakfast start?"
       },
       {
         "speaker": "Receptionist",
         "hanzi": "早上七点，在一楼。",
         "pinyin": "Zǎoshang qī diǎn, zài yī lóu.",
-        "vietnamese": "Bảy giờ sáng, ở tầng trệt."
+        "english": "At seven in the morning, on the ground floor."
       },
       {
         "speaker": "An",
         "hanzi": "好的，谢谢。",
         "pinyin": "Hǎo de, xièxie.",
-        "vietnamese": "Vâng, cảm ơn."
+        "english": "Okay, thank you."
       }
     ],
     "vocabulary": [
       {
         "hanzi": "酒店",
         "pinyin": "jiǔdiàn",
-        "vietnamese": "khách sạn"
+        "english": "hotel"
       },
       {
         "hanzi": "预订",
         "pinyin": "yùdìng",
-        "vietnamese": "đặt trước; đặt phòng"
+        "english": "reservation; to reserve"
       },
       {
         "hanzi": "晚",
         "pinyin": "wǎn",
-        "vietnamese": "đêm; buổi tối"
+        "english": "night; evening"
       },
       {
         "hanzi": "早餐",
         "pinyin": "zǎocān",
-        "vietnamese": "bữa sáng"
+        "english": "breakfast"
       },
       {
         "hanzi": "开始",
         "pinyin": "kāishǐ",
-        "vietnamese": "bắt đầu"
+        "english": "to begin"
       },
       {
         "hanzi": "一楼",
         "pinyin": "yī lóu",
-        "vietnamese": "tầng một theo cách gọi Trung Quốc; tầng trệt"
+        "english": "first floor; ground level"
       }
     ],
     "note": {
-      "title": "Xưng hô lịch sự với 您",
-      "body": "您 (nín) là cách nói lịch sự của 你, thường dùng với khách hàng hoặc người lớn tuổi. Ở hai đêm là 两晚. Khi đánh số tầng, 一 giữ thanh một: 一楼 (yī lóu). Trong hội thoại này, 一楼 là tầng trệt."
+      "title": "Use 您 for polite address",
+      "body": "您 (nín) is a polite form of 你, often used when addressing a customer or an older person. A stay of two nights is 两晚. For numbered floors, 一 keeps its first tone: 一楼 (yī lóu). In this dialogue, 一楼 is the ground-level floor."
     }
   },
   {
     "id": 24,
-    "title": "Tiếp tục trò chuyện",
+    "title": "Keep the conversation going",
     "hanzi": "可以再说一遍吗",
     "pinyin": "Kěyǐ zài shuō yí biàn ma",
     "level": "Everyday",
-    "description": "Nhờ nhắc lại, hỏi nghĩa từ và xác nhận thông tin.",
+    "description": "Ask for repetition, check a word, and confirm the details.",
     "dialogue": [
       {
         "speaker": "Mei",
         "hanzi": "我们在图书馆门口见。",
         "pinyin": "Wǒmen zài túshūguǎn ménkǒu jiàn.",
-        "vietnamese": "Chúng ta gặp ở cửa thư viện nhé."
+        "english": "Let’s meet at the library entrance."
       },
       {
         "speaker": "An",
         "hanzi": "不好意思，可以再说一遍吗？",
         "pinyin": "Bù hǎoyìsi, kěyǐ zài shuō yí biàn ma?",
-        "vietnamese": "Xin lỗi, bạn có thể nói lại một lần không?"
+        "english": "Sorry, could you say that again?"
       },
       {
         "speaker": "Mei",
         "hanzi": "在图书馆门口见。",
         "pinyin": "Zài túshūguǎn ménkǒu jiàn.",
-        "vietnamese": "Ở cửa thư viện."
+        "english": "At the library entrance."
       },
       {
         "speaker": "An",
         "hanzi": "“图书馆”是什么意思？",
         "pinyin": "“Túshūguǎn” shì shénme yìsi?",
-        "vietnamese": "“Túshūguǎn” nghĩa là gì?"
+        "english": "What does “túshūguǎn” mean?"
       },
       {
         "speaker": "Mei",
         "hanzi": "就是可以看书、借书的地方。",
         "pinyin": "Jiù shì kěyǐ kàn shū, jiè shū de dìfang.",
-        "vietnamese": "Là nơi bạn có thể đọc và mượn sách."
+        "english": "It’s a place where you can read and borrow books."
       },
       {
         "speaker": "An",
         "hanzi": "明白了。我们两点见，对吗？",
         "pinyin": "Míngbai le. Wǒmen liǎng diǎn jiàn, duì ma?",
-        "vietnamese": "Hiểu rồi. Chúng ta gặp lúc hai giờ, đúng không?"
+        "english": "Got it. We’re meeting at two, right?"
       },
       {
         "speaker": "Mei",
         "hanzi": "对，两点见！",
         "pinyin": "Duì, liǎng diǎn jiàn!",
-        "vietnamese": "Đúng rồi. Hai giờ gặp nhé!"
+        "english": "Right. See you at two!"
       }
     ],
     "vocabulary": [
       {
         "hanzi": "不好意思",
         "pinyin": "bù hǎoyìsi",
-        "vietnamese": "xin lỗi; làm phiền"
+        "english": "excuse me; sorry"
       },
       {
         "hanzi": "再",
         "pinyin": "zài",
-        "vietnamese": "lại; lần nữa"
+        "english": "again"
       },
       {
         "hanzi": "一遍",
         "pinyin": "yí biàn",
-        "vietnamese": "một lượt từ đầu đến cuối"
+        "english": "one time all the way through"
       },
       {
         "hanzi": "意思",
         "pinyin": "yìsi",
-        "vietnamese": "ý nghĩa"
+        "english": "meaning"
       },
       {
         "hanzi": "图书馆",
         "pinyin": "túshūguǎn",
-        "vietnamese": "thư viện"
+        "english": "library"
       },
       {
         "hanzi": "明白",
         "pinyin": "míngbai",
-        "vietnamese": "hiểu; rõ ràng"
+        "english": "to understand; clear"
       }
     ],
     "note": {
-      "title": "Ba cách gỡ bí khi trò chuyện",
-      "body": "Dùng 可以再说一遍吗？ để nhờ nhắc lại. Hỏi X 是什么意思？ để biết nghĩa một từ. Thêm 对吗？ sau điều vừa nghe để xác nhận: 我们两点见，对吗？ Những mẫu câu này giúp bạn tiếp tục luyện nói tiếng Trung."
+      "title": "Three ways to get unstuck",
+      "body": "Use 可以再说一遍吗？ to ask for repetition. Ask X 是什么意思？ to check what a word means. Add 对吗？ after what you heard to confirm it: 我们两点见，对吗？ These patterns help you keep practising in Mandarin."
     }
   }
 ]

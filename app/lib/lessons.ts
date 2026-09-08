@@ -6,13 +6,13 @@ export type DialogueLine = {
   speaker: string;
   hanzi: string;
   pinyin: string;
-  vietnamese: string;
+  english: string;
 };
 
 export type VocabularyItem = {
   hanzi: string;
   pinyin: string;
-  vietnamese: string;
+  english: string;
 };
 
 export type Lesson = {
@@ -53,15 +53,15 @@ export function matchesLesson(lesson: Lesson, query: string): boolean {
     lesson.pinyin,
     lesson.level,
     lesson.description,
-    ...lesson.vocabulary.flatMap(({ hanzi, pinyin, vietnamese }) => [
+    ...lesson.vocabulary.flatMap(({ hanzi, pinyin, english }) => [
       hanzi,
       pinyin,
-      vietnamese,
+      english,
     ]),
-    ...lesson.dialogue.flatMap(({ hanzi, pinyin, vietnamese }) => [
+    ...lesson.dialogue.flatMap(({ hanzi, pinyin, english }) => [
       hanzi,
       pinyin,
-      vietnamese,
+      english,
     ]),
   ];
 

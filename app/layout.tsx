@@ -26,15 +26,15 @@ const contentSecurityPolicy = [
   "script-src 'self' 'unsafe-inline'",
   "media-src 'self' https:",
   "frame-src https://www.youtube-nocookie.com",
-  "connect-src 'self'",
+  "connect-src 'self' https://www.chinesepod.com https://chinesepod.com",
   "upgrade-insecure-requests",
 ].join("; ");
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title: "Mandarin Steps — Mỗi ngày một chút tiếng Trung.",
+  title: "Mandarin Steps — A little Chinese, every day.",
   description:
-    "Học tiếng Trung với 24 bài nhập môn có nghĩa tiếng Việt, 1.920 tập ChinesePod và Công chúa Ori. Có pinyin và âm thanh luyện tập sẵn.",
+    "Learn Mandarin with recorded podcasts, starter lessons with pinyin and English, and Ori Princess episodes.",
   referrer: "strict-origin-when-cross-origin",
   manifest: `${assetBase}/manifest.webmanifest`,
   icons: {
@@ -43,16 +43,16 @@ export const metadata: Metadata = {
     apple: `${assetBase}/favicon.svg`,
   },
   openGraph: {
-    title: "Mandarin Steps — Mỗi ngày một chút tiếng Trung.",
+    title: "Mandarin Steps — A little Chinese, every day.",
     description:
-      "Học tiếng Trung với 24 bài nhập môn có nghĩa tiếng Việt, 1.920 tập ChinesePod và Công chúa Ori. Có pinyin và âm thanh luyện tập sẵn.",
+      "Learn Mandarin with recorded podcasts, starter lessons with pinyin and English, and Ori Princess episodes.",
     type: "website",
   },
   twitter: {
     card: "summary",
-    title: "Mandarin Steps — Mỗi ngày một chút tiếng Trung.",
+    title: "Mandarin Steps — A little Chinese, every day.",
     description:
-      "Học tiếng Trung với 24 bài nhập môn có nghĩa tiếng Việt, 1.920 tập ChinesePod và Công chúa Ori. Có pinyin và âm thanh luyện tập sẵn.",
+      "Learn Mandarin with recorded podcasts, starter lessons with pinyin and English, and Ori Princess episodes.",
   },
 };
 
@@ -73,7 +73,7 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="vi"
+      lang="en"
       className={handwritingFont.variable}
       suppressHydrationWarning
     >
