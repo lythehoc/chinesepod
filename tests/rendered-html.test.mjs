@@ -1,285 +1,249 @@
 import assert from "node:assert/strict";
-import { readFile, readdir, stat } from "node:fs/promises";
+import { readFile, stat } from "node:fs/promises";
 import test from "node:test";
+import ts from "typescript";
 
-async function render() {
-  const html = await readFile(
-    new URL("../out/index.html", import.meta.url),
-    "utf8",
+const root = new URL("../", import.meta.url);
+const read = (path) => readFile(new URL(path, root), "utf8");
+const catalog = JSON.parse(await read("app/data/lessons.json"));
+
+// Execute the same search helpers used by the app without requiring a Next loader.
+const { outputText } = ts.transpileModule(await read("app/lib/lessons.ts"), {
+  compilerOptions: { module: ts.ModuleKind.ESNext, target: ts.ScriptTarget.ES2022 },
+});
+const searchModule = outputText.replace(
+  /import\s+lessonData\s+from\s+["']\.\.\/data\/lessons\.json["'];?/,
+  `const lessonData = ${JSON.stringify(catalog)};`,
+);
+const { normalizeSearch, matchesLesson } = await import(
+  `data:text/javascript;base64,${Buffer.from(searchModule).toString("base64")}`
+);
+
+function decodeEntities(value) {
+  return value.replace(
+    /&(?:amp|lt|gt|quot|apos|#39|#x[\da-f]+|#\d+);/gi,
+    (entity) => {
+      const named = {
+        "&amp;": "&", "&lt;": "<", "&gt;": ">", "&quot;": '"',
+        "&apos;": "'", "&#39;": "'",
+      };
+      if (named[entity]) return named[entity];
+      const hex = entity.startsWith("&#x");
+      return String.fromCodePoint(parseInt(entity.slice(hex ? 3 : 2, -1), hex ? 16 : 10));
+    },
   );
-  return new Response(html, {
-    status: 200,
-    headers: { "content-type": "text/html; charset=utf-8" },
-  });
 }
 
-test("renders the finished engpod library", async () => {
-  const response = await render();
-  assert.equal(response.status, 200);
-  assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
-
-  const html = await response.text();
-  const repositoryOwner =
-    process.env.GITHUB_REPOSITORY?.split("/")[0] ?? "demo-user";
-  assert.match(html, /<title>engpod - small step every day<\/title>/i);
-  assert.doesNotMatch(html, /engpod — small step every day/i);
-  assert.match(html, /small step every day/i);
-  assert.doesNotMatch(html, /listen[. ]+read[. ]+repeat/i);
-  assert.match(html, /engpod/);
-  assert.match(html, /Cut In Line/);
-  assert.match(html, /Search title, level, or number/);
-  assert.match(html, />Random<\/span>/);
-  assert.doesNotMatch(html, /Surprise me|aria-label="Volume"|volume-control/);
-  assert.doesNotMatch(html, /NOW PLAYING|ARCHIVE AUDIO/);
-  assert.match(html, /Open Elementary episodes/);
-  assert.ok(
-    html.includes(
-      `https://${repositoryOwner}.github.io/engpod/og.png`,
+function htmlTags(html, name) {
+  return [...html.matchAll(new RegExp(`<${name}\\b[^>]*>`, "gi"))].map(([tag]) =>
+    Object.fromEntries(
+      [...tag.matchAll(/([\w:-]+)="([^"]*)"/g)].map(([, key, value]) => [
+        key.toLowerCase(), decodeEntities(value),
+      ]),
     ),
   );
-  assert.match(html, /\/engpod\/favicon\.svg/);
-  assert.match(html, /\/engpod\/manifest\.webmanifest/);
-  assert.doesNotMatch(html, /\/engpod\/engpod\/og\.png/);
-  assert.doesNotMatch(html, /codex-preview|react-loading-skeleton/i);
-});
+}
 
-test("ships all episodes, transcripts, and the GitHub Pages workflow", async () => {
-  const root = new URL("../", import.meta.url);
-  const [catalog, transcriptNames, workflow, readme, socialCard, mobileManifest, mobileIcon, handwritingFont, fontLicense] =
-    await Promise.all([
-    readFile(new URL("app/data/episodes.json", root), "utf8"),
-    readdir(new URL("public/transcripts/", root)),
-    readFile(new URL(".github/workflows/deploy.yml", root), "utf8"),
-    readFile(new URL("README.md", root), "utf8"),
-    stat(new URL("public/og.png", root)),
-    readFile(new URL("public/manifest.webmanifest", root), "utf8"),
-    readFile(new URL("public/favicon.svg", root), "utf8"),
-    stat(new URL("app/fonts/PatrickHand-Regular.ttf", root)),
-    stat(new URL("public/fonts/PatrickHand-OFL.txt", root)),
-  ]);
+const han = /\p{Script=Han}/u;
+const tone = /[āáǎàēéěèīíǐìōóǒòūúǔùǖǘǚǜ]/i;
 
-  const episodes = JSON.parse(catalog);
-  assert.equal(episodes.length, 365);
-  assert.equal(transcriptNames.filter((name) => name.endsWith(".html")).length, 365);
-  assert.ok(episodes.every((episode) => episode.mp3 && episode.transcript_id));
-  assert.match(workflow, /actions\/checkout@v6/);
-  assert.match(workflow, /actions\/setup-node@v6/);
-  assert.match(workflow, /actions\/configure-pages@v6/);
-  assert.match(workflow, /actions\/upload-pages-artifact@v5/);
-  assert.match(workflow, /actions\/deploy-pages@v5/);
-  assert.match(workflow, /node-version:\s*24/);
-  assert.match(workflow, /path:\s*out/);
-  assert.match(workflow, /run:\s*npm run lint/);
-  assert.match(workflow, /run:\s*node --test tests\/rendered-html\.test\.mjs/);
-  assert.match(workflow, /permissions:\s*\{\}/);
-  assert.doesNotMatch(readme, /independent educational project|not affiliated with|endorsed by EnglishPod/i);
-  assert.doesNotMatch(readme, /^## Audio$|Audio streams from the public Internet Archive/m);
-  assert.match(readme, /Tap any episode to play, then resume later/);
-  assert.equal(
-    readme.match(/^-/gm)?.length,
-    4,
+function assertText(value, label) {
+  assert.equal(typeof value, "string", `${label} must be text`);
+  assert.ok(value.trim(), `${label} must not be empty`);
+}
+
+function assertBilingual(item, label) {
+  for (const key of ["hanzi", "pinyin", "vietnamese"]) assertText(item[key], `${label}.${key}`);
+  assert.match(item.hanzi, han, `${label} needs Chinese characters`);
+  assert.doesNotMatch(item.pinyin, han, `${label} needs a separate pinyin reading`);
+  assert.match(item.pinyin, /[a-zü]/i, `${label} needs readable pinyin`);
+  assert.match(item.vietnamese, /[a-z]/i, `${label} needs a Vietnamese translation`);
+}
+
+test("contains 24 complete original Mandarin lessons across all three learning levels", () => {
+  assert.equal(catalog.length, 24);
+  assert.equal(new Set(catalog.map(({ id }) => id)).size, catalog.length);
+  assert.deepEqual(
+    [...new Set(catalog.map(({ level }) => level))].sort(),
+    ["Beginner", "Everyday", "Foundations"],
   );
-  assert.ok(socialCard.size > 100_000);
-  assert.match(mobileManifest, /"short_name": "engpod"/);
-  assert.match(mobileManifest, /"src": "logo\.jpg"/);
-  assert.match(mobileIcon, /#167D73/);
-  assert.doesNotMatch(mobileIcon, /#0C79D8|#2E9EFF/);
-  assert.ok(handwritingFont.size > 100_000);
-  assert.ok(fontLicense.size > 1_000);
+
+  for (const lesson of catalog) {
+    const label = `Lesson ${lesson.id}`;
+    assert.ok(Number.isInteger(lesson.id) && lesson.id > 0, `${label} needs a stable positive ID`);
+    for (const key of ["title", "description", "hanzi", "pinyin"]) assertText(lesson[key], `${label}.${key}`);
+    assert.match(lesson.hanzi, han);
+    assert.match(lesson.pinyin, tone, `${label} title should demonstrate tone-marked pinyin`);
+    assert.ok(lesson.dialogue.length >= 4, `${label} needs at least four dialogue lines`);
+    assert.ok(lesson.vocabulary.length >= 4, `${label} needs at least four vocabulary items`);
+    assertText(lesson.note.title, `${label}.note.title`);
+    assertText(lesson.note.body, `${label}.note.body`);
+
+    for (const [index, line] of lesson.dialogue.entries()) {
+      assertBilingual(line, `${label} line ${index + 1}`);
+      assertText(line.speaker, `${label} line ${index + 1}.speaker`);
+      assert.match(line.pinyin, tone, `${label} line ${index + 1} needs tone marks`);
+    }
+    for (const [index, word] of lesson.vocabulary.entries()) {
+      assertBilingual(word, `${label} word ${index + 1}`);
+    }
+    // Neutral-tone words may legitimately have no accent; every lesson must
+    // nevertheless include tone-marked vocabulary for pronunciation practice.
+    assert.ok(lesson.vocabulary.some(({ pinyin }) => tone.test(pinyin)));
+  }
+  assert.doesNotMatch(JSON.stringify(catalog), /archive\.org|vietnamesepod|transcript_id|"mp3"/i);
 });
 
-test("uses redundant HTTPS Internet Archive audio sources", async () => {
-  const root = new URL("../", import.meta.url);
-  const page = await readFile(new URL("app/page.tsx", root), "utf8");
-
-  assert.match(page, /ia600408\.us\.archive\.org\/10\/items\/englishpod_all/);
-  assert.match(page, /archive\.org\/download\/englishpod_all/);
-  assert.doesNotMatch(page, /ia800408\.us\.archive\.org/);
-  assert.doesNotMatch(page, /\/audio\/\$\{audioFileName\}/);
+test("search normalizes tone marks, capitalization, punctuation, and Mandarin ü input", () => {
+  assert.equal(normalizeSearch("Nǐ hǎo!"), normalizeSearch("nihao"));
+  assert.equal(normalizeSearch("  NI HAO  "), normalizeSearch("nǐ-hǎo"));
+  for (const query of ["lǜ chá", "lücha", "lvcha", "LU:CHA"]) {
+    assert.equal(normalizeSearch(query), "lvcha");
+  }
+  assert.notEqual(normalizeSearch("nǚ"), normalizeSearch("nu"));
+  assert.equal(normalizeSearch("你好！"), "你好");
+  assert.equal(normalizeSearch("Điện thoại"), normalizeSearch("dien thoai"));
 });
 
-test("auto-plays selections and safely persists player preferences", async () => {
-  const root = new URL("../", import.meta.url);
-  const [page, styles, layout, workflow, dependabot] = await Promise.all([
-    readFile(new URL("app/page.tsx", root), "utf8"),
-    readFile(new URL("app/globals.css", root), "utf8"),
-    readFile(new URL("app/layout.tsx", root), "utf8"),
-    readFile(new URL(".github/workflows/deploy.yml", root), "utf8"),
-    readFile(new URL(".github/dependabot.yml", root), "utf8"),
-  ]);
+test("search finds Chinese, pinyin, Vietnamese, vocabulary, dialogue, levels, and lesson numbers", () => {
+  const lesson = {
+    id: 91,
+    title: "Walking home",
+    hanzi: "回家",
+    pinyin: "Huí jiā",
+    level: "Beginner",
+    description: "A short walk after class.",
+    dialogue: [
+      { speaker: "A", hanzi: "你好吗？", pinyin: "Nǐ hǎo ma?", vietnamese: "How are you?" },
+    ],
+    vocabulary: [
+      { hanzi: "女孩", pinyin: "nǚhái", vietnamese: "girl" },
+      { hanzi: "绿茶", pinyin: "lǜchá", vietnamese: "green tea" },
+    ],
+    note: { title: "Greetings", body: "Use a question to greet someone." },
+  };
+  for (const query of [
+    "回家", "huijia", "huí jiā", "WALKING", "after class", "Beginner", "91",
+    "你好", "ni hao", "nihao", "HOW ARE YOU", "女孩", "nü hai", "nvhai",
+    "nǚhái", "girl", "绿茶", "lü cha", "lvcha", "lu:cha", "GREEN TEA", "",
+  ]) {
+    assert.equal(matchesLesson(lesson, query), true, `Should match ${JSON.stringify(query)}`);
+  }
+  for (const query of ["airport", "日语", "999", "nu hai", "lu cha"]) {
+    assert.equal(matchesLesson(lesson, query), false, `Should not match ${JSON.stringify(query)}`);
+  }
+  for (const lesson of catalog) {
+    assert.equal(matchesLesson(lesson, lesson.hanzi), true);
+    assert.equal(matchesLesson(lesson, normalizeSearch(lesson.pinyin)), true);
+    assert.equal(matchesLesson(lesson, lesson.vocabulary[0].vietnamese), true);
+  }
+});
 
-  assert.match(page, /autoplay = true/);
-  assert.match(page, /englishpod:settings-v1/);
-  assert.match(page, /resume: "englishpod:last-resume"/);
-  assert.match(page, /type ResumeRecord = \{\s*episodeId: number;\s*position: number;/);
-  assert.match(page, /JSON\.stringify\(\{ episodeId, position: savedPosition \}\)/);
-  assert.match(page, /Math\.max\(safePosition, checkpoint\.position\)/);
-  assert.match(page, /savedResume\.position - 10/);
-  assert.match(page, /POSITION_SAVE_INTERVAL_MS = 1_000/);
-  assert.match(page, /AUDIO_RECOVERY_TIMEOUT_MS = 12_000/);
-  assert.match(page, /FINAL_AUDIO_RECOVERY_TIMEOUT_MS = 30_000/);
-  assert.match(page, /ia600408\.us\.archive\.org\/10\/items\/englishpod_all/);
-  assert.match(page, /archive\.org\/download\/englishpod_all/);
-  assert.doesNotMatch(page, /ia800408\.us\.archive\.org/);
-  assert.match(page, /const handleAudioFailure = useCallback/);
-  assert.match(page, /audio\.readyState < HTMLMediaElement\.HAVE_FUTURE_DATA/);
-  assert.match(page, /fallbackPositionRef\.current/);
-  assert.match(page, /onStalled=\{\(\) => setIsBuffering\(true\)\}/);
-  assert.match(page, /onError=\{handleAudioFailure\}/);
-  assert.match(page, /src=\{settingsLoaded \? audioUrl : undefined\}/);
-  assert.match(page, /if \(!audio \|\| !settingsLoaded\) return;/);
-  assert.match(page, /if \(!settingsLoaded\) return;\s*if \(audioRef\.current\)/);
-  assert.match(page, /addEventListener\("pagehide", saveCurrentPosition\)/);
-  assert.match(page, /addEventListener\("visibilitychange", handleVisibilityChange\)/);
-  assert.match(page, /removeItem\(STORAGE\.legacyEpisode\)/);
-  assert.match(page, /removeItem\(STORAGE\.legacyPositions\)/);
-  assert.doesNotMatch(page, /positions\[String\(episodeId\)\]\s*=/);
-  assert.doesNotMatch(page, /groupByLevel|Group levels|groupedEpisodes/);
-  assert.match(page, /selectedLevel/);
-  assert.match(page, /type CompletionFilter = "all" \| "unfinished" \| "finished"/);
-  assert.match(page, /completionFilter: CompletionFilter/);
-  assert.match(page, /COMPLETION_FILTERS\.includes/);
-  assert.match(page, /completionFilter === "finished"/);
-  assert.match(page, /completionFilter === "unfinished"/);
-  assert.match(page, /return \[\.\.\.filtered\]\.sort\(\(a, b\) => a\.id - b\.id\)/);
-  assert.doesNotMatch(page, /SortMode|sortMode|Sort episodes|<select/);
-  assert.match(page, /aria-label="Filter by completion"/);
-  assert.match(page, /\["unfinished", "Not finished"\]/);
-  assert.match(page, /\["finished", "Finished"\]/);
-  assert.match(page, /setSelectedLevel\("All"\);\s*setCompletionFilter\("all"\);/);
-  assert.match(page, /transcriptVisible/);
-  assert.match(page, /if \(!transcriptVisible\) return;/);
-  assert.match(page, /setTranscript\(""\);\s*setTranscriptLoading\(true\);/);
-  assert.match(page, /setTimeout\(\(\) => controller\.abort\(\), 10_000\)/);
-  assert.match(page, /\[currentEpisode\.transcript_id, transcriptVisible\]/);
-  assert.match(page, /sanitizeTranscriptHtml\(html\)/);
-  assert.match(page, /const EpisodeRow = memo\(function EpisodeRow/);
-  assert.match(page, /const completedIdSet = useMemo\(\(\) => new Set\(completedIds\)/);
-  assert.match(page, /completed=\{completedIdSet\.has\(episode\.id\)\}/);
-  assert.match(page, /querySelector\("h1"\)\?\.remove\(\)/);
-  assert.doesNotMatch(page, /speaker-tone-|speakerTones|toneClass/);
-  assert.doesNotMatch(styles, /--speaker-|speaker-tone-/);
-  assert.match(styles, /\.line \{[^}]*border: 1px solid var\(--line\);[^}]*border-radius: 18px;[^}]*background: color-mix\(in srgb, var\(--surface-2\) 28%, var\(--surface\)\);/);
-  assert.match(styles, /\.speaker \{[^}]*border: 1px solid color-mix\(in srgb, var\(--accent\) 16%, var\(--line\)\);[^}]*background: color-mix\(in srgb, var\(--accent\) 7%, transparent\);[^}]*color: var\(--accent-strong\);/);
-  assert.match(page, />Auto next</);
-  assert.match(page, /SLEEP_TIMER_OPTIONS = \[0, 15, 30, 45, 60\]/);
-  assert.match(page, /function formatCountdown\(value: number\)/);
-  assert.match(page, /setInterval\(updateRemainingTime, 1_000\)/);
-  assert.match(page, /sleepTimerEndAt - Date\.now\(\)/);
-  assert.match(page, /formatCountdown\(sleepTimerRemainingSeconds\)/);
-  assert.match(page, /: "Sleep"/);
-  assert.match(page, /Mark episode as finished/);
-  assert.match(page, /className=\{`episode-complete \$\{completed \? "is-finished" : ""\}`\}/);
-  assert.match(page, /onToggleCompleted=\{updateCompleted\}/);
-  assert.match(page, /<span className="episode-number" aria-hidden="true">\s*\{episode\.id\}/);
-  assert.doesNotMatch(page, /active \? "▶" : episode\.id/);
-  assert.doesNotMatch(page, /now-label|>NOW</);
-  assert.doesNotMatch(page, /updateCompleted\(currentId, true\)/);
-  assert.match(page, /orderedCandidates\.find\([\s\S]*?!completedIds\.includes\(episode\.id\)/);
-  assert.match(page, /previousCandidates\.find\([\s\S]*?!completedIds\.includes\(episode\.id\)/);
-  assert.match(page, /unfinishedVisible[\s\S]*?unfinishedAnywhere/);
-  assert.match(page, /<span className="speed-value">\{playbackRate\}×<\/span>/);
-  assert.match(page, /<span className="control-label">Speed<\/span>/);
-  assert.match(page, /className="track-button"/);
-  assert.match(page, /<MediaIcon name="replay10" \/>/);
-  assert.match(page, /<MediaIcon name="previous" \/>/);
-  assert.match(page, /<MediaIcon name=\{isPlaying \? "pause" : "play"\} \/>/);
-  assert.match(page, /<MediaIcon name="next" \/>/);
-  assert.match(page, /<MediaIcon name="forward10" \/>/);
-  assert.doesNotMatch(page, /skip-glyph|skip-arrow|⟲|⟳|\|◀|▶\|/);
-  assert.doesNotMatch(page, /className="soft-button"|brand-actions/);
-  assert.match(page, /className="brand-name"[\s\S]*?className="guide-icon-button"[\s\S]*?className="mobile-close"/);
-  assert.match(page, /type UiIconName = "help" \| "close" \| "sun" \| "moon"/);
-  assert.match(page, /className="guide-icon-button"[\s\S]*?onClick=\{\(\) => setHelpOpen\(true\)\}[\s\S]*?aria-label="Open quick guide"[\s\S]*?<UiIcon name="help" \/>/);
-  assert.match(page, /className="mobile-close"[\s\S]*?<UiIcon name="close" \/>/);
-  assert.match(page, /className="theme-toggle"[\s\S]*?<UiIcon name=\{theme === "dark" \? "sun" : "moon"\} \/>[\s\S]*?\{theme === "dark" \? "Light" : "Dark"\}/);
-  assert.doesNotMatch(page, /setSidebarOpen\(false\);\s*setHelpOpen\(true\);/);
-  assert.match(page, /querySelector<HTMLElement>\("\.episode-row\.is-active"\)/);
-  assert.match(page, /scrollIntoView\(\{[\s\S]*?behavior: "smooth",[\s\S]*?block: "center"/);
-  assert.match(page, /distanceX >= 56 && distanceX > distanceY \* 1\.25/);
-  assert.match(page, /onTouchStart=\{handleSidebarTouchStart\}/);
-  assert.match(page, /onTouchEnd=\{handleSidebarTouchEnd\}/);
-  assert.match(page, /closest\("\[data-drawer-swipe-ignore\]"\)/);
-  assert.match(page, /className="level-filters"[\s\S]*?data-drawer-swipe-ignore/);
-  assert.match(page, /onTouchStart=\{handlePlayerTouchStart\}/);
-  assert.match(page, /onTouchEnd=\{handlePlayerTouchEnd\}/);
-  assert.match(page, /event\.target\.closest\("button, input, select, a"\)/);
-  assert.match(page, /distanceX = touch\.clientX - start\.x/);
-  assert.match(page, /setSidebarOpen\(true\);/);
-  assert.doesNotMatch(page, /className="modal-close"/);
-  assert.doesNotMatch(page, /Surprise me|volume-control/);
-  assert.equal(page.match(/small step every day/g)?.length, 1);
-  assert.doesNotMatch(page, /Small steps, clear ears, confident English/);
-  assert.doesNotMatch(page, /resumeNotice|setResumeNotice|Welcome back|Saved on this device/);
-  assert.doesNotMatch(page, /Your episode, position, filters|Not affiliated with or endorsed/);
-  assert.doesNotMatch(styles, /\.brand-row p/);
-  assert.doesNotMatch(styles, /\.brand-actions|\.soft-button/);
-  assert.match(styles, /\.brand-name \{[^}]*flex: 1;/);
-  assert.match(styles, /\.guide-icon-button,[\s\S]*?\.mobile-close \{[\s\S]*?width: 40px;[\s\S]*?height: 40px;[\s\S]*?border: 1px solid var\(--line\);[\s\S]*?border-radius: 14px;/);
-  assert.match(styles, /\.ui-icon \{[\s\S]*?stroke-width: 1\.9;[\s\S]*?stroke-linecap: round;/);
-  assert.match(styles, /\.theme-toggle \{[\s\S]*?display: inline-flex;[\s\S]*?gap: 7px;/);
-  assert.match(styles, /\.guide-icon-button:hover,[\s\S]*?\.mobile-close:hover \{[\s\S]*?background: var\(--surface-3\);/);
-  assert.doesNotMatch(styles, /project-disclaimer/);
-  assert.doesNotMatch(styles, /resume-note|radial-gradient/);
-  assert.match(styles, /\.app-shell \{[\s\S]*?background: var\(--bg\);/);
-  assert.match(styles, /\.brand-block \{[^}]*padding: 24px 22px 10px;/);
-  assert.doesNotMatch(styles, /\.brand-block \{[^}]*border-bottom:/);
-  assert.match(styles, /\.library-tools \{[^}]*padding: 10px 16px 12px;/);
-  assert.match(styles, /\.completion-filters \{[\s\S]*?grid-template-columns: repeat\(3, minmax\(0, 1fr\)\);/);
-  assert.match(styles, /\.completion-filters button \{[\s\S]*?min-height: 43px;/);
-  assert.doesNotMatch(page, /<span>Sort<\/span>/);
-  assert.doesNotMatch(styles, /\.list-options|\.group-heading|\.episode-group/);
-  assert.match(styles, /--accent: #167d73/);
-  assert.match(styles, /--accent: #168f82/);
-  assert.doesNotMatch(styles, /#e85d3f|#ff7657|#c94229|#ff9178|#f9d9cc|#3b211c/);
-  assert.match(styles, /@media \(max-width: 660px\)/);
-  assert.match(styles, /--player-height: 160px/);
-  assert.match(styles, /\.lesson-heading h2 \{[\s\S]*?font-size: clamp\(32px, 4\.2vw, 56px\);/);
-  assert.match(styles, /\.lesson-heading h2 \{[\s\S]*?font-size: clamp\(27px, 8vw, 36px\);/);
-  assert.match(styles, /grid-template-columns: 34px minmax\(0, 1fr\) 34px/);
-  assert.match(styles, /\.progress-time:last-child \{[\s\S]*?text-align: right;/);
-  assert.match(styles, /\.transport button \{[\s\S]*?width: 52px;[\s\S]*?height: 52px;/);
-  assert.match(styles, /\.transport button \{[^}]*padding: 0;[^}]*display: grid;[^}]*place-items: center;/);
-  assert.match(styles, /\.transport \.track-button \{[\s\S]*?width: 58px;[\s\S]*?height: 58px;/);
-  assert.match(styles, /\.transport \.skip-button \{[\s\S]*?width: 54px;[\s\S]*?height: 54px;/);
-  assert.match(styles, /\.transport \.play-button \{[\s\S]*?width: 70px;[\s\S]*?height: 70px;/);
-  assert.match(styles, /\.transport \.play-button \{[\s\S]*?box-shadow: none;/);
-  assert.match(styles, /\.media-icon \{[^}]*width: 30px;[^}]*height: 30px;/);
-  assert.match(styles, /\.track-button \.media-icon \{[^}]*width: 32px;[^}]*height: 32px;/);
-  assert.match(styles, /\.play-button \.media-icon \{[^}]*width: 44px;[^}]*height: 44px;/);
-  assert.doesNotMatch(styles, /\.media-icon-play \{[^}]*transform:/);
-  assert.match(styles, /\.transport \.track-button \{[^}]*border: 0;[^}]*background: transparent;/);
-  assert.match(styles, /\.player-options > button \{[\s\S]*?min-height: 44px;/);
-  assert.match(styles, /\.player-options > button\.is-on \{[^}]*var\(--accent\) 8%/);
-  assert.doesNotMatch(styles, /\.player-options > button\.is-on \{[^}]*background: var\(--accent-soft\)/);
-  assert.match(styles, /grid-template-columns: repeat\(4, minmax\(0, 1fr\)\)/);
-  assert.match(styles, /\.player-options > button \{[\s\S]*?max-width: 82px;[\s\S]*?justify-self: center;/);
-  assert.doesNotMatch(styles, /\.modal-close|place-items: end center|max-height: min\(78dvh, 620px\)/);
-  assert.match(styles, /\.primary-button \{[^}]*margin-top: 18px;/);
-  assert.match(styles, /\.guide-modal \{[\s\S]*?padding: 28px 20px 20px;/);
-  assert.match(styles, /\.guide-modal h2 \{[^}]*font-family: var\(--font-handwriting\)/);
-  assert.match(styles, /\.library-panel \{[\s\S]*?touch-action: pan-y;/);
-  assert.match(styles, /\.content-panel \{[\s\S]*?touch-action: pan-y;/);
-  assert.match(styles, /@media \(hover: hover\) and \(pointer: fine\)/);
-  assert.match(styles, /-webkit-tap-highlight-color: transparent/);
-  assert.match(styles, /\.lesson-heading \{[\s\S]*?position: sticky;/);
-  assert.match(styles, /\.heading-complete \{[^}]*width: 44px;[^}]*height: 44px;/);
-  assert.match(styles, /\.heading-complete \{[^}]*border: 1px solid var\(--line\);[^}]*background: var\(--surface-2\);[^}]*color: var\(--muted\);/);
-  assert.doesNotMatch(styles, /\.heading-complete \{[^}]*var\(--accent/);
-  assert.match(styles, /\.heading-complete\.is-finished \{[^}]*background: var\(--accent\);/);
-  assert.match(styles, /\.episode-complete \{[^}]*width: 40px;[^}]*height: 40px;/);
-  assert.match(styles, /\.episode-complete \{[^}]*background: var\(--surface-2\);[^}]*color: var\(--muted\);/);
-  assert.doesNotMatch(styles, /\.episode-complete \{[^}]*var\(--accent/);
-  assert.match(styles, /\.episode-complete\.is-finished \{[^}]*background: var\(--accent\);/);
-  assert.doesNotMatch(styles, /\.episode-row\.is-active \.episode-number/);
-  assert.doesNotMatch(styles, /\.now-label|\.complete-toggle/);
-  assert.match(styles, /\.speed-value \{[^}]*var\(--font-geist-mono\)/);
-  assert.match(styles, /grid-template-columns: max-content minmax\(0, 1fr\)/);
-  assert.match(styles, /\.speaker \{[\s\S]*?min-width: 32px;[\s\S]*?max-width: min\(126px, 32vw\);/);
-  assert.match(layout, /Content-Security-Policy/);
-  assert.match(layout, /https:\/\/\*\.archive\.org/);
-  assert.match(layout, /PatrickHand-Regular\.ttf/);
-  assert.doesNotMatch(workflow, /AUDIO_BASE_URL/);
-  assert.match(dependabot, /package-ecosystem: npm/);
-  assert.match(dependabot, /package-ecosystem: github-actions/);
+test("exports the recorded podcast library with a real audio player", async () => {
+  const catalog = JSON.parse(await read("app/data/podcasts.json"));
+  const html = await read("out/index.html");
+  const rendered = html.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, "");
+  const visibleText = decodeEntities(rendered.replace(/<[^>]+>/g, " ")).replace(/\s+/g, " ");
+  assert.match(visibleText, /Mandarin Steps/);
+  assert.match(visibleText, /Podcast/);
+  assert.match(visibleText, /Bài nhập môn/);
+  assert.match(visibleText, /1\.920/);
+  assert.match(visibleText, /Podcast do người thật thu âm/);
+  assert.match(visibleText, /Mở tài liệu bài học/);
+  const player = htmlTags(rendered, "audio")[0];
+  assert.ok(player?.src.startsWith("https://anchor.fm/"));
+  assert.ok(catalog.some((item) => item.audioUrl === player.src));
+  assert.match(rendered, /<audio[^>]*controls/);
+  assert.doesNotMatch(html, /vietnamesepod|Mandarin device voice|voice installation is required/i);
+});
+
+test("the catalog contains unique episodes and valid publisher audio links across five levels", async () => {
+  const episodes = JSON.parse(await read("app/data/podcasts.json"));
+  assert.equal(episodes.length, 1920);
+  assert.equal(new Set(episodes.map((item) => item.id)).size, episodes.length);
+  assert.equal(new Set(episodes.map((item) => item.level + item.title.toLowerCase())).size, episodes.length);
+  assert.equal(new Set(episodes.map((item) => item.level)).size, 5);
+  for (const item of episodes) {
+    assert.ok(item.title.trim());
+    assert.ok(item.duration >= 60);
+    assert.equal(new URL(item.audioUrl).protocol, "https:");
+    assert.equal(new URL(item.audioUrl).hostname, "anchor.fm");
+    assert.equal(new URL(item.sourceUrl).protocol, "https:");
+  }
+});
+
+test("every starter sentence and vocabulary item has a bundled AAC audio file", async () => {
+  const manifest = JSON.parse(await read("app/data/starter-audio.json"));
+  const paths = new Set();
+  for (const lesson of catalog) {
+    for (const item of [...lesson.dialogue, ...lesson.vocabulary]) {
+      const path = manifest[item.hanzi];
+      assert.match(path ?? "", /^\/audio\/starter\/[a-f0-9]+\.m4a$/);
+      paths.add(path);
+    }
+  }
+  assert.equal(paths.size, 288);
+  for (const path of paths) {
+    const bytes = await readFile(new URL(`out${path}`, root));
+    assert.ok(bytes.length > 4500, `Audio must not be empty: ${path}`);
+    assert.ok(bytes.includes(Buffer.from("ftyp")), `M4A container missing: ${path}`);
+    assert.ok(bytes.includes(Buffer.from("mdat")), `Audio data missing: ${path}`);
+  }
+});
+
+test("exports safe local icons and metadata for both local and GitHub Pages builds", async () => {
+  const html = await read("out/index.html");
+  const repositoryName = process.env.GITHUB_REPOSITORY?.split("/")[1] ?? "";
+  const basePath = process.env.GITHUB_ACTIONS === "true" && repositoryName && !repositoryName.endsWith(".github.io")
+    ? `/${repositoryName}` : "";
+  const links = htmlTags(html, "link");
+  assert.ok(links.some((link) => link.rel === "manifest" && link.href === `${basePath}/manifest.webmanifest`));
+  assert.ok(links.some((link) => link.rel === "icon" && link.href === `${basePath}/favicon.svg`));
+  const manifest = JSON.parse(await read("out/manifest.webmanifest"));
+  assert.equal(manifest.short_name, "Mandarin Steps");
+  assert.equal(manifest.start_url, "./");
+  assert.equal(manifest.icons[0].src, "favicon.svg");
+  assert.equal(manifest.icons[0].type, "image/svg+xml");
+  assert.ok((await stat(new URL("out/favicon.svg", root))).size > 0);
+
+  const metas = htmlTags(html, "meta");
+  const meta = (name) => metas.find((item) => item.name === name || item.property === name)?.content;
+  assert.match(meta("description"), /Học tiếng Trung/);
+  assert.match(meta("og:title"), /Mandarin Steps/);
+  assert.equal(meta("twitter:card"), "summary");
+  assert.equal(meta("og:image"), undefined);
+  assert.equal(meta("twitter:image"), undefined);
+  assert.equal(meta("referrer"), "strict-origin-when-cross-origin");
+  const csp = metas.find((item) => item["http-equiv"]?.toLowerCase() === "content-security-policy")?.content;
+  assert.ok(csp, "The exported page must retain its content security policy");
+  const directives = csp.split(";").map((directive) => directive.trim());
+  for (const directive of ["default-src 'self'", "object-src 'none'", "form-action 'none'", "media-src 'self' https:", "connect-src 'self'"]) {
+    assert.ok(directives.includes(directive), `Missing CSP directive: ${directive}`);
+  }
+});
+
+test("the current app no longer references the previous audio and transcript sources", async () => {
+  for (const file of ["app/page.tsx", "app/layout.tsx", "app/lib/lessons.ts"]) {
+    assert.doesNotMatch(
+      await read(file),
+      /archive\.org|vietnamesepod|engpod|\/transcripts\/|\.mp3\b|episodes\.json|logo\.jpg|og\.png/i,
+      `${file} should use the Mandarin course and local app assets`,
+    );
+  }
+});
+
+ test("Vietnamese locale, GitHub links and official Ori catalog are present", async () => {
+  const html = await read("out/index.html");
+  assert.match(html, /<html[^>]*lang="vi"/);
+  for (const url of ["https://github.com/lythehoc/chinesepod", "https://github.com/lythehoc"]) {
+    assert.ok(htmlTags(html, "a").some((link) => link.href === url));
+  }
+  const ori = JSON.parse(await read("app/data/ori.json"));
+  assert.equal(ori.length, 104);
+  assert.equal(new Set(ori.map((item) => item.url)).size, 104);
+  for (const item of ori) assert.equal(new URL(item.url).hostname, "tv.cctv.com");
+  for (const lesson of catalog) for (const item of [...lesson.dialogue, ...lesson.vocabulary]) {
+    assert.ok(item.vietnamese.trim());
+    assert.equal(item.english, undefined);
+  }
 });

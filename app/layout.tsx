@@ -14,12 +14,6 @@ const assetBase = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 const siteUrl = (
   process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"
 ).replace(/\/$/, "");
-const socialImageUrl = `${siteUrl}/og.png`;
-const archiveAudioOrigins = [
-  "https://ia600408.us.archive.org",
-  "https://archive.org",
-  "https://*.archive.org",
-];
 const contentSecurityPolicy = [
   "default-src 'self'",
   "base-uri 'self'",
@@ -30,43 +24,35 @@ const contentSecurityPolicy = [
   "font-src 'self'",
   "style-src 'self' 'unsafe-inline'",
   "script-src 'self' 'unsafe-inline'",
-  `media-src 'self' ${archiveAudioOrigins.join(" ")}`,
-  `connect-src 'self' ${archiveAudioOrigins.join(" ")}`,
+  "media-src 'self' https:",
+  "frame-src https://www.youtube-nocookie.com",
+  "connect-src 'self'",
   "upgrade-insecure-requests",
 ].join("; ");
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title: "engpod - small step every day",
+  title: "Mandarin Steps — Mỗi ngày một chút tiếng Trung.",
   description:
-    "Learn English with 365 podcast conversations, searchable transcripts, level filters, shuffle, and automatic listening progress.",
+    "Học tiếng Trung với 24 bài nhập môn có nghĩa tiếng Việt, 1.920 tập ChinesePod và Công chúa Ori. Có pinyin và âm thanh luyện tập sẵn.",
   referrer: "strict-origin-when-cross-origin",
   manifest: `${assetBase}/manifest.webmanifest`,
   icons: {
     icon: `${assetBase}/favicon.svg`,
     shortcut: `${assetBase}/favicon.svg`,
-    apple: `${assetBase}/logo.jpg`,
+    apple: `${assetBase}/favicon.svg`,
   },
   openGraph: {
-    title: "engpod - small step every day",
+    title: "Mandarin Steps — Mỗi ngày một chút tiếng Trung.",
     description:
-      "A focused English listening library with 365 episodes, transcripts, level filters, shuffle, and automatic resume.",
+      "Học tiếng Trung với 24 bài nhập môn có nghĩa tiếng Việt, 1.920 tập ChinesePod và Công chúa Ori. Có pinyin và âm thanh luyện tập sẵn.",
     type: "website",
-    images: [
-      {
-        url: socialImageUrl,
-        width: 1731,
-        height: 908,
-        alt: "engpod - small step every day",
-      },
-    ],
   },
   twitter: {
-    card: "summary_large_image",
-    title: "engpod - small step every day",
+    card: "summary",
+    title: "Mandarin Steps — Mỗi ngày một chút tiếng Trung.",
     description:
-      "A focused English listening library with 365 episodes and transcripts.",
-    images: [socialImageUrl],
+      "Học tiếng Trung với 24 bài nhập môn có nghĩa tiếng Việt, 1.920 tập ChinesePod và Công chúa Ori. Có pinyin và âm thanh luyện tập sẵn.",
   },
 };
 
@@ -87,7 +73,7 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="en"
+      lang="vi"
       className={handwritingFont.variable}
       suppressHydrationWarning
     >

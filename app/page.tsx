@@ -1,1497 +1,239 @@
 "use client";
+import { levelLabel } from "./lib/labels";
 
-import {
-  memo,
-  type ChangeEvent,
-  type KeyboardEvent as ReactKeyboardEvent,
-  type TouchEvent as ReactTouchEvent,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
-import episodesData from "./data/episodes.json";
-
-type Episode = {
-  id: number;
-  original_title: string;
-  title: string;
-  level: string;
-  mp3: string;
-  poster: string;
-  transcript_id: string;
-  transcript_url: string;
-};
+import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
+import { MediaIcon, UiIcon } from "./components/icons";
+import { lessons, LEVELS, matchesLesson, type Lesson } from "./lib/lessons";
+import { useStarterAudio } from "./lib/use-starter-audio";
+import OriLibrary from "./components/ori-library";
+import PodcastLibrary, { PODCAST_COUNT } from "./components/podcast-library";
 
 type CompletionFilter = "all" | "unfinished" | "finished";
-type Theme = "light" | "dark";
-type ResumeRecord = {
-  episodeId: number;
-  position: number;
+type Preferences = {
+  theme: "light" | "dark"; pinyin: boolean; english: boolean; rate: number;
+  loop: boolean; autoplayNext: boolean; level: string; completion: CompletionFilter;
 };
-type PersistedSettings = {
-  loop: boolean;
-  autoplayNext: boolean;
-  selectedLevel: string;
-  completionFilter: CompletionFilter;
-  transcriptVisible: boolean;
-  playbackRate: number;
-};
+type SleepTimer = { until: number | null; remaining: number };
+type Session = { lessonId: number; initialLine: number; autoplay: boolean; revision: number };
+const DEFAULTS: Preferences = { theme: "light", pinyin: true, english: true, rate: 0.85, loop: false, autoplayNext: false, level: "All", completion: "all" };
+const STORAGE = { settings: "mandarinsteps:settings-v1", completed: "mandarinsteps:completed-v1", resume: "mandarinsteps:resume-v1" };
+const RATES = [0.65, 0.85, 1, 1.15];
 
-const episodes = episodesData as Episode[];
-const LEVEL_ORDER = [
-  "Elementary",
-  "Intermediate",
-  "Upper-Intermediate",
-  "Advanced",
-  "Daily Life",
-  "The Office",
-  "The Weekend",
-  "Global View",
-  "Advanced Media",
-];
-const EPISODE_BY_ID = new Map(
-  episodes.map((episode) => [episode.id, episode]),
-);
-const EPISODE_INDEX_BY_ID = new Map(
-  episodes.map((episode, index) => [episode.id, index]),
-);
-const EPISODE_COUNT_BY_LEVEL = new Map(
-  LEVEL_ORDER.map((level) => [
-    level,
-    episodes.filter((episode) => episode.level === level).length,
-  ]),
-);
-const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
-const DEFAULT_AUDIO_BASE =
-  "https://ia600408.us.archive.org/10/items/englishpod_all";
-const ARCHIVE_AUDIO_FALLBACKS = [
-  "https://archive.org/download/englishpod_all",
-];
-const EXTERNAL_AUDIO_BASES = [
-  DEFAULT_AUDIO_BASE,
-  ...ARCHIVE_AUDIO_FALLBACKS,
-];
-const STORAGE = {
-  resume: "englishpod:last-resume",
-  legacyEpisode: "englishpod:last-episode",
-  legacyPositions: "englishpod:positions",
-  completed: "englishpod:completed",
-  theme: "englishpod:theme",
-  settings: "englishpod:settings-v1",
-};
-const COMPLETION_FILTERS: CompletionFilter[] = [
-  "all",
-  "unfinished",
-  "finished",
-];
-const PLAYBACK_RATES = [0.75, 1, 1.25, 1.5, 2];
-const SLEEP_TIMER_OPTIONS = [0, 15, 30, 45, 60] as const;
-const POSITION_SAVE_INTERVAL_MS = 1_000;
-const AUDIO_RECOVERY_TIMEOUT_MS = 12_000;
-const FINAL_AUDIO_RECOVERY_TIMEOUT_MS = 30_000;
-
-type MediaIconName =
-  | "replay10"
-  | "previous"
-  | "play"
-  | "pause"
-  | "next"
-  | "forward10";
-type UiIconName = "help" | "close" | "sun" | "moon";
-
-// Google Material Symbols Rounded, Apache 2.0:
-// https://github.com/google/material-design-icons
-const MEDIA_ICON_PATHS: Record<MediaIconName, string> = {
-  replay10:
-    "M360-514.67h-30q-11.27 0-18.63-7.57-7.37-7.58-7.37-19.17 0-11.59 7.56-18.76 7.55-7.16 19.11-7.16h56.66q11.67 0 18.84 7.16 7.16 7.17 7.16 18.84V-340q0 11.56-7.57 19.11-7.58 7.56-19.17 7.56-11.59 0-19.09-7.56-7.5-7.55-7.5-19.11v-174.67Zm144.67 201.34q-18.14 0-30.4-12.27Q462-337.87 462-356v-168.67q0-18.13 12.27-30.4 12.26-12.26 30.4-12.26h82q18.13 0 30.4 12.26 12.26 12.27 12.26 30.4V-356q0 18.13-12.26 30.4-12.27 12.27-30.4 12.27h-82Zm10.66-53.34H576v-148h-60.67v148ZM480-80q-75 0-140.5-28.17-65.5-28.16-114.33-77-48.84-48.83-77-114.33Q120-365 120-440q0-14.17 9.62-23.75 9.61-9.58 23.83-9.58 14.22 0 23.72 9.58 9.5 9.58 9.5 23.75 0 122.57 85.38 207.95T480-146.67q122.57 0 207.95-85.38T773.33-440q0-122.57-83.83-207.95t-206.17-85.38h-16.66l46 46q10 10 9.83 23.33-.17 13.33-9.57 23.33-10.26 10-23.76 10.17-13.5.17-23.5-9.83L361.33-744.67q-10-10-10-23.33 0-13.33 10-23.33l105-105q9.34-9.34 23.17-9.17 13.83.17 23.4 9.5 8.77 9.33 8.93 23 .17 13.67-9.16 23l-50 50H480q75 0 140.5 28.17 65.5 28.16 114.33 77 48.84 48.83 77 114.33Q840-515 840-440t-28.17 140.5q-28.16 65.5-77 114.33-48.83 48.84-114.33 77Q555-80 480-80Z",
-  previous:
-    "M220-273.33v-413.34q0-14.16 9.62-23.75 9.61-9.58 23.83-9.58 14.22 0 23.72 9.58 9.5 9.59 9.5 23.75v413.34q0 14.16-9.62 23.75-9.62 9.58-23.83 9.58-14.22 0-23.72-9.58-9.5-9.59-9.5-23.75Zm468-2.34L430-452.33q-7.67-5.34-11.17-12.37-3.5-7.03-3.5-15.3t3.5-15.3q3.5-7.03 11.17-12.37l258-176.66q4.33-3.34 9-4.67t9.67-1.33q13.33 0 23.33 9.16Q740-672 740-657v354q0 15-10 24.17-10 9.16-23.33 9.16-5 0-9.67-1.33t-9-4.67Z",
-  play:
-    "M292-247.33v-469.34q0-24 15.71-38.5 15.72-14.5 36.34-14.5 6.8 0 14.21 1.67 7.41 1.67 14.66 5.95l369.41 236.38q11.67 7.67 18 19.17 6.34 11.5 6.34 24.5t-6.34 24.5q-6.33 11.5-18 19.17L372.92-201.95q-7.25 4.28-14.68 5.62Q350.81-195 344-195q-20.67 0-36.33-14.02Q292-223.03 292-247.33Z",
-  pause:
-    "M623.33-200q-27.5 0-47.08-19.58-19.58-19.59-19.58-47.09v-426.66q0-27.5 19.58-47.09Q595.83-760 623.33-760H660q27.5 0 47.08 19.58 19.59 19.59 19.59 47.09v426.66q0 27.5-19.59 47.09Q687.5-200 660-200h-36.67ZM300-200q-27.5 0-47.08-19.58-19.59-19.59-19.59-47.09v-426.66q0-27.5 19.59-47.09Q272.5-760 300-760h36.67q27.5 0 47.08 19.58 19.58 19.59 19.58 47.09v426.66q0 27.5-19.58 47.09Q364.17-200 336.67-200H300Z",
-  next:
-    "M673.33-273.33v-413.34q0-14.16 9.62-23.75 9.62-9.58 23.83-9.58 14.22 0 23.72 9.58 9.5 9.59 9.5 23.75v413.34q0 14.16-9.62 23.75-9.61 9.58-23.83 9.58-14.22 0-23.72-9.58-9.5-9.59-9.5-23.75ZM220-303v-354q0-15 10-24.17 10-9.16 23.33-9.16 5 0 9.67 1.33t9 4.67l258 176.66q7.67 5.34 11.17 12.37 3.5 7.03 3.5 15.3t-3.5 15.3q-3.5 7.03-11.17 12.37L272-275.67q-4.33 3.34-9 4.67t-9.67 1.33q-13.33 0-23.33-9.16Q220-288 220-303Z",
-  forward10:
-    "M480-80q-75 0-140.5-28.17-65.5-28.16-114.33-77-48.84-48.83-77-114.33Q120-365 120-440t28.17-140.5q28.16-65.5 77-114.33 48.83-48.84 114.33-77Q405-800 480-800h17.33L448-849.33q-9.33-9.34-9.17-23 .17-13.67 8.94-23 9.56-9.34 23.06-9.84 13.5-.5 22.84 8.84l105 105q10 10 10 23.33 0 13.33-10 23.33L494.33-640.33q-10 10-23.5 9.83-13.5-.17-23.76-10.17-9.4-10-9.57-23.33-.17-13.33 9.83-23.33l46-46h-16.66q-122.34 0-206.17 85.38-83.83 85.38-83.83 207.95t85.38 207.95q85.38 85.38 207.95 85.38t207.95-85.38q85.38-85.38 85.38-207.95 0-14.17 9.62-23.75t23.83-9.58q14.22 0 23.72 9.58 9.5 9.58 9.5 23.75 0 75-28.17 140.5-28.16 65.5-77 114.33-48.83 48.84-114.33 77Q555-80 480-80ZM360-514.67h-30q-11.27 0-18.63-7.57-7.37-7.58-7.37-19.17 0-11.59 7.56-18.76 7.55-7.16 19.11-7.16h56.66q11.67 0 18.84 7.16 7.16 7.17 7.16 18.84V-340q0 11.56-7.57 19.11-7.58 7.56-19.17 7.56-11.59 0-19.09-7.56-7.5-7.55-7.5-19.11v-174.67Zm144.67 201.34q-18.14 0-30.4-12.27Q462-337.87 462-356v-168.67q0-18.13 12.27-30.4 12.26-12.26 30.4-12.26h82q18.13 0 30.4 12.26 12.26 12.27 12.26 30.4V-356q0 18.13-12.26 30.4-12.27 12.27-30.4 12.27h-82Zm10.66-53.34H576v-148h-60.67v148Z",
-};
-
-function MediaIcon({ name }: { name: MediaIconName }) {
-  return (
-    <svg
-      className={`media-icon media-icon-${name}`}
-      viewBox="0 -960 960 960"
-      aria-hidden="true"
-      focusable="false"
-    >
-      <path d={MEDIA_ICON_PATHS[name]} />
-    </svg>
-  );
+function readStored(key: string): unknown {
+  try { return JSON.parse(localStorage.getItem(key) ?? "null"); } catch { return null; }
 }
-
-function UiIcon({ name }: { name: UiIconName }) {
-  return (
-    <svg
-      className="ui-icon"
-      viewBox="0 0 24 24"
-      aria-hidden="true"
-      focusable="false"
-    >
-      {name === "help" && (
-        <>
-          <path d="M9.1 9a3.15 3.15 0 1 1 4.3 2.94c-.86.34-1.4 1.03-1.4 1.81v.35" />
-          <path d="M12 17.5h.01" />
-        </>
-      )}
-      {name === "close" && (
-        <>
-          <path d="m7 7 10 10" />
-          <path d="M17 7 7 17" />
-        </>
-      )}
-      {name === "sun" && (
-        <>
-          <circle cx="12" cy="12" r="3.5" />
-          <path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.28 5.28l1.42 1.42M17.3 17.3l1.42 1.42M18.72 5.28 17.3 6.7M6.7 17.3l-1.42 1.42" />
-        </>
-      )}
-      {name === "moon" && (
-        <path d="M20.2 14.55A8.4 8.4 0 0 1 9.45 3.8 8.4 8.4 0 1 0 20.2 14.55Z" />
-      )}
-    </svg>
-  );
+function saveStored(key: string, value: unknown) {
+  try { localStorage.setItem(key, JSON.stringify(value)); } catch { /* Learning works without storage. */ }
 }
-
-function formatTime(value: number) {
-  if (!Number.isFinite(value) || value < 0) return "0:00";
-  const minutes = Math.floor(value / 60);
-  const seconds = Math.floor(value % 60);
-  return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+function record(value: unknown): Record<string, unknown> {
+  return value && typeof value === "object" && !Array.isArray(value) ? value as Record<string, unknown> : {};
 }
-
-function formatCountdown(value: number) {
-  const safeValue = Math.max(0, Math.ceil(value));
-  const minutes = Math.floor(safeValue / 60);
-  const seconds = safeValue % 60;
-  return `${minutes}:${seconds.toString().padStart(2, "0")}`;
-}
-
-function readNumberMap(key: string): Record<string, number> {
-  try {
-    const parsed: unknown = JSON.parse(localStorage.getItem(key) ?? "{}");
-    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) return {};
-    return Object.fromEntries(
-      Object.entries(parsed).filter(
-        ([key, value]) =>
-          /^\d+$/.test(key) && typeof value === "number" && Number.isFinite(value),
-      ),
-    );
-  } catch {
-    return {};
-  }
-}
-
-function readResumeRecord(): ResumeRecord | null {
-  try {
-    const parsed: unknown = JSON.parse(
-      localStorage.getItem(STORAGE.resume) ?? "null",
-    );
-    if (
-      parsed &&
-      typeof parsed === "object" &&
-      "episodeId" in parsed &&
-      "position" in parsed
-    ) {
-      const episodeId = (parsed as ResumeRecord).episodeId;
-      const position = (parsed as ResumeRecord).position;
-      if (
-        Number.isInteger(episodeId) &&
-        EPISODE_BY_ID.has(episodeId) &&
-        Number.isFinite(position) &&
-        position >= 0
-      ) {
-        return { episodeId, position };
-      }
-    }
-  } catch {
-    // Fall through to the legacy one-time migration below.
-  }
-
-  const legacyEpisodeId = Number(
-    localStorage.getItem(STORAGE.legacyEpisode),
-  );
-  if (!EPISODE_BY_ID.has(legacyEpisodeId)) return null;
-  const legacyPosition =
-    readNumberMap(STORAGE.legacyPositions)[String(legacyEpisodeId)] ?? 0;
-  return {
-    episodeId: legacyEpisodeId,
-    position: Math.max(0, legacyPosition),
-  };
-}
-
-function readSettings(): Partial<PersistedSettings> {
-  try {
-    const parsed: unknown = JSON.parse(
-      localStorage.getItem(STORAGE.settings) ?? "{}",
-    );
-    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) return {};
-    return parsed as Partial<PersistedSettings>;
-  } catch {
-    return {};
-  }
-}
-
-function sanitizeTranscriptHtml(html: string) {
-  const parsed = new DOMParser().parseFromString(html, "text/html");
-  // Every source file repeats the current episode title as its first H1.
-  // The page already shows that title prominently, so remove only this copy.
-  parsed.body.querySelector("h1")?.remove();
-  const allowedTags = new Set([
-    "H1",
-    "H2",
-    "DIV",
-    "P",
-    "SPAN",
-    "UL",
-    "OL",
-    "LI",
-    "BR",
-    "STRONG",
-    "EM",
-  ]);
-  const allowedClasses = new Set([
-    "dialogue-block",
-    "line",
-    "speaker",
-    "text",
-    "vocab-block",
-    "vocab-item",
-    "word",
-    "type",
-    "definition",
-  ]);
-
-  for (const element of Array.from(parsed.body.querySelectorAll("*"))) {
-    if (!allowedTags.has(element.tagName)) {
-      const parent = element.parentNode;
-      if (parent) {
-        while (element.firstChild) parent.insertBefore(element.firstChild, element);
-        element.remove();
-      }
-      continue;
-    }
-
-    const safeClasses = Array.from(element.classList).filter((className) =>
-      allowedClasses.has(className),
-    );
-    for (const attribute of Array.from(element.attributes)) {
-      element.removeAttribute(attribute.name);
-    }
-    if (safeClasses.length > 0) element.className = safeClasses.join(" ");
-  }
-
-  return parsed.body.innerHTML;
-}
-
-const EpisodeRow = memo(function EpisodeRow({
-  episode,
-  active,
-  completed,
-  onSelect,
-  onToggleCompleted,
-}: {
-  episode: Episode;
-  active: boolean;
-  completed: boolean;
-  onSelect: (episode: Episode) => void;
-  onToggleCompleted: (episodeId: number, completed: boolean) => void;
-}) {
-  return (
-    <div className={`episode-row ${active ? "is-active" : ""}`}>
-      <button
-        className="episode-select"
-        onClick={() => onSelect(episode)}
-        aria-current={active ? "true" : undefined}
-      >
-        <span className="episode-number" aria-hidden="true">
-          {episode.id}
-        </span>
-        <span className="episode-copy">
-          <strong>{episode.title}</strong>
-          <span>{episode.level}</span>
-        </span>
-      </button>
-      <button
-        className={`episode-complete ${completed ? "is-finished" : ""}`}
-        onClick={() => onToggleCompleted(episode.id, !completed)}
-        aria-label={
-          completed
-            ? `Mark ${episode.title} as unfinished`
-            : `Mark ${episode.title} as finished`
-        }
-        aria-pressed={completed}
-        title={completed ? "Marked as finished" : "Mark as finished"}
-      >
-        <span aria-hidden="true">✓</span>
-      </button>
-    </div>
-  );
-});
 
 export default function Home() {
-  const audioRef = useRef<HTMLAudioElement>(null);
-  const episodeListRef = useRef<HTMLDivElement>(null);
-  const sidebarSwipeStartRef = useRef<{ x: number; y: number } | null>(null);
-  const playerSwipeStartRef = useRef<{ x: number; y: number } | null>(null);
-  const pendingAutoplayRef = useRef(false);
-  const playbackIntentRef = useRef(false);
-  const fallbackPositionRef = useRef<number | null>(null);
-  const lastPositionWriteRef = useRef(0);
-  const resumeCheckpointRef = useRef<ResumeRecord | null>(null);
-  const [currentId, setCurrentId] = useState(5);
-  const [query, setQuery] = useState("");
-  const [selectedLevel, setSelectedLevel] = useState("All");
-  const [completionFilter, setCompletionFilter] =
-    useState<CompletionFilter>("all");
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [transcriptVisible, setTranscriptVisible] = useState(true);
-  const [transcript, setTranscript] = useState("");
-  const [transcriptLoading, setTranscriptLoading] = useState(true);
-  const [transcriptError, setTranscriptError] = useState(false);
-  const [theme, setTheme] = useState<Theme>("dark");
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [isBuffering, setIsBuffering] = useState(false);
-  const [currentTime, setCurrentTime] = useState(0);
-  const [duration, setDuration] = useState(0);
-  const [playbackRate, setPlaybackRate] = useState(1);
-  const [loop, setLoop] = useState(false);
-  const [autoplayNext, setAutoplayNext] = useState(true);
-  const [sleepTimerMinutes, setSleepTimerMinutes] = useState(0);
-  const [sleepTimerEndAt, setSleepTimerEndAt] = useState<number | null>(null);
-  const [sleepTimerRemainingSeconds, setSleepTimerRemainingSeconds] = useState(0);
+  const [mode, setMode] = useState<"recordings" | "practice" | "ori">("recordings");
+  return <div className="workspace"><nav className="course-switcher" aria-label="Thư viện học tiếng Trung"><div className="course-tabs"><button aria-pressed={mode === "recordings"} onClick={() => setMode("recordings")}>Podcast <span>{PODCAST_COUNT.toLocaleString("vi-VN")}</span></button><button aria-pressed={mode === "practice"} onClick={() => setMode("practice")}>Bài nhập môn <span>24</span></button><button aria-pressed={mode === "ori"} onClick={() => setMode("ori")}>Công chúa Ori <span>104</span></button></div><div className="github-links"><a href="https://github.com/lythehoc/chinesepod" target="_blank" rel="noreferrer">GitHub ↗</a><a href="https://github.com/lythehoc" target="_blank" rel="noreferrer" aria-label="Theo dõi lythehoc trên GitHub">Theo dõi @lythehoc ↗</a></div></nav>{mode === "recordings" ? <PodcastLibrary /> : mode === "practice" ? <StarterCourse /> : <OriLibrary />}</div>;
+}
+
+function StarterCourse() {
+  const [preferences, setPreferences] = useState(DEFAULTS);
+  const [session, setSession] = useState<Session>({ lessonId: 1, initialLine: 0, autoplay: false, revision: 0 });
   const [completedIds, setCompletedIds] = useState<number[]>([]);
-  const [helpOpen, setHelpOpen] = useState(false);
-  const [audioSourceIndex, setAudioSourceIndex] = useState(0);
-  const [audioFailed, setAudioFailed] = useState(false);
-  const [settingsLoaded, setSettingsLoaded] = useState(false);
-
-  const currentEpisode = EPISODE_BY_ID.get(currentId) ?? episodes[0];
-  const currentIndex = EPISODE_INDEX_BY_ID.get(currentId) ?? 0;
-  const completedIdSet = useMemo(() => new Set(completedIds), [completedIds]);
-  const audioFileName = `${currentEpisode.transcript_id}pb.mp3`;
-  const audioUrl = `${EXTERNAL_AUDIO_BASES[audioSourceIndex]}/${audioFileName}`;
-
-  const levels = useMemo(
-    () =>
-      LEVEL_ORDER.filter((level) =>
-        episodes.some((episode) => episode.level === level),
-      ),
-    [],
-  );
-
-  const matchingEpisodes = useMemo(() => {
-    const normalized = query.trim().toLowerCase();
-    return episodes.filter((episode) => {
-      const matchesLevel =
-        selectedLevel === "All" || episode.level === selectedLevel;
-      const matchesQuery =
-        !normalized ||
-        episode.title.toLowerCase().includes(normalized) ||
-        episode.level.toLowerCase().includes(normalized) ||
-        String(episode.id).includes(normalized);
-      return matchesLevel && matchesQuery;
-    });
-  }, [query, selectedLevel]);
-
-  const completionCounts = useMemo(() => {
-    const finished = matchingEpisodes.filter((episode) =>
-      completedIdSet.has(episode.id),
-    ).length;
-    return {
-      all: matchingEpisodes.length,
-      unfinished: matchingEpisodes.length - finished,
-      finished,
-    };
-  }, [completedIdSet, matchingEpisodes]);
-
-  const visibleEpisodes = useMemo(() => {
-    const filtered = matchingEpisodes.filter((episode) => {
-      const finished = completedIdSet.has(episode.id);
-      if (completionFilter === "finished") return finished;
-      if (completionFilter === "unfinished") return !finished;
-      return true;
-    });
-
-    return [...filtered].sort((a, b) => a.id - b.id);
-  }, [completedIdSet, completionFilter, matchingEpisodes]);
-
-  const savePosition = useCallback((episodeId: number, position: number) => {
-    const safePosition = Math.max(
-      0,
-      Number.isFinite(position) ? Math.floor(position) : 0,
-    );
-    const checkpoint = resumeCheckpointRef.current;
-    const savedPosition =
-      checkpoint?.episodeId === episodeId
-        ? Math.max(safePosition, checkpoint.position)
-        : safePosition;
-    if (
-      checkpoint?.episodeId === episodeId &&
-      safePosition >= checkpoint.position
-    ) {
-      resumeCheckpointRef.current = null;
-    }
-    localStorage.setItem(
-      STORAGE.resume,
-      JSON.stringify({ episodeId, position: savedPosition }),
-    );
-  }, []);
-
-  const selectEpisode = useCallback(
-    (episode: Episode, autoplay = true) => {
-      if (audioRef.current) {
-        savePosition(currentId, audioRef.current.currentTime);
-        audioRef.current.pause();
-      }
-      resumeCheckpointRef.current = null;
-      fallbackPositionRef.current = null;
-      savePosition(episode.id, 0);
-      pendingAutoplayRef.current = autoplay;
-      playbackIntentRef.current = autoplay;
-      setAudioSourceIndex(0);
-      setAudioFailed(false);
-      setIsBuffering(autoplay);
-      setCurrentId(episode.id);
-      setCurrentTime(0);
-      setDuration(0);
-      setIsPlaying(false);
-      setTranscript("");
-      setTranscriptLoading(true);
-      setTranscriptError(false);
-      setSidebarOpen(false);
-    },
-    [currentId, savePosition],
-  );
-
-  const nextEpisode = useCallback(
-    (autoplay = true) => {
-      const orderedCandidates = Array.from(
-        { length: episodes.length },
-        (_, offset) => episodes[(currentIndex + offset + 1) % episodes.length],
-      );
-      const next =
-        orderedCandidates.find(
-          (episode) => !completedIds.includes(episode.id),
-        ) ?? orderedCandidates[0];
-      selectEpisode(next, autoplay);
-    },
-    [completedIds, currentIndex, selectEpisode],
-  );
-
-  const previousEpisode = useCallback(() => {
-    const previousCandidates = Array.from(
-      { length: episodes.length },
-      (_, offset) =>
-        episodes[
-          (currentIndex - offset - 1 + episodes.length) % episodes.length
-        ],
-    );
-    const previous =
-      previousCandidates.find(
-        (episode) => !completedIds.includes(episode.id),
-      ) ?? previousCandidates[0];
-    selectEpisode(previous);
-  }, [completedIds, currentIndex, selectEpisode]);
-
-  const shuffleEpisode = useCallback(() => {
-    const pool = visibleEpisodes.length > 1 ? visibleEpisodes : episodes;
-    const unfinishedVisible = pool.filter(
-      (episode) =>
-        episode.id !== currentId && !completedIds.includes(episode.id),
-    );
-    const unfinishedAnywhere = episodes.filter(
-      (episode) =>
-        episode.id !== currentId && !completedIds.includes(episode.id),
-    );
-    const candidates =
-      unfinishedVisible.length > 0
-        ? unfinishedVisible
-        : unfinishedAnywhere.length > 0
-          ? unfinishedAnywhere
-          : pool.filter((episode) => episode.id !== currentId);
-    const next =
-      candidates[Math.floor(Math.random() * candidates.length)] ?? pool[0];
-    selectEpisode(next);
-  }, [completedIds, currentId, selectEpisode, visibleEpisodes]);
-
-  const updateCompleted = useCallback(
-    (episodeId: number, completed: boolean) => {
-      const savedCompleted = readNumberMap(STORAGE.completed);
-      if (completed) {
-        savedCompleted[String(episodeId)] = 1;
-      } else {
-        delete savedCompleted[String(episodeId)];
-      }
-      localStorage.setItem(STORAGE.completed, JSON.stringify(savedCompleted));
-      setCompletedIds((ids) =>
-        completed
-          ? ids.includes(episodeId)
-            ? ids
-            : [...ids, episodeId]
-          : ids.filter((id) => id !== episodeId),
-      );
-    },
-    [],
-  );
-
-  const togglePlayback = useCallback(() => {
-    const audio = audioRef.current;
-    if (!audio) return;
-    if (audio.paused) {
-      playbackIntentRef.current = true;
-      if (audioFailed) {
-        pendingAutoplayRef.current = true;
-        setAudioFailed(false);
-        setAudioSourceIndex(0);
-        setIsBuffering(true);
-        return;
-      }
-      setIsBuffering(true);
-      void audio.play().catch(() => setIsPlaying(false));
-    } else {
-      playbackIntentRef.current = false;
-      savePosition(currentId, audio.currentTime);
-      audio.pause();
-      setIsPlaying(false);
-    }
-  }, [audioFailed, currentId, savePosition]);
-
-  const seek = useCallback(
-    (seconds: number) => {
-      const audio = audioRef.current;
-      if (!audio) return;
-      resumeCheckpointRef.current = null;
-      audio.currentTime = Math.min(
-        Math.max(0, audio.currentTime + seconds),
-        audio.duration || Infinity,
-      );
-      savePosition(currentId, audio.currentTime);
-    },
-    [currentId, savePosition],
-  );
-
-  const handleAudioFailure = useCallback(() => {
-    const audio = audioRef.current;
-    const failedAt = audio?.currentTime ?? 0;
-    fallbackPositionRef.current =
-      Number.isFinite(failedAt) && failedAt > 0 ? failedAt : null;
-    setIsPlaying(false);
-
-    if (audioSourceIndex < EXTERNAL_AUDIO_BASES.length - 1) {
-      pendingAutoplayRef.current = playbackIntentRef.current;
-      setAudioSourceIndex(audioSourceIndex + 1);
-      setIsBuffering(true);
-      return;
-    }
-
-    pendingAutoplayRef.current = false;
-    playbackIntentRef.current = false;
-    setAudioFailed(true);
-    setIsBuffering(false);
-  }, [audioSourceIndex]);
-
-  const cycleSleepTimer = useCallback(() => {
-    const index = SLEEP_TIMER_OPTIONS.indexOf(
-      sleepTimerMinutes as (typeof SLEEP_TIMER_OPTIONS)[number],
-    );
-    const nextMinutes =
-      SLEEP_TIMER_OPTIONS[(index + 1) % SLEEP_TIMER_OPTIONS.length];
-    setSleepTimerMinutes(nextMinutes);
-    setSleepTimerRemainingSeconds(nextMinutes * 60);
-    setSleepTimerEndAt(
-      nextMinutes > 0 ? Date.now() + nextMinutes * 60_000 : null,
-    );
-  }, [sleepTimerMinutes]);
-
-  const handleSidebarTouchStart = useCallback(
-    (event: ReactTouchEvent<HTMLElement>) => {
-      if (
-        event.target instanceof Element &&
-        event.target.closest("[data-drawer-swipe-ignore]")
-      ) {
-        sidebarSwipeStartRef.current = null;
-        return;
-      }
-      const touch = event.touches[0];
-      sidebarSwipeStartRef.current = touch
-        ? { x: touch.clientX, y: touch.clientY }
-        : null;
-    },
-    [],
-  );
-
-  const handleSidebarTouchEnd = useCallback(
-    (event: ReactTouchEvent<HTMLElement>) => {
-      const start = sidebarSwipeStartRef.current;
-      const touch = event.changedTouches[0];
-      sidebarSwipeStartRef.current = null;
-      if (!start || !touch) return;
-      const distanceX = start.x - touch.clientX;
-      const distanceY = Math.abs(start.y - touch.clientY);
-      if (distanceX >= 56 && distanceX > distanceY * 1.25) {
-        setSidebarOpen(false);
-      }
-    },
-    [],
-  );
-
-  const handlePlayerTouchStart = useCallback(
-    (event: ReactTouchEvent<HTMLElement>) => {
-      if (
-        !(event.target instanceof Element) ||
-        event.target.closest("button, input, select, a")
-      ) {
-        playerSwipeStartRef.current = null;
-        return;
-      }
-      const touch = event.touches[0];
-      playerSwipeStartRef.current = touch
-        ? { x: touch.clientX, y: touch.clientY }
-        : null;
-    },
-    [],
-  );
-
-  const handlePlayerTouchEnd = useCallback(
-    (event: ReactTouchEvent<HTMLElement>) => {
-      const start = playerSwipeStartRef.current;
-      const touch = event.changedTouches[0];
-      playerSwipeStartRef.current = null;
-      if (!start || !touch) return;
-      const distanceX = touch.clientX - start.x;
-      const distanceY = Math.abs(touch.clientY - start.y);
-      if (distanceX >= 56 && distanceX > distanceY * 1.25) {
-        setSidebarOpen(true);
-      }
-    },
-    [],
-  );
+  const [ready, setReady] = useState(false);
+  const [sleepTimer, setSleepTimer] = useState<SleepTimer>({ until: null, remaining: 0 });
+  const [query, setQuery] = useState("");
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const guideRef = useRef<HTMLDialogElement>(null);
+  const menuRef = useRef<HTMLButtonElement>(null);
+  const sidebarRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
-    let cancelled = false;
-    queueMicrotask(() => {
-      if (cancelled) return;
-      const savedResume = readResumeRecord();
-      const savedTheme = localStorage.getItem(STORAGE.theme) as Theme | null;
-      const savedCompleted = readNumberMap(STORAGE.completed);
-      const savedSettings = readSettings();
-      if (savedResume) {
-        setCurrentId(savedResume.episodeId);
-        localStorage.setItem(STORAGE.resume, JSON.stringify(savedResume));
+    const frame = requestAnimationFrame(() => {
+      const saved = record(readStored(STORAGE.settings));
+      const next = { ...DEFAULTS };
+      if (saved.theme === "light" || saved.theme === "dark") next.theme = saved.theme;
+      for (const key of ["pinyin", "english", "loop", "autoplayNext"] as const) {
+        if (typeof saved[key] === "boolean") next[key] = saved[key];
       }
-      localStorage.removeItem(STORAGE.legacyEpisode);
-      localStorage.removeItem(STORAGE.legacyPositions);
-      setCompletedIds(
-        Object.entries(savedCompleted)
-          .filter(([, value]) => Boolean(value))
-          .map(([id]) => Number(id)),
-      );
-      const nextTheme =
-        savedTheme === "light" || savedTheme === "dark"
-          ? savedTheme
-          : window.matchMedia("(prefers-color-scheme: light)").matches
-            ? "light"
-            : "dark";
-      setTheme(nextTheme);
-      document.documentElement.dataset.theme = nextTheme;
-      if (typeof savedSettings.loop === "boolean") setLoop(savedSettings.loop);
-      if (typeof savedSettings.autoplayNext === "boolean") {
-        setAutoplayNext(savedSettings.autoplayNext);
-      }
-      if (
-        savedSettings.selectedLevel === "All" ||
-        LEVEL_ORDER.includes(savedSettings.selectedLevel ?? "")
-      ) {
-        setSelectedLevel(savedSettings.selectedLevel ?? "All");
-      }
-      if (
-        COMPLETION_FILTERS.includes(
-          savedSettings.completionFilter as CompletionFilter,
-        )
-      ) {
-        setCompletionFilter(
-          savedSettings.completionFilter as CompletionFilter,
-        );
-      }
-      if (typeof savedSettings.transcriptVisible === "boolean") {
-        setTranscriptVisible(savedSettings.transcriptVisible);
-      }
-      if (PLAYBACK_RATES.includes(savedSettings.playbackRate ?? 0)) {
-        setPlaybackRate(savedSettings.playbackRate ?? 1);
-      }
-      setSettingsLoaded(true);
+      if (typeof saved.rate === "number" && RATES.includes(saved.rate)) next.rate = saved.rate;
+      if (typeof saved.level === "string" && ["All", ...LEVELS].includes(saved.level)) next.level = saved.level;
+      if (saved.completion === "all" || saved.completion === "finished" || saved.completion === "unfinished") next.completion = saved.completion;
+      setPreferences(next);
+      const completed = readStored(STORAGE.completed);
+      if (Array.isArray(completed)) setCompletedIds([...new Set(completed.filter((id): id is number => typeof id === "number" && lessons.some((lesson) => lesson.id === id)))]);
+      const resume = record(readStored(STORAGE.resume));
+      const lesson = lessons.find((item) => item.id === resume.lessonId);
+      if (lesson) setSession({ lessonId: lesson.id, initialLine: typeof resume.line === "number" && Number.isInteger(resume.line) ? Math.max(0, Math.min(lesson.dialogue.length - 1, resume.line)) : 0, autoplay: false, revision: 1 });
+      setReady(true);
     });
-    return () => {
-      cancelled = true;
-    };
+    return () => cancelAnimationFrame(frame);
   }, []);
-
   useEffect(() => {
-    document.documentElement.dataset.theme = theme;
-    localStorage.setItem(STORAGE.theme, theme);
-  }, [theme]);
-
+    document.documentElement.dataset.theme = preferences.theme;
+    if (ready) saveStored(STORAGE.settings, preferences);
+  }, [preferences, ready]);
+  useEffect(() => { if (ready) saveStored(STORAGE.completed, completedIds); }, [completedIds, ready]);
   useEffect(() => {
     if (!sidebarOpen) return;
-    const frameId = window.requestAnimationFrame(() => {
-      episodeListRef.current
-        ?.querySelector<HTMLElement>(".episode-row.is-active")
-        ?.scrollIntoView({
-          behavior: "smooth",
-          block: "center",
-          inline: "nearest",
-        });
-    });
-    return () => window.cancelAnimationFrame(frameId);
+    const panel = sidebarRef.current;
+    const mobile = window.matchMedia("(max-width: 980px)").matches;
+    if (mobile) panel?.querySelector<HTMLButtonElement>(".mobile-close")?.focus();
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (guideRef.current?.open) return;
+      if (event.key === "Escape") { setSidebarOpen(false); menuRef.current?.focus(); }
+      if (event.key === "Tab" && mobile && panel) {
+        const buttons = Array.from(panel.querySelectorAll<HTMLElement>("button, input")).filter((element) => element.getClientRects().length > 0);
+        const first = buttons[0], last = buttons[buttons.length - 1];
+        if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
+        else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
+      }
+    };
+    document.addEventListener("keydown", onKeyDown);
+    panel?.querySelector("[aria-current='true']")?.scrollIntoView({ block: "nearest" });
+    return () => document.removeEventListener("keydown", onKeyDown);
   }, [sidebarOpen]);
 
-  useEffect(() => {
-    if (sleepTimerEndAt === null) return;
-    const updateRemainingTime = () => {
-      setSleepTimerRemainingSeconds(
-        Math.max(0, Math.ceil((sleepTimerEndAt - Date.now()) / 1000)),
-      );
-    };
-    updateRemainingTime();
-    const intervalId = window.setInterval(updateRemainingTime, 1_000);
-    const timerId = window.setTimeout(() => {
-      const audio = audioRef.current;
-      if (audio) {
-        savePosition(currentId, audio.currentTime);
-        audio.pause();
-      }
-      playbackIntentRef.current = false;
-      setIsPlaying(false);
-      setIsBuffering(false);
-      setSleepTimerMinutes(0);
-      setSleepTimerRemainingSeconds(0);
-      setSleepTimerEndAt(null);
-    }, Math.max(0, sleepTimerEndAt - Date.now()));
-    return () => {
-      window.clearInterval(intervalId);
-      window.clearTimeout(timerId);
-    };
-  }, [currentId, savePosition, sleepTimerEndAt]);
-
-  useEffect(() => {
-    if (!settingsLoaded) return;
-    const settings: PersistedSettings = {
-      loop,
-      autoplayNext,
-      selectedLevel,
-      completionFilter,
-      transcriptVisible,
-      playbackRate,
-    };
-    localStorage.setItem(STORAGE.settings, JSON.stringify(settings));
-  }, [
-    autoplayNext,
-    completionFilter,
-    loop,
-    playbackRate,
-    selectedLevel,
-    settingsLoaded,
-    transcriptVisible,
-  ]);
-
-  useEffect(() => {
-    if (!transcriptVisible) return;
-    const controller = new AbortController();
-    let active = true;
-    queueMicrotask(() => {
-      if (!active) return;
-      setTranscriptLoading(true);
-      setTranscriptError(false);
-    });
-    const timeoutId = window.setTimeout(() => controller.abort(), 10_000);
-    fetch(
-      `${BASE_PATH}/transcripts/${currentEpisode.transcript_id}.html`,
-      { signal: controller.signal },
-    )
-      .then((response) => {
-        if (!response.ok) throw new Error("Transcript unavailable");
-        return response.text();
-      })
-      .then((html) => {
-        if (!active) return;
-        setTranscript(sanitizeTranscriptHtml(html));
-      })
-      .catch(() => {
-        if (active) setTranscriptError(true);
-      })
-      .finally(() => {
-        window.clearTimeout(timeoutId);
-        if (active) setTranscriptLoading(false);
-      });
-    return () => {
-      active = false;
-      window.clearTimeout(timeoutId);
-      controller.abort();
-    };
-  }, [currentEpisode.transcript_id, transcriptVisible]);
-
-  useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio) return;
-    audio.playbackRate = playbackRate;
-  }, [playbackRate]);
-
-  useEffect(() => {
-    if (!settingsLoaded || !isBuffering || audioFailed) return;
-    const timeoutId = window.setTimeout(() => {
-      const audio = audioRef.current;
-      if (
-        !audio ||
-        audio.readyState < HTMLMediaElement.HAVE_FUTURE_DATA
-      ) {
-        handleAudioFailure();
-      }
-    }, audioSourceIndex < EXTERNAL_AUDIO_BASES.length - 1
-      ? AUDIO_RECOVERY_TIMEOUT_MS
-      : FINAL_AUDIO_RECOVERY_TIMEOUT_MS);
-    return () => window.clearTimeout(timeoutId);
-  }, [
-    audioFailed,
-    audioSourceIndex,
-    handleAudioFailure,
-    isBuffering,
-    settingsLoaded,
-  ]);
-
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      const target = event.target as HTMLElement | null;
-      if (
-        target?.tagName === "INPUT" ||
-        target?.tagName === "SELECT" ||
-        target?.tagName === "TEXTAREA" ||
-        target?.tagName === "BUTTON"
-      ) {
-        return;
-      }
-      if (event.code === "Space") {
-        event.preventDefault();
-        void togglePlayback();
-      } else if (event.key === "ArrowLeft") {
-        seek(-10);
-      } else if (event.key === "ArrowRight") {
-        seek(10);
-      }
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [seek, togglePlayback]);
-
-  useEffect(() => {
-    if (!("mediaSession" in navigator)) return;
-    navigator.mediaSession.metadata = new MediaMetadata({
-      title: currentEpisode.title,
-      artist: `engpod · ${currentEpisode.level}`,
-      album: "engpod listening library",
-      artwork: [{ src: `${BASE_PATH}/logo.jpg`, sizes: "500x500" }],
-    });
-    navigator.mediaSession.setActionHandler("play", () => {
-      void togglePlayback();
-    });
-    navigator.mediaSession.setActionHandler("pause", () => {
-      const audio = audioRef.current;
-      if (audio) {
-        savePosition(currentId, audio.currentTime);
-        audio.pause();
-      }
-      playbackIntentRef.current = false;
-      setIsPlaying(false);
-    });
-    navigator.mediaSession.setActionHandler("seekbackward", () => seek(-10));
-    navigator.mediaSession.setActionHandler("seekforward", () => seek(10));
-    navigator.mediaSession.setActionHandler("previoustrack", previousEpisode);
-    navigator.mediaSession.setActionHandler("nexttrack", () => nextEpisode());
-  }, [
-    currentEpisode,
-    currentId,
-    nextEpisode,
-    previousEpisode,
-    savePosition,
-    seek,
-    togglePlayback,
-  ]);
-
-  useEffect(() => {
-    const saveCurrentPosition = () => {
-      if (!settingsLoaded) return;
-      if (audioRef.current) {
-        savePosition(currentId, audioRef.current.currentTime);
-      }
-    };
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === "hidden") saveCurrentPosition();
-    };
-    window.addEventListener("pagehide", saveCurrentPosition);
-    document.addEventListener("visibilitychange", handleVisibilityChange);
-    return () => {
-      window.removeEventListener("pagehide", saveCurrentPosition);
-      document.removeEventListener(
-        "visibilitychange",
-        handleVisibilityChange,
-      );
-    };
-  }, [currentId, savePosition, settingsLoaded]);
-
-  const onLoadedMetadata = () => {
-    const audio = audioRef.current;
-    if (!audio) return;
-    setDuration(audio.duration || 0);
-    audio.playbackRate = playbackRate;
-    const fallbackPosition = fallbackPositionRef.current;
-    const savedResume = readResumeRecord();
-    if (
-      fallbackPosition !== null &&
-      fallbackPosition > 0 &&
-      audio.duration > 0
-    ) {
-      const resumeTime = Math.min(
-        fallbackPosition,
-        Math.max(0, audio.duration - 0.25),
-      );
-      fallbackPositionRef.current = null;
-      resumeCheckpointRef.current = null;
-      audio.currentTime = resumeTime;
-      setCurrentTime(resumeTime);
-    } else if (
-      savedResume?.episodeId === currentId &&
-      savedResume.position > 0 &&
-      audio.duration > 0
-    ) {
-      const resumeTime = Math.min(
-        Math.max(0, savedResume.position - 10),
-        Math.max(0, audio.duration - 0.25),
-      );
-      resumeCheckpointRef.current = savedResume;
-      audio.currentTime = resumeTime;
-      setCurrentTime(resumeTime);
-    } else {
-      resumeCheckpointRef.current = null;
-    }
-    if (pendingAutoplayRef.current || playbackIntentRef.current) {
-      pendingAutoplayRef.current = false;
-      void audio
-        .play()
-        .then(() => setIsPlaying(true))
-        .catch(() => setIsPlaying(false));
-    }
-  };
-
-  const onTimeUpdate = () => {
-    const audio = audioRef.current;
-    if (!audio || !settingsLoaded) return;
-    setCurrentTime(audio.currentTime);
-    setDuration(audio.duration || 0);
-    if (
-      Date.now() - lastPositionWriteRef.current >
-      POSITION_SAVE_INTERVAL_MS
-    ) {
-      lastPositionWriteRef.current = Date.now();
-      savePosition(currentId, audio.currentTime);
-    }
-  };
-
-  const onEnded = () => {
-    resumeCheckpointRef.current = null;
-    fallbackPositionRef.current = null;
-    savePosition(currentId, 0);
-    setIsPlaying(false);
-    if (loop && audioRef.current) {
-      playbackIntentRef.current = true;
-      audioRef.current.currentTime = 0;
-      void audioRef.current.play().then(() => setIsPlaying(true));
-    } else if (autoplayNext) {
-      nextEpisode(true);
-    } else {
-      playbackIntentRef.current = false;
-    }
-  };
-
-  const handleProgressChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const audio = audioRef.current;
-    if (!audio) return;
-    const nextTime = Number(event.target.value);
-    resumeCheckpointRef.current = null;
-    audio.currentTime = nextTime;
-    setCurrentTime(nextTime);
-    savePosition(currentId, nextTime);
-  };
-
-  const preventSliderKeys = (event: ReactKeyboardEvent<HTMLInputElement>) => {
-    event.stopPropagation();
+  const lesson = lessons.find((item) => item.id === session.lessonId) ?? lessons[0];
+  const completed = useMemo(() => new Set(completedIds), [completedIds]);
+  const matching = useMemo(() => lessons.filter((item) => (preferences.level === "All" || item.level === preferences.level) && matchesLesson(item, query)), [preferences.level, query]);
+  const counts = { all: matching.length, finished: matching.filter((item) => completed.has(item.id)).length, unfinished: matching.filter((item) => !completed.has(item.id)).length };
+  const visible = matching.filter((item) => preferences.completion === "all" || (preferences.completion === "finished" ? completed.has(item.id) : !completed.has(item.id)));
+  const updatePreference = useCallback(<K extends keyof Preferences,>(key: K, value: Preferences[K]) => setPreferences((previous) => ({ ...previous, [key]: value })), []);
+  const selectLesson = useCallback((item: Lesson, autoplay = false) => {
+    setSession((previous) => ({ lessonId: item.id, initialLine: 0, autoplay, revision: previous.revision + 1 }));
+    saveStored(STORAGE.resume, { lessonId: item.id, line: 0 });
+    setSidebarOpen(false);
+    requestAnimationFrame(() => document.getElementById("lesson-title")?.focus());
+  }, []);
+  const toggleCompleted = (id: number) => setCompletedIds((ids) => ids.includes(id) ? ids.filter((item) => item !== id) : [...ids, id]);
+  const randomLesson = useCallback(() => {
+    const unfinished = visible.filter((item) => item.id !== lesson.id && !completed.has(item.id));
+    const candidates = unfinished.length ? unfinished : lessons.filter((item) => item.id !== lesson.id);
+    selectLesson(candidates[Math.floor(Math.random() * candidates.length)]);
+  }, [visible, lesson.id, completed, selectLesson]);
+  const navigate = (direction: number, autoplay: boolean) => {
+    const index = lessons.findIndex((item) => item.id === lesson.id);
+    selectLesson(lessons[(index + direction + lessons.length) % lessons.length], autoplay);
   };
 
   return (
-    <main className="app-shell">
-      <audio
-        ref={audioRef}
-        src={settingsLoaded ? audioUrl : undefined}
-        preload="metadata"
-        loop={false}
-        onLoadedMetadata={onLoadedMetadata}
-        onTimeUpdate={onTimeUpdate}
-        onPlay={() => {
-          playbackIntentRef.current = true;
-          setAudioFailed(false);
-          setIsBuffering(false);
-          setIsPlaying(true);
-        }}
-        onPause={() => setIsPlaying(false)}
-        onWaiting={() => setIsBuffering(true)}
-        onCanPlay={() => setIsBuffering(false)}
-        onStalled={() => setIsBuffering(true)}
-        onError={handleAudioFailure}
-        onEnded={onEnded}
-      />
-
-      {sidebarOpen && (
-        <button
-          className="mobile-scrim"
-          aria-label="Close episode library"
-          onClick={() => setSidebarOpen(false)}
-        />
-      )}
-
-      <aside
-        className={`library-panel ${sidebarOpen ? "is-open" : ""}`}
-        onTouchStart={handleSidebarTouchStart}
-        onTouchEnd={handleSidebarTouchEnd}
-        onTouchCancel={() => {
-          sidebarSwipeStartRef.current = null;
-        }}
-      >
+    <main className={`app-shell ${sidebarOpen ? "drawer-open" : ""}`}>
+      {sidebarOpen && <button className="mobile-scrim" aria-label="Đóng danh sách bài học" onClick={() => { setSidebarOpen(false); menuRef.current?.focus(); }} />}
+      <aside className={`library-panel ${sidebarOpen ? "is-open" : ""}`} aria-label="Danh sách bài học" ref={sidebarRef}>
         <div className="brand-block">
           <div className="brand-row">
-            {/* Static local asset; optimization endpoints do not exist on Pages. */}
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={`${BASE_PATH}/logo.jpg`}
-              alt=""
-              className="brand-logo"
-            />
-            <div className="brand-name">
-              <h1>eng<span>pod</span></h1>
-            </div>
-            <button
-              className="guide-icon-button"
-              onClick={() => setHelpOpen(true)}
-              aria-label="Open quick guide"
-              title="Quick guide"
-            >
-              <UiIcon name="help" />
-            </button>
-            <button
-              className="mobile-close"
-              onClick={() => setSidebarOpen(false)}
-              aria-label="Close episode library"
-            >
-              <UiIcon name="close" />
-            </button>
+            <span className="brand-mark" lang="zh-Hans" aria-hidden="true">中</span>
+            <div className="brand-name"><h1>Mandarin<span> Steps</span></h1><p>LUYỆN TIẾNG TRUNG MỖI NGÀY</p></div>
+            <button className="guide-icon-button" onClick={() => guideRef.current?.showModal()} aria-label="Mở hướng dẫn"><UiIcon name="help" /></button>
+            <button className="mobile-close" onClick={() => { setSidebarOpen(false); menuRef.current?.focus(); }} aria-label="Đóng danh sách bài học"><UiIcon name="close" /></button>
           </div>
+          <div className="course-progress"><span>{completedIds.length} / {lessons.length} bài đã xong</span><progress value={completedIds.length} max={lessons.length} aria-label="Tiến độ học" /></div>
         </div>
-
         <div className="library-tools">
-          <label className="search-field">
-            <span aria-hidden="true">⌕</span>
-            <input
-              value={query}
-              onChange={(event) => setQuery(event.target.value)}
-              placeholder="Search title, level, or number"
-              aria-label="Search episodes"
-            />
-            {query && (
-              <button onClick={() => setQuery("")} aria-label="Clear search">
-                ×
-              </button>
-            )}
-          </label>
-
-          <div
-            className="completion-filters"
-            role="group"
-            aria-label="Filter by completion"
-          >
-            {(
-              [
-                ["all", "All"],
-                ["unfinished", "Not finished"],
-                ["finished", "Finished"],
-              ] as const
-            ).map(([value, label]) => (
-              <button
-                key={value}
-                className={completionFilter === value ? "is-selected" : ""}
-                onClick={() => setCompletionFilter(value)}
-                aria-pressed={completionFilter === value}
-              >
-                {label}
-                <span>{completionCounts[value]}</span>
-              </button>
-            ))}
+          <label className="search-field"><span aria-hidden="true">⌕</span><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Tìm chữ Hán, pinyin hoặc tiếng Việt" aria-label="Tìm bài học" />{query && <button onClick={() => setQuery("")} aria-label="Xóa tìm kiếm">×</button>}</label>
+          <div className="level-filters" role="group" aria-label="Lọc trình độ">
+            {["All", ...LEVELS].map((level) => <button key={level} className={preferences.level === level ? "is-selected" : ""} onClick={() => updatePreference("level", level)} aria-pressed={preferences.level === level}>{levelLabel(level)}</button>)}
           </div>
-
-          <div
-            className="level-filters"
-            aria-label="Filter by level"
-            data-drawer-swipe-ignore
-          >
-            {["All", ...levels].map((level) => {
-              const count =
-                level === "All"
-                  ? episodes.length
-                  : EPISODE_COUNT_BY_LEVEL.get(level) ?? 0;
-              return (
-                <button
-                  key={level}
-                  className={selectedLevel === level ? "is-selected" : ""}
-                  onClick={() => setSelectedLevel(level)}
-                >
-                  {level} <span>{count}</span>
-                </button>
-              );
-            })}
+          <div className="completion-filters" role="group" aria-label="Lọc tiến độ">
+            {([["all", "All"], ["unfinished", "To learn"], ["finished", "Finished"]] as const).map(([value, label]) => <button key={value} className={preferences.completion === value ? "is-selected" : ""} onClick={() => updatePreference("completion", value)} aria-pressed={preferences.completion === value}>{levelLabel(label)}<span>{counts[value]}</span></button>)}
           </div>
-
         </div>
-
-        <div className="episode-list" ref={episodeListRef}>
-          <div className="results-line">
-            <span>{visibleEpisodes.length} episodes</span>
-            <span>{completedIds.length} finished</span>
-          </div>
-          {visibleEpisodes.map((episode) => (
-            <EpisodeRow
-              key={episode.id}
-              episode={episode}
-              active={episode.id === currentId}
-              completed={completedIdSet.has(episode.id)}
-              onSelect={selectEpisode}
-              onToggleCompleted={updateCompleted}
-            />
-          ))}
-          {visibleEpisodes.length === 0 && (
-            <div className="empty-state">
-              <span>⌕</span>
-              <strong>No episodes found</strong>
-              <button
-                onClick={() => {
-                  setQuery("");
-                  setSelectedLevel("All");
-                  setCompletionFilter("all");
-                }}
-              >
-                Clear filters
-              </button>
-            </div>
-          )}
+        <div className="episode-list">
+          <div className="results-line" aria-live="polite"><span>{visible.length} bài học</span><span>Tiếng Trung giản thể</span></div>
+          {visible.map((item) => <div className={`episode-row ${item.id === lesson.id ? "is-active" : ""}`} key={item.id}>
+            <button className="episode-select" onClick={() => selectLesson(item)} aria-current={item.id === lesson.id ? "true" : undefined}>
+              <span className="episode-number" aria-hidden="true">{String(item.id).padStart(2, "0")}</span><span className="episode-copy"><strong>{item.title}</strong><span lang="zh-Hans">{item.hanzi}</span><small>{levelLabel(item.level)}</small></span>
+            </button>
+            <button className={`episode-complete ${completed.has(item.id) ? "is-finished" : ""}`} onClick={() => toggleCompleted(item.id)} aria-label={`Đánh dấu ${item.title}: ${completed.has(item.id) ? "chưa học" : "đã xong"}`} aria-pressed={completed.has(item.id)}><span aria-hidden="true">✓</span></button>
+          </div>)}
+          {!visible.length && <div className="empty-state"><strong>Không tìm thấy bài học</strong><p>Thử tìm 你好, ni hao hoặc xin chào.</p><button onClick={() => { setQuery(""); setPreferences((previous) => ({ ...previous, level: "All", completion: "all" })); }}>Xóa bộ lọc</button></div>}
         </div>
       </aside>
-
-      <section
-        className="content-panel"
-        onTouchStart={handlePlayerTouchStart}
-        onTouchEnd={handlePlayerTouchEnd}
-        onTouchCancel={() => {
-          playerSwipeStartRef.current = null;
-        }}
-      >
+      <section className="content-panel">
         <header className="topbar">
-          <button
-            className="menu-button"
-            onClick={() => setSidebarOpen(true)}
-            aria-label="Open episode library"
-          >
-            ☰
-          </button>
-          <p>small step every day</p>
-          <div className="topbar-actions">
-            <button onClick={shuffleEpisode} title="Play a random episode">
-              <span aria-hidden="true">🎲</span>{" "}
-              <span className="topbar-label">Random</span>
-            </button>
-            <button
-              className="theme-toggle"
-              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} theme`}
-              title={`Switch to ${theme === "dark" ? "light" : "dark"} theme`}
-            >
-              <UiIcon name={theme === "dark" ? "sun" : "moon"} />
-              <span>{theme === "dark" ? "Light" : "Dark"}</span>
-            </button>
-          </div>
+          <button ref={menuRef} className="menu-button" onClick={() => setSidebarOpen(true)} aria-label="Mở danh sách bài học" aria-expanded={sidebarOpen}>☰</button>
+          <p>Mỗi ngày một chút tiếng Trung.</p>
+          <div className="topbar-actions"><button onClick={randomLesson} title="Mở bài ngẫu nhiên"><span aria-hidden="true">🎲</span> <span className="topbar-label">Ngẫu nhiên</span></button><button className="theme-toggle" onClick={() => updatePreference("theme", preferences.theme === "light" ? "dark" : "light")} aria-label={`Chuyển giao diện ${preferences.theme === "light" ? "tối" : "sáng"}`}><UiIcon name={preferences.theme === "light" ? "moon" : "sun"} /><span>{preferences.theme === "light" ? "Tối" : "Sáng"}</span></button></div>
         </header>
-
-        <div className="lesson-scroll">
-          <div className="lesson">
-            <div className="lesson-heading">
-              <div>
-                <div className="eyebrow">
-                  <button
-                    className="level-shortcut"
-                    onClick={() => {
-                      setSelectedLevel(currentEpisode.level);
-                      setSidebarOpen(true);
-                    }}
-                    aria-label={`Open ${currentEpisode.level} episodes`}
-                    title={`Show all ${currentEpisode.level} episodes`}
-                  >
-                    {currentEpisode.level}
-                  </button>
-                  <span>Episode {currentEpisode.id} of {episodes.length}</span>
-                </div>
-                <h2>{currentEpisode.title}</h2>
-              </div>
-              <button
-                className={`heading-complete ${
-                  completedIdSet.has(currentId) ? "is-finished" : ""
-                }`}
-                onClick={() =>
-                  updateCompleted(
-                    currentId,
-                    !completedIdSet.has(currentId),
-                  )
-                }
-                aria-label={
-                  completedIdSet.has(currentId)
-                    ? "Mark episode as unfinished"
-                    : "Mark episode as finished"
-                }
-                aria-pressed={completedIdSet.has(currentId)}
-                title={
-                  completedIdSet.has(currentId)
-                    ? "Marked as finished"
-                    : "Mark as finished"
-                }
-              >
-                <span aria-hidden="true">✓</span>
-              </button>
-            </div>
-
-            <section className="transcript-card">
-              <div className="card-heading">
-                <div>
-                  <span className="section-kicker">READ ALONG</span>
-                  <h3>Transcript & vocabulary</h3>
-                </div>
-                <button
-                  onClick={() => setTranscriptVisible((value) => !value)}
-                  aria-expanded={transcriptVisible}
-                >
-                  {transcriptVisible ? "Hide notes" : "Show notes"}
-                </button>
-              </div>
-
-              {transcriptVisible && (
-                <div
-                  className={`transcript-content ${
-                    transcriptLoading ? "is-loading" : ""
-                  }`}
-                >
-                  {transcriptLoading && (
-                    <div className="transcript-skeleton" aria-live="polite">
-                      Loading transcript…
-                    </div>
-                  )}
-                  {transcriptError && (
-                    <div className="transcript-error">
-                      <strong>Transcript could not be loaded.</strong>
-                      <p>
-                        The audio is still available. Refresh the page to try
-                        loading the notes again.
-                      </p>
-                    </div>
-                  )}
-                  {!transcriptLoading && !transcriptError && (
-                    <div dangerouslySetInnerHTML={{ __html: transcript }} />
-                  )}
-                </div>
-              )}
-            </section>
-          </div>
-        </div>
-
-        <section className="player" aria-label="Audio player">
-          <div className="progress-wrap">
-            <span className="progress-time">{formatTime(currentTime)}</span>
-            <input
-              type="range"
-              min={0}
-              max={duration || 0}
-              step={0.1}
-              value={Math.min(currentTime, duration || 0)}
-              onChange={handleProgressChange}
-              onKeyDown={preventSliderKeys}
-              aria-label="Episode progress"
-              style={
-                {
-                  "--progress":
-                    duration > 0 ? `${(currentTime / duration) * 100}%` : "0%",
-                } as React.CSSProperties
-              }
-            />
-            <span className="progress-time">{formatTime(duration)}</span>
-          </div>
-
-          <div className="player-main">
-            <div className="transport">
-              <button
-                className="skip-button"
-                onClick={() => seek(-10)}
-                aria-label="Back 10 seconds"
-                title="Back 10 seconds"
-              >
-                <MediaIcon name="replay10" />
-              </button>
-              <button
-                className="track-button"
-                onClick={previousEpisode}
-                aria-label="Previous episode"
-              >
-                <MediaIcon name="previous" />
-              </button>
-              <button
-                className="play-button"
-                onClick={() => void togglePlayback()}
-                aria-label={isPlaying ? "Pause" : "Play"}
-              >
-                {isBuffering ? (
-                  <span className="buffering-glyph" aria-hidden="true">
-                    …
-                  </span>
-                ) : (
-                  <MediaIcon name={isPlaying ? "pause" : "play"} />
-                )}
-              </button>
-              <button
-                className="track-button"
-                onClick={() => nextEpisode()}
-                aria-label="Next episode"
-              >
-                <MediaIcon name="next" />
-              </button>
-              <button
-                className="skip-button"
-                onClick={() => seek(10)}
-                aria-label="Forward 10 seconds"
-                title="Forward 10 seconds"
-              >
-                <MediaIcon name="forward10" />
-              </button>
-            </div>
-
-            <div className="player-options">
-              <button
-                className={autoplayNext ? "is-on" : ""}
-                onClick={() => setAutoplayNext((value) => !value)}
-                aria-pressed={autoplayNext}
-                title="Autoplay next episode"
-              >
-                <span aria-hidden="true">⏭</span>
-                <span className="control-label">Auto next</span>
-              </button>
-              <button
-                className={loop ? "is-on" : ""}
-                onClick={() => setLoop((value) => !value)}
-                aria-pressed={loop}
-                title="Loop this episode"
-              >
-                <span aria-hidden="true">↻</span>
-                <span className="control-label">Loop</span>
-              </button>
-              <button
-                className={`sleep-button ${sleepTimerMinutes > 0 ? "is-on" : ""}`}
-                onClick={cycleSleepTimer}
-                aria-label={
-                  sleepTimerMinutes > 0
-                    ? `Sleep timer, ${formatCountdown(sleepTimerRemainingSeconds)} remaining`
-                    : "Sleep timer off"
-                }
-                aria-pressed={sleepTimerMinutes > 0}
-                title={
-                  sleepTimerMinutes > 0
-                    ? `${formatCountdown(sleepTimerRemainingSeconds)} remaining`
-                    : "Set a sleep timer"
-                }
-              >
-                <span className="sleep-icon" aria-hidden="true">☾</span>
-                <span className="control-label">
-                  {sleepTimerMinutes > 0
-                    ? formatCountdown(sleepTimerRemainingSeconds)
-                    : "Sleep"}
-                </span>
-              </button>
-              <button
-                className={`speed-button ${
-                  playbackRate !== 1 ? "is-on" : ""
-                }`}
-                onClick={() => {
-                  const index = PLAYBACK_RATES.indexOf(playbackRate);
-                  setPlaybackRate(
-                    PLAYBACK_RATES[(index + 1) % PLAYBACK_RATES.length],
-                  );
-                }}
-                title="Change playback speed"
-              >
-                <span className="speed-value">{playbackRate}×</span>
-                <span className="control-label">Speed</span>
-              </button>
-            </div>
-          </div>
-
-        </section>
+        <LessonView key={`${lesson.id}-${session.revision}`} lesson={lesson} session={session} preferences={preferences} ready={ready} completed={completed.has(lesson.id)} onCompleted={() => toggleCompleted(lesson.id)} onPreference={updatePreference} onNavigate={navigate} sleepTimer={sleepTimer} onSleepTimer={setSleepTimer} onLevel={() => { updatePreference("level", lesson.level); if (window.matchMedia("(max-width: 980px)").matches) setSidebarOpen(true); }} />
       </section>
-
-      {helpOpen && (
-        <div className="modal-wrap" role="presentation">
-          <button
-            className="modal-scrim"
-            aria-label="Close quick guide"
-            onClick={() => setHelpOpen(false)}
-          />
-          <section
-            className="guide-modal"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="guide-title"
-          >
-            <span className="section-kicker">QUICK GUIDE</span>
-            <h2 id="guide-title">Make each listen count</h2>
-            <ol>
-              <li>
-                <strong>Listen once</strong>
-                <span>Focus on the situation without reading.</span>
-              </li>
-              <li>
-                <strong>Read along</strong>
-                <span>Replay difficult parts with the transcript open.</span>
-              </li>
-              <li>
-                <strong>Repeat aloud</strong>
-                <span>Copy the speakers’ rhythm and stress.</span>
-              </li>
-            </ol>
-            <button className="primary-button" onClick={() => setHelpOpen(false)}>
-              Start listening
-            </button>
-          </section>
-        </div>
-      )}
+      <dialog className="guide-modal" ref={guideRef} aria-labelledby="guide-title" onClick={(event) => { if (event.target === event.currentTarget) guideRef.current?.close(); }}>
+        <span className="section-kicker">HƯỚNG DẪN NHANH</span><h2 id="guide-title">Tạo thói quen học tiếng Trung</h2>
+        <ol><li><strong>Lắng nghe thanh điệu</strong><span>Nghe từng câu rồi đọc lại thành tiếng. Tiếng Trung có bốn thanh điệu và thanh nhẹ.</span></li><li><strong>Đọc cùng gợi ý</strong><span>Pinyin giúp bạn phát âm. Hãy ẩn pinyin hoặc tiếng Việt khi muốn tự kiểm tra.</span></li><li><strong>Ôn lại để nhớ lâu</strong><span>Ôn từ vựng và ghi chú, sau đó đánh dấu hoàn thành bài học.</span></li></ol>
+        <p className="guide-note">Âm thanh luyện tập tiếng Trung có sẵn trong ứng dụng, không cần cài giọng đọc. Khi tiếp tục sau khi tạm dừng, câu hiện tại sẽ được đọc lại từ đầu.</p>
+        <p className="guide-note">Phím cách: phát hoặc dừng; ← / →: chuyển câu. Tiến độ được lưu trong trình duyệt này.</p>
+        <button className="primary-button" onClick={() => guideRef.current?.close()}>Bắt đầu học</button>
+      </dialog>
     </main>
   );
+}
+
+function LessonView({ lesson, session, preferences, ready, completed, onCompleted, onPreference, onNavigate, onLevel, sleepTimer, onSleepTimer }: {
+  lesson: Lesson; session: Session; preferences: Preferences; ready: boolean; completed: boolean;
+  onCompleted: () => void; onPreference: <K extends keyof Preferences>(key: K, value: Preferences[K]) => void;
+  onNavigate: (direction: number, autoplay: boolean) => void; onLevel: () => void;
+  sleepTimer: SleepTimer; onSleepTimer: (timer: SleepTimer) => void;
+}) {
+  const [tab, setTab] = useState<"dialogue" | "vocabulary">("dialogue");
+  const { until: sleepUntil, remaining: sleepRemaining } = sleepTimer;
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const onPositionChange = useCallback((line: number) => { if (ready) saveStored(STORAGE.resume, { lessonId: lesson.id, line }); }, [ready, lesson.id]);
+  const speech = useStarterAudio({ lessonId: lesson.id, lines: lesson.dialogue, rate: preferences.rate, loop: preferences.loop, autoplayNext: preferences.autoplayNext, initialLine: session.initialLine, autoplay: session.autoplay, onNext: () => onNavigate(1, true), onPositionChange });
+  useEffect(() => {
+    const onKey = (event: KeyboardEvent) => {
+      const target = event.target as HTMLElement;
+      if (event.defaultPrevented || event.ctrlKey || event.metaKey || event.altKey || target.closest("button, input, select, textarea, dialog, [contenteditable='true']") || document.querySelector("dialog[open], .drawer-open")) return;
+      if (event.code === "Space") { event.preventDefault(); speech.toggle(); }
+      if (event.key === "ArrowLeft") { event.preventDefault(); speech.seekLine(speech.activeLine - 1); }
+      if (event.key === "ArrowRight") { event.preventDefault(); speech.seekLine(speech.activeLine + 1); }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [speech]);
+  useEffect(() => {
+    if (speech.isPlaying && tab === "dialogue") scrollRef.current?.querySelector(`[data-line='${speech.activeLine}']`)?.scrollIntoView({ block: "nearest", behavior: "smooth" });
+  }, [speech.activeLine, speech.isPlaying, tab]);
+  const pauseSpeech = speech.pause;
+  useEffect(() => {
+    if (sleepUntil === null) return;
+    const timer = window.setInterval(() => {
+      const remaining = Math.max(0, Math.ceil((sleepUntil - Date.now()) / 1000));
+      if (!remaining) pauseSpeech();
+      onSleepTimer({ until: remaining ? sleepUntil : null, remaining });
+    }, 1000);
+    return () => window.clearInterval(timer);
+  }, [sleepUntil, pauseSpeech, onSleepTimer]);
+  const canSpeak = ready;
+  const audioMessage = speech.error;
+
+  return <>
+    <div className="lesson-scroll" ref={scrollRef}>
+      <div className="lesson">
+        <div className="lesson-heading">
+          <div><div className="eyebrow"><button className="level-shortcut" onClick={onLevel} aria-label={`Open ${levelLabel(lesson.level)} lessons`}>{levelLabel(lesson.level)}</button><span>Bài {String(lesson.id).padStart(2, "0")} / {lessons.length}</span></div><h2 id="lesson-title" tabIndex={-1}>{lesson.title}</h2><p className="lesson-hanzi" lang="zh-Hans">{lesson.hanzi}</p>{preferences.pinyin && <p className="lesson-pinyin" lang="zh-Latn-pinyin">{lesson.pinyin}</p>}<p className="lesson-description">{lesson.description}</p></div>
+          <button className={`heading-complete ${completed ? "is-finished" : ""}`} onClick={onCompleted} aria-label={`Đánh dấu ${completed ? "chưa học" : "đã xong"}`} aria-pressed={completed} title={completed ? "Đã xong" : "Đánh dấu hoàn thành"}><span aria-hidden="true">✓</span></button>
+        </div>
+        <section className="transcript-card" aria-label="Nội dung bài học">
+          <div className="card-heading"><div><span className="section-kicker">NGHE · ĐỌC · NHẮC LẠI</span><h3>Luyện nói từng câu</h3></div><span className="lesson-size">{lesson.dialogue.length} câu</span></div>
+          <div className="study-toolbar"><div className="study-tabs" role="tablist" aria-label="Phần học">{(["dialogue", "vocabulary"] as const).map((value) => <button id={`${value}-tab`} key={value} role="tab" aria-selected={tab === value} aria-controls="study-panel" tabIndex={tab === value ? 0 : -1} className={tab === value ? "is-selected" : ""} onClick={() => setTab(value)} onKeyDown={(event) => { if (["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) { event.preventDefault(); const next = event.key === "Home" ? "dialogue" : event.key === "End" ? "vocabulary" : tab === "dialogue" ? "vocabulary" : "dialogue"; setTab(next); document.getElementById(`${next}-tab`)?.focus(); } }}>{value === "dialogue" ? "Hội thoại" : "Từ vựng"}</button>)}</div><div className="reading-toggles" role="group" aria-label="Gợi ý khi đọc"><button aria-pressed={preferences.pinyin} onClick={() => onPreference("pinyin", !preferences.pinyin)}>Pinyin <span aria-hidden="true">{preferences.pinyin ? "✓" : "+"}</span></button><button aria-pressed={preferences.english} onClick={() => onPreference("english", !preferences.english)}>Tiếng Việt <span aria-hidden="true">{preferences.english ? "✓" : "+"}</span></button></div></div>
+          <div className="transcript-content" id="study-panel" role="tabpanel" aria-labelledby={`${tab}-tab`} tabIndex={0}>
+            {tab === "dialogue" ? <div className="dialogue-block">{lesson.dialogue.map((line, index) => <div className={`line ${speech.activeLine === index ? "is-current" : ""}`} key={index} data-line={index}>
+              <div className="line-meta"><span className="speaker">{line.speaker}</span><span className="line-number">{String(index + 1).padStart(2, "0")}</span></div>
+              <div className="line-copy"><p className="hanzi" lang="zh-Hans">{line.hanzi}</p>{preferences.pinyin && <p className="pinyin" lang="zh-Latn-pinyin">{line.pinyin}</p>}{preferences.english && <p className="translation">{line.vietnamese}</p>}</div>
+              <button className="sentence-play" disabled={!canSpeak} onClick={() => speech.playLine(index)} aria-label={`Nghe câu ${index + 1}: ${line.hanzi}`} title="Nghe từ câu này"><MediaIcon name="play" /></button>
+            </div>)}</div> : <div className="vocab-block">{lesson.vocabulary.map((word) => <article className="vocab-item" key={word.hanzi}><div className="vocab-top"><h4 className="hanzi" lang="zh-Hans">{word.hanzi}</h4><button className="sentence-play" disabled={!canSpeak} onClick={() => speech.speakText(word.hanzi)} aria-label={`Nghe ${word.hanzi}`}><MediaIcon name="play" /></button></div>{preferences.pinyin && <p className="pinyin" lang="zh-Latn-pinyin">{word.pinyin}</p>}{preferences.english && <p className="translation">{word.vietnamese}</p>}</article>)}</div>}
+          </div>
+        </section>
+        <aside className="language-note"><span className="note-symbol" lang="zh-Hans" aria-hidden="true">记</span><div><span className="section-kicker">GHI CHÚ NGÔN NGỮ</span><h3>{lesson.note.title}</h3><p>{lesson.note.body}</p></div></aside>
+        <div className="lesson-footer"><p>Nghe, đọc thành tiếng, rồi thử bỏ gợi ý.</p><button className={`finish-button ${completed ? "is-finished" : ""}`} onClick={onCompleted} aria-pressed={completed}>{completed ? "✓ Đã hoàn thành" : "Đánh dấu hoàn thành"}</button></div>
+      </div>
+    </div>
+    <section className="player" aria-label="Trình phát câu tiếng Trung">
+      {audioMessage && <p className="speech-notice" role="status">{audioMessage}</p>}
+      <div className="progress-wrap"><span className="progress-time">{speech.activeLine + 1}</span><input type="range" min={0} max={lesson.dialogue.length - 1} step={1} value={speech.activeLine} onChange={(event) => speech.seekLine(Number(event.target.value))} aria-label="Tiến độ câu" aria-valuetext={`Câu ${speech.activeLine + 1} / ${lesson.dialogue.length}`} style={{ "--progress": `${speech.activeLine / Math.max(1, lesson.dialogue.length - 1) * 100}%` } as CSSProperties} /><span className="progress-time">{lesson.dialogue.length}</span></div>
+      <div className="player-main"><div className="transport"><button className="track-button" onClick={() => onNavigate(-1, speech.isPlaying)} aria-label="Bài trước"><MediaIcon name="previous" /></button><button className="sentence-step" onClick={() => speech.seekLine(speech.activeLine - 1)} disabled={speech.activeLine === 0} aria-label="Câu trước">‹</button><button className="play-button" onClick={speech.toggle} disabled={!canSpeak} aria-label={speech.isPlaying ? "Tạm dừng" : "Nghe tiếng Trung"}><MediaIcon name={speech.isPlaying ? "pause" : "play"} /></button><button className="sentence-step" onClick={() => speech.seekLine(speech.activeLine + 1)} disabled={speech.activeLine === lesson.dialogue.length - 1} aria-label="Câu tiếp">›</button><button className="track-button" onClick={() => onNavigate(1, speech.isPlaying)} aria-label="Bài tiếp"><MediaIcon name="next" /></button></div>
+        <div className="player-options"><button className={preferences.autoplayNext ? "is-on" : ""} aria-pressed={preferences.autoplayNext} onClick={() => onPreference("autoplayNext", !preferences.autoplayNext)}><span className="control-label">Tự chuyển</span></button><button className={preferences.loop ? "is-on" : ""} aria-pressed={preferences.loop} onClick={() => onPreference("loop", !preferences.loop)}><span aria-hidden="true">↻</span><span className="control-label">Lặp lại</span></button><button className={sleepUntil ? "is-on" : ""} aria-pressed={sleepUntil !== null} onClick={() => { onSleepTimer({ until: sleepUntil ? null : Date.now() + 15 * 60 * 1000, remaining: sleepUntil ? 0 : 900 }); }} title="Dừng phát sau 15 phút"><span className="control-label">{sleepUntil ? `${Math.floor(sleepRemaining / 60)}:${String(sleepRemaining % 60).padStart(2, "0")}` : "Hẹn giờ"}</span></button><button className="speed-button" onClick={() => onPreference("rate", RATES[(RATES.indexOf(preferences.rate) + 1) % RATES.length])} aria-label={`Tốc độ phát ${preferences.rate}, đổi tốc độ`}><span className="speed-value">{preferences.rate}×</span><span className="control-label">Tốc độ</span></button></div>
+      </div>
+      <div className="voice-row"><span>Âm thanh tiếng Trung có sẵn · Câu {speech.activeLine + 1} / {lesson.dialogue.length}</span></div>
+    </section>
+  </>;
 }
