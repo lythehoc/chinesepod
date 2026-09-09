@@ -28,7 +28,7 @@ function time(seconds: number) {
   return `${Math.floor(value / 60)}:${String(value % 60).padStart(2, "0")}`;
 }
 
-export default function PodcastLibrary() {
+export default function PodcastLibrary({ theme, onToggleTheme }: { theme: "light" | "dark"; onToggleTheme: () => void }) {
   const [episode, setEpisode] = useState(firstEpisode);
   const [query, setQuery] = useState("");
   const [level, setLevel] = useState("All");
@@ -37,7 +37,6 @@ export default function PodcastLibrary() {
   const [completed, setCompleted] = useState<string[]>([]);
   const [ready, setReady] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [dark, setDark] = useState(false);
   const [playing, setPlaying] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [rate, setRate] = useState(1);
@@ -100,7 +99,6 @@ export default function PodcastLibrary() {
   }, [savePosition]);
 
   useEffect(() => { if (ready) write(COMPLETED_KEY, completed); }, [completed, ready]);
-  useEffect(() => { document.documentElement.dataset.theme = dark ? "dark" : "light"; }, [dark]);
   useEffect(() => { if (audioRef.current) audioRef.current.playbackRate = rate; }, [rate]);
   useEffect(() => {
     if (!sleepUntil) return;
@@ -186,7 +184,7 @@ export default function PodcastLibrary() {
       <div className="library-tools"><label className="search-field"><span aria-hidden="true">⌕</span><input type="search" aria-label="Search recorded episodes" placeholder="Search topics, titles, or levels" value={query} onChange={(event) => { setQuery(event.target.value); setLimit(80); }} /></label><div className="level-filters" role="group" aria-label="Episode level">{["All", ...levels].map((value) => <button key={value} className={level === value ? "is-selected" : ""} aria-pressed={level === value} onClick={() => { setLevel(value); setLimit(80); }}>{levelLabel(value)}</button>)}</div><div className="completion-filters" role="group" aria-label="Episode completion">{([['all', 'All'], ['unfinished', 'To listen'], ['finished', 'Finished']] as const).map(([value, label]) => <button key={value} className={filter === value ? "is-selected" : ""} aria-pressed={filter === value} onClick={() => { setFilter(value); setLimit(80); }}>{levelLabel(label)}<span>{counts[value]}</span></button>)}</div></div>
       <div className="episode-list"><div className="results-line" aria-live="polite"><span>{visible.length.toLocaleString("en-US")} episodes</span><span>ChinesePod</span></div>{visible.slice(0, limit).map((item) => <div className={`episode-row ${item.id === episode.id ? "is-active" : ""}`} key={item.id}><button className="episode-select" aria-current={item.id === episode.id ? "true" : undefined} onClick={() => select(item)}><span className="episode-number" aria-hidden="true">▶</span><span className="episode-copy"><strong>{item.title}</strong><small>{levelLabel(item.level)} · {time(item.duration)}</small></span></button><button className={`episode-complete ${finished.has(item.id) ? "is-finished" : ""}`} aria-label={`Mark ${item.title}: ${finished.has(item.id) ? "unfinished" : "finished"}`} aria-pressed={finished.has(item.id)} onClick={() => toggleFinished(item.id)}>✓</button></div>)}{visible.length > limit && <button className="load-more" onClick={() => setLimit((value) => value + 80)}>Show more · {visible.length - limit} remaining</button>}{!visible.length && <div className="empty-state"><strong>No matching episodes</strong><button onClick={() => { setQuery(""); setLevel("All"); setFilter("all"); }}>Clear filters</button></div>}</div>
     </aside>
-    <section className="content-panel"><header className="topbar"><button ref={menuRef} className="menu-button" aria-label="Open episode library" aria-expanded={sidebarOpen} onClick={() => setSidebarOpen(true)}><UiIcon name="menu" /><span className="menu-label">Lessons</span></button><p>A little Chinese, every day.</p><div className="topbar-actions"><button onClick={random}>Random</button><button className="theme-toggle" onClick={() => setDark((value) => !value)} aria-label={dark ? "Switch to light theme" : "Switch to dark theme"}><UiIcon name={dark ? "sun" : "moon"} /></button></div></header>
+    <section className="content-panel"><header className="topbar"><button ref={menuRef} className="menu-button" aria-label="Open episode library" aria-expanded={sidebarOpen} onClick={() => setSidebarOpen(true)}><UiIcon name="menu" /><span className="menu-label">Lessons</span></button><p>A little Chinese, every day.</p><div className="topbar-actions"><button onClick={random}>Random</button><button className="theme-toggle" onClick={onToggleTheme} aria-label={`Switch theme to ${theme === "light" ? "dark" : "light"}`}><UiIcon name={theme === "light" ? "moon" : "sun"} /></button></div></header>
       <div className="lesson-scroll"><div className="lesson"><div className="lesson-heading"><div><div className="eyebrow"><span className="recording-badge">RECORDED AUDIO</span><span>{levelLabel(episode.level)} · {time(episode.duration)}</span></div><h2 id="podcast-title" tabIndex={-1}>{episode.title}</h2></div><button className={`heading-complete ${finished.has(episode.id) ? "is-finished" : ""}`} aria-label="Mark current episode as finished" aria-pressed={finished.has(episode.id)} onClick={() => toggleFinished(episode.id)}>✓</button></div>
         <EpisodeStudy key={episode.id} sourceUrl={episode.sourceUrl} onPronunciation={() => audioRef.current?.pause()} />
         <p className="publisher-credit">Audio is streamed from ChinesePod’s public podcast feeds. Recordings and lesson materials belong to ChinesePod. <a href="https://www.chinesepod.com" target="_blank" rel="noreferrer">Visit ChinesePod ↗</a></p>

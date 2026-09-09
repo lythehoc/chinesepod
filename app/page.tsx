@@ -10,14 +10,16 @@ import OriLibrary from "./components/ori-library";
 import PodcastLibrary from "./components/podcast-library";
 
 type CompletionFilter = "all" | "unfinished" | "finished";
+type Theme = "light" | "dark";
 type Preferences = {
-  theme: "light" | "dark"; pinyin: boolean; english: boolean; rate: number;
+  pinyin: boolean; english: boolean; rate: number;
   loop: boolean; autoplayNext: boolean; level: string; completion: CompletionFilter;
 };
 type SleepTimer = { until: number | null; remaining: number };
 type Session = { lessonId: number; initialLine: number; autoplay: boolean; revision: number };
-const DEFAULTS: Preferences = { theme: "light", pinyin: true, english: true, rate: 1, loop: false, autoplayNext: false, level: "All", completion: "all" };
+const DEFAULTS: Preferences = { pinyin: true, english: true, rate: 1, loop: false, autoplayNext: false, level: "All", completion: "all" };
 const STORAGE = { settings: "mandarinsteps:settings-v2", completed: "mandarinsteps:completed-v1", resume: "mandarinsteps:resume-v1" };
+const THEME_KEY = "mandarinsteps:theme-v1";
 const RATES = [0.75, 1, 1.25, 1.5, 2];
 
 function readStored(key: string): unknown {
@@ -32,10 +34,23 @@ function record(value: unknown): Record<string, unknown> {
 
 export default function Home() {
   const [mode, setMode] = useState<"recordings" | "practice" | "ori">("recordings");
-  return <div className="workspace"><nav className="course-switcher" aria-label="Chinese learning library"><div className="course-tabs"><button aria-pressed={mode === "recordings"} onClick={() => setMode("recordings")}>Podcast</button><button aria-pressed={mode === "practice"} onClick={() => setMode("practice")}>Starter lessons</button><button aria-pressed={mode === "ori"} onClick={() => setMode("ori")}>Ori Princess</button></div></nav>{mode === "recordings" ? <PodcastLibrary /> : mode === "practice" ? <StarterCourse /> : <OriLibrary />}</div>;
+  const [theme, setTheme] = useState<Theme>("light");
+  const [themeReady, setThemeReady] = useState(false);
+  useEffect(() => {
+    const frame = requestAnimationFrame(() => {
+      const shared = localStorage.getItem(THEME_KEY);
+      const oldSettings = record(readStored(STORAGE.settings));
+      const next = shared === "dark" || shared === "light" ? shared : oldSettings.theme === "dark" ? "dark" : "light";
+      setTheme(next); document.documentElement.dataset.theme = next; setThemeReady(true);
+    });
+    return () => cancelAnimationFrame(frame);
+  }, []);
+  useEffect(() => { if (themeReady) { document.documentElement.dataset.theme = theme; localStorage.setItem(THEME_KEY, theme); } }, [theme, themeReady]);
+  const toggleTheme = () => setTheme((value) => value === "light" ? "dark" : "light");
+  return <div className="workspace"><nav className="course-switcher" aria-label="Chinese learning library"><div className="course-tabs"><button aria-pressed={mode === "recordings"} onClick={() => setMode("recordings")}>Podcast</button><button aria-pressed={mode === "practice"} onClick={() => setMode("practice")}>Starter lessons</button><button aria-pressed={mode === "ori"} onClick={() => setMode("ori")}>Ori Princess</button></div></nav>{mode === "recordings" ? <PodcastLibrary theme={theme} onToggleTheme={toggleTheme} /> : mode === "practice" ? <StarterCourse theme={theme} onToggleTheme={toggleTheme} /> : <OriLibrary theme={theme} onToggleTheme={toggleTheme} />}</div>;
 }
 
-function StarterCourse() {
+function StarterCourse({ theme, onToggleTheme }: { theme: Theme; onToggleTheme: () => void }) {
   const [preferences, setPreferences] = useState(DEFAULTS);
   const [session, setSession] = useState<Session>({ lessonId: 1, initialLine: 0, autoplay: false, revision: 0 });
   const [completedIds, setCompletedIds] = useState<number[]>([]);
@@ -51,7 +66,6 @@ function StarterCourse() {
     const frame = requestAnimationFrame(() => {
       const saved = record(readStored(STORAGE.settings));
       const next = { ...DEFAULTS };
-      if (saved.theme === "light" || saved.theme === "dark") next.theme = saved.theme;
       for (const key of ["pinyin", "english", "loop", "autoplayNext"] as const) {
         if (typeof saved[key] === "boolean") next[key] = saved[key];
       }
@@ -68,10 +82,7 @@ function StarterCourse() {
     });
     return () => cancelAnimationFrame(frame);
   }, []);
-  useEffect(() => {
-    document.documentElement.dataset.theme = preferences.theme;
-    if (ready) saveStored(STORAGE.settings, preferences);
-  }, [preferences, ready]);
+  useEffect(() => { if (ready) saveStored(STORAGE.settings, preferences); }, [preferences, ready]);
   useEffect(() => { if (ready) saveStored(STORAGE.completed, completedIds); }, [completedIds, ready]);
   useEffect(() => {
     if (!sidebarOpen) return;
@@ -153,7 +164,7 @@ function StarterCourse() {
         <header className="topbar">
           <button ref={menuRef} className="menu-button" onClick={() => setSidebarOpen(true)} aria-label="Open lesson library" aria-expanded={sidebarOpen}><UiIcon name="menu" /><span className="menu-label">Lessons</span></button>
           <p>A little Chinese, every day.</p>
-          <div className="topbar-actions"><button onClick={randomLesson} title="Open a random lesson"><span aria-hidden="true">🎲</span> <span className="topbar-label">Random</span></button><button className="theme-toggle" onClick={() => updatePreference("theme", preferences.theme === "light" ? "dark" : "light")} aria-label={`Switch theme to ${preferences.theme === "light" ? "dark" : "light"}`}><UiIcon name={preferences.theme === "light" ? "moon" : "sun"} /><span>{preferences.theme === "light" ? "Dark" : "Light"}</span></button></div>
+          <div className="topbar-actions"><button onClick={randomLesson} title="Open a random lesson"><span aria-hidden="true">🎲</span> <span className="topbar-label">Random</span></button><button className="theme-toggle" onClick={onToggleTheme} aria-label={`Switch theme to ${theme === "light" ? "dark" : "light"}`}><UiIcon name={theme === "light" ? "moon" : "sun"} /><span>{theme === "light" ? "Dark" : "Light"}</span></button></div>
         </header>
         <LessonView key={`${lesson.id}-${session.revision}`} lesson={lesson} session={session} preferences={preferences} ready={ready} completed={completed.has(lesson.id)} onCompleted={() => toggleCompleted(lesson.id)} onPreference={updatePreference} onNavigate={navigate} sleepTimer={sleepTimer} onSleepTimer={setSleepTimer} onLevel={() => { updatePreference("level", lesson.level); if (window.matchMedia("(max-width: 980px)").matches) setSidebarOpen(true); }} />
       </section>

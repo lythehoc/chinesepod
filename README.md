@@ -14,7 +14,8 @@ learn with English explanations, and pick up where you left off.
 - Use the engpod-style player: central Play/Pause, previous/next, ±10 seconds, seeking, tap-to-cycle speed, loop, auto next, and a 15/30/45/60-minute sleep timer.
 - Read public dialogue and vocabulary previews inside each episode, with pronunciation clips.
 - Practise **24 original starter lessons** with English translations, pinyin and **288 included pronunciation clips**, starting at 1× speed.
-- Learn with **47 full Mandarin Ori Princess episodes** from Asia Animation Channel without leaving the app. Every episode has its own Chinese title phrase, pinyin, English meaning, title vocabulary, three-pass listening checklist, and saved notebook.
+- Learn with **47 full Mandarin Ori Princess episodes** from Asia Animation Channel without leaving the app. Every episode has its own Chinese title phrase, pinyin, English meaning, title vocabulary, three-pass listening checklist, and saved notebook. On desktop, the video remains visible while the lesson pane scrolls.
+- Use one saved light or dark theme across Podcast, Starter lessons, and Ori Princess.
 - Save progress locally, with light/dark themes and no app account needed.
 
 ChinesePod audio includes Mandarin conversations and English teaching. Public study previews and YouTube videos are served by their publishers and depend on
