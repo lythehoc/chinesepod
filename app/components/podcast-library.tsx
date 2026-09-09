@@ -50,6 +50,8 @@ export default function PodcastLibrary({ theme, onToggleTheme }: { theme: "light
   const audioRef = useRef<HTMLAudioElement>(null);
   const activeRef = useRef(episode);
   const restoreRef = useRef<number | null>(null);
+  const pendingAutoplayRef = useRef(false);
+  const switchingSourceRef = useRef(false);
   const lastSaveRef = useRef(0);
   const menuRef = useRef<HTMLButtonElement>(null);
   const sidebarRef = useRef<HTMLElement>(null);
@@ -137,6 +139,12 @@ export default function PodcastLibrary({ theme, onToggleTheme }: { theme: "light
     const audio = audioRef.current;
     if (!audio) return;
     setError(null);
+    if (audio.readyState < HTMLMediaElement.HAVE_METADATA) {
+      pendingAutoplayRef.current = true;
+      setBuffering(true);
+      audio.load();
+      return;
+    }
     if (audio.ended) audio.currentTime = 0;
     void audio.play().catch((reason: unknown) => {
       if (reason instanceof DOMException && reason.name === "AbortError") return;
@@ -144,8 +152,17 @@ export default function PodcastLibrary({ theme, onToggleTheme }: { theme: "light
     });
   }, []);
 
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    audio.load();
+  }, [episode.audioUrl]);
+
   const select = useCallback((item: Episode, autoplay = true) => {
     savePosition();
+    switchingSourceRef.current = true;
+    pendingAutoplayRef.current = autoplay;
+    audioRef.current?.pause();
     restoreRef.current = null;
     activeRef.current = item;
     setEpisode(item);
@@ -154,17 +171,9 @@ export default function PodcastLibrary({ theme, onToggleTheme }: { theme: "light
     setBuffering(false);
     setError(null);
     setSidebarOpen(false);
-    const audio = audioRef.current;
-    if (audio) {
-      audio.pause();
-      audio.src = item.audioUrl;
-      audio.load();
-      audio.playbackRate = rate;
-      if (autoplay) start();
-    }
     write(RESUME_KEY, { id: item.id, position: 0 });
     requestAnimationFrame(() => document.getElementById("podcast-title")?.focus());
-  }, [rate, savePosition, start]);
+  }, [savePosition]);
 
   const next = (direction: number, autoplay = playing) => {
     const pool = visible.length ? visible : episodes;
@@ -182,7 +191,7 @@ export default function PodcastLibrary({ theme, onToggleTheme }: { theme: "light
     <aside className={`library-panel ${sidebarOpen ? "is-open" : ""}`} ref={sidebarRef} aria-label="Recorded episode library">
       <div className="brand-block"><div className="brand-row"><span className="brand-mark" lang="zh-Hans" aria-hidden="true">中</span><div className="brand-name"><h1>Mandarin<span> Steps</span></h1><p>REAL CONVERSATIONS. EVERY DAY.</p></div><button className="mobile-close" aria-label="Close episode library" onClick={() => { setSidebarOpen(false); menuRef.current?.focus(); }}><UiIcon name="close" /></button></div></div>
       <div className="library-tools"><label className="search-field"><span aria-hidden="true">⌕</span><input type="search" aria-label="Search recorded episodes" placeholder="Search topics, titles, or levels" value={query} onChange={(event) => { setQuery(event.target.value); setLimit(80); }} /></label><div className="level-filters" role="group" aria-label="Episode level">{["All", ...levels].map((value) => <button key={value} className={level === value ? "is-selected" : ""} aria-pressed={level === value} onClick={() => { setLevel(value); setLimit(80); }}>{levelLabel(value)}</button>)}</div><div className="completion-filters" role="group" aria-label="Episode completion">{([['all', 'All'], ['unfinished', 'To listen'], ['finished', 'Finished']] as const).map(([value, label]) => <button key={value} className={filter === value ? "is-selected" : ""} aria-pressed={filter === value} onClick={() => { setFilter(value); setLimit(80); }}>{levelLabel(label)}<span>{counts[value]}</span></button>)}</div></div>
-      <div className="episode-list"><div className="results-line" aria-live="polite"><span>{visible.length.toLocaleString("en-US")} episodes</span><span>ChinesePod</span></div>{visible.slice(0, limit).map((item) => <div className={`episode-row ${item.id === episode.id ? "is-active" : ""}`} key={item.id}><button className="episode-select" aria-current={item.id === episode.id ? "true" : undefined} onClick={() => select(item)}><span className="episode-number" aria-hidden="true">▶</span><span className="episode-copy"><strong>{item.title}</strong><small>{levelLabel(item.level)} · {time(item.duration)}</small></span></button><button className={`episode-complete ${finished.has(item.id) ? "is-finished" : ""}`} aria-label={`Mark ${item.title}: ${finished.has(item.id) ? "unfinished" : "finished"}`} aria-pressed={finished.has(item.id)} onClick={() => toggleFinished(item.id)}>✓</button></div>)}{visible.length > limit && <button className="load-more" onClick={() => setLimit((value) => value + 80)}>Show more · {visible.length - limit} remaining</button>}{!visible.length && <div className="empty-state"><strong>No matching episodes</strong><button onClick={() => { setQuery(""); setLevel("All"); setFilter("all"); }}>Clear filters</button></div>}</div>
+      <div className="episode-list">{visible.slice(0, limit).map((item) => <div className={`episode-row ${item.id === episode.id ? "is-active" : ""}`} key={item.id}><button className="episode-select" aria-current={item.id === episode.id ? "true" : undefined} onClick={() => select(item)}><span className="episode-number" aria-hidden="true">▶</span><span className="episode-copy"><strong>{item.title}</strong><small>{levelLabel(item.level)} · {time(item.duration)}</small></span></button><button className={`episode-complete ${finished.has(item.id) ? "is-finished" : ""}`} aria-label={`Mark ${item.title}: ${finished.has(item.id) ? "unfinished" : "finished"}`} aria-pressed={finished.has(item.id)} onClick={() => toggleFinished(item.id)}>✓</button></div>)}{visible.length > limit && <button className="load-more" onClick={() => setLimit((value) => value + 80)}>Show more · {visible.length - limit} remaining</button>}{!visible.length && <div className="empty-state"><strong>No matching episodes</strong><button onClick={() => { setQuery(""); setLevel("All"); setFilter("all"); }}>Clear filters</button></div>}</div>
     </aside>
     <section className="content-panel"><header className="topbar"><button ref={menuRef} className="menu-button" aria-label="Open episode library" aria-expanded={sidebarOpen} onClick={() => setSidebarOpen(true)}><UiIcon name="menu" /><span className="menu-label">Lessons</span></button><p>A little Chinese, every day.</p><div className="topbar-actions"><button onClick={random}>Random</button><button className="theme-toggle" onClick={onToggleTheme} aria-label={`Switch theme to ${theme === "light" ? "dark" : "light"}`}><UiIcon name={theme === "light" ? "moon" : "sun"} /></button></div></header>
       <div className="lesson-scroll"><div className="lesson"><div className="lesson-heading"><div><div className="eyebrow"><span className="recording-badge">RECORDED AUDIO</span><span>{levelLabel(episode.level)} · {time(episode.duration)}</span></div><h2 id="podcast-title" tabIndex={-1}>{episode.title}</h2></div><button className={`heading-complete ${finished.has(episode.id) ? "is-finished" : ""}`} aria-label="Mark current episode as finished" aria-pressed={finished.has(episode.id)} onClick={() => toggleFinished(episode.id)}>✓</button></div>
@@ -190,7 +199,7 @@ export default function PodcastLibrary({ theme, onToggleTheme }: { theme: "light
       </div></div>
       <section className="player recorded-player" aria-label="Recorded Mandarin audio player">
         {error && <p className="speech-notice" role="alert">{error} <button onClick={() => { audioRef.current?.load(); start(); }}>Retry</button></p>}
-        <audio ref={audioRef} src={episode.audioUrl} preload="metadata" loop={loop} onPlay={() => { setPlaying(true); setError(null); }} onPlaying={() => setBuffering(false)} onWaiting={() => setBuffering(true)} onPause={() => { setPlaying(false); setBuffering(false); savePosition(); }} onError={() => { setPlaying(false); setBuffering(false); setError("The episode could not load. Check your connection and try again."); }} onDurationChange={() => { const audio = audioRef.current; if (audio && Number.isFinite(audio.duration)) setDuration(audio.duration); }} onLoadedMetadata={() => { const audio = audioRef.current; if (!audio) return; setDuration(Number.isFinite(audio.duration) ? audio.duration : 0); audio.playbackRate = rate; if (restoreRef.current !== null && Number.isFinite(audio.duration)) { audio.currentTime = Math.min(restoreRef.current, Math.max(0, audio.duration - 1)); setPosition(audio.currentTime); restoreRef.current = null; } }} onTimeUpdate={() => { const audio = audioRef.current; if (!audio) return; setPosition(audio.currentTime); if (Date.now() - lastSaveRef.current > 1000) { savePosition(); lastSaveRef.current = Date.now(); } }} onEnded={() => { setPlaying(false); if (autoNext && (!sleepUntil || sleepUntil > Date.now())) next(1, true); }} />
+        <audio ref={audioRef} src={episode.audioUrl} preload="metadata" loop={loop} onPlay={() => { pendingAutoplayRef.current = false; setPlaying(true); setError(null); }} onPlaying={() => setBuffering(false)} onWaiting={() => setBuffering(true)} onPause={() => { setPlaying(false); setBuffering(false); if (!switchingSourceRef.current) savePosition(); }} onError={() => { pendingAutoplayRef.current = false; switchingSourceRef.current = false; setPlaying(false); setBuffering(false); setError("The episode could not load. Check your connection and try again."); }} onDurationChange={() => { const audio = audioRef.current; if (audio && Number.isFinite(audio.duration)) setDuration(audio.duration); }} onLoadedMetadata={() => { const audio = audioRef.current; if (!audio) return; switchingSourceRef.current = false; setDuration(Number.isFinite(audio.duration) ? audio.duration : 0); audio.playbackRate = rate; if (restoreRef.current !== null && Number.isFinite(audio.duration)) { audio.currentTime = Math.min(restoreRef.current, Math.max(0, audio.duration - 1)); setPosition(audio.currentTime); restoreRef.current = null; } if (pendingAutoplayRef.current) { pendingAutoplayRef.current = false; void audio.play().catch((reason: unknown) => { if (!(reason instanceof DOMException && reason.name === "AbortError")) setError("Playback could not start. Press Play again or try a different episode."); }); } }} onTimeUpdate={() => { const audio = audioRef.current; if (!audio) return; setPosition(audio.currentTime); if (Date.now() - lastSaveRef.current > 1000) { savePosition(); lastSaveRef.current = Date.now(); } }} onEnded={() => { setPlaying(false); if (autoNext && (!sleepUntil || sleepUntil > Date.now())) next(1, true); }} />
         <div className="progress-wrap"><span className="progress-time">{time(position)}</span><input type="range" min={0} max={duration || 0} step={0.1} value={Math.min(position, duration || 0)} disabled={!duration} aria-label="Episode progress" aria-valuetext={`${time(position)} / ${time(duration)}`} onChange={(event) => { const audio = audioRef.current; if (audio && duration) { const value = Number(event.target.value); audio.currentTime = value; setPosition(value); savePosition(); } }} style={{ "--progress": duration ? `${position / duration * 100}%` : "0%" } as CSSProperties} /><span className="progress-time">{time(duration)}</span></div>
         <div className="player-main"><div className="transport"><button className="skip-button" onClick={() => { if (audioRef.current) audioRef.current.currentTime = Math.max(0, audioRef.current.currentTime - 10); }} aria-label="Back 10 seconds"><MediaIcon name="replay10" /></button><button className="track-button" onClick={() => next(-1)} aria-label="Previous episode"><MediaIcon name="previous" /></button><button className="play-button" disabled={!ready} onClick={() => playing ? audioRef.current?.pause() : start()} aria-label={playing ? "Pause podcast" : "Play podcast"}>{buffering && playing ? <span aria-hidden="true">…</span> : <MediaIcon name={playing ? "pause" : "play"} />}</button><button className="track-button" onClick={() => next(1)} aria-label="Next episode"><MediaIcon name="next" /></button><button className="skip-button" onClick={() => { const audio = audioRef.current; if (audio && Number.isFinite(audio.duration)) audio.currentTime = Math.min(audio.duration, audio.currentTime + 10); }} aria-label="Forward 10 seconds"><MediaIcon name="forward10" /></button></div><div className="player-options"><button className={autoNext ? "is-on" : ""} aria-pressed={autoNext} onClick={() => setAutoNext((value) => !value)}><span aria-hidden="true">⏭</span><span className="control-label">Auto next</span></button><button className={loop ? "is-on" : ""} aria-pressed={loop} onClick={() => setLoop((value) => !value)}><span aria-hidden="true">↻</span><span className="control-label">Loop</span></button><SleepTimerButton until={sleepUntil} remaining={remaining} onSelect={(minutes) => { setSleepUntil(minutes ? Date.now() + minutes * 60000 : null); setRemaining(minutes * 60); }} /><button className={`speed-button ${rate !== 1 ? "is-on" : ""}`} onClick={() => setRate(RATES[(RATES.indexOf(rate) + 1) % RATES.length])} aria-label={`Playback speed ${rate}, change speed`} title="Change playback speed"><span className="speed-value">{rate}×</span><span className="control-label">Speed</span></button></div></div>
       </section>

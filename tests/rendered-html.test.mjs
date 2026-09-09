@@ -147,10 +147,11 @@ test("exports the recorded podcast library with a real audio player", async () =
   assert.match(visibleText, /Mandarin Steps/);
   assert.match(visibleText, /Podcast/);
   assert.match(visibleText, /Starter lessons/);
-  assert.match(visibleText, /1,920/);
+  assert.match(visibleText, /All 1920 To listen 1920 Finished 0/);
   assert.doesNotMatch(visibleText, /YOUR NEXT LISTEN|Learn Chinese in context|recorded episodes ·/);
-  assert.match(rendered, /aria-label="Episode study material"/);
-  assert.match(rendered, /Loading public study material/);
+  assert.match(rendered, /aria-label="Transcript and vocabulary"/);
+  assert.match(rendered, /Transcript &amp; vocabulary/);
+  assert.match(rendered, /Loading transcript/);
   const player = htmlTags(rendered, "audio")[0];
   assert.ok(player?.src.startsWith("https://anchor.fm/"));
   assert.ok(catalog.some((item) => item.audioUrl === player.src));

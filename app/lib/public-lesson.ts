@@ -1,5 +1,5 @@
 export type PublicLine = { hanzi: string; pinyin: string; english: string; audioUrl: string | null };
-export type PublicLesson = { dialogue: PublicLine[]; vocabulary: PublicLine[] };
+export type PublicLesson = { dialogue: PublicLine[]; keyVocabulary: PublicLine[]; supplementaryVocabulary: PublicLine[] };
 
 /** Read only the publisher's anonymous preview. Never insert source HTML or scripts. */
 export function parsePublicLesson(document: Document): PublicLesson {
@@ -18,5 +18,7 @@ export function parsePublicLesson(document: Document): PublicLesson {
     return { hanzi: text(cells[0]), pinyin: text(cells[1]), english: text(cells[2]), audioUrl: audioUrl(row) };
   });
   const complete = (line: PublicLine) => /\p{Script=Han}/u.test(line.hanzi) && !!line.pinyin && !!line.english;
-  return { dialogue: dialogue.filter(complete), vocabulary: vocabulary.filter(complete) };
+  const completeVocabulary = vocabulary.filter(complete);
+  const keyCount = completeVocabulary.length > 1 ? Math.ceil(completeVocabulary.length * 0.6) : completeVocabulary.length;
+  return { dialogue: dialogue.filter(complete), keyVocabulary: completeVocabulary.slice(0, keyCount), supplementaryVocabulary: completeVocabulary.slice(keyCount) };
 }
