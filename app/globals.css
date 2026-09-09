@@ -304,6 +304,10 @@ p { line-height: 1.6; }
 .ori-language, .ori-practice, .ori-episodes { border: 1px solid var(--line); border-radius: 18px; background: var(--surface); box-shadow: var(--shadow); }
 .ori-language { padding: 0; }
 .ori-language .ori-phrase { padding-bottom: 4px; }
+.ori-transcript { margin-top: 24px; }
+.ori-transcript .line { grid-template-columns: 52px minmax(0, 1fr); }
+.ori-transcript .speaker { margin-top: 4px; font-family: monospace; }
+.ori-transcript .text { padding-top: 0; }
 .ori-language .ori-phrase h2 { margin: 8px 0 0; font: 400 clamp(28px, 4vw, 40px)/1.35 "Songti SC", "SimSun", serif; }
 .ori-language .pinyin { margin-top: 2px; }
 .ori-language .translation { margin-top: 1px; }
@@ -394,6 +398,8 @@ p { line-height: 1.6; }
   .ori-practice { padding: 16px; }
   .ori-language { padding: 0; }
   .ori-language .ori-phrase h2 { font-size: 29px; }
+  .ori-transcript .line { grid-template-columns: 44px minmax(0, 1fr); gap: 8px; padding: 13px 10px; }
+  .ori-transcript .hanzi { font-size: 21px; }
   .ori-video { border-radius: 14px; }
   .ori-now { align-items: flex-end; }
   .ori-now h2 { max-width: 190px; font-size: 15px; }

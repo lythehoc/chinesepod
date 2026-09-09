@@ -14,7 +14,7 @@ learn with English explanations, and pick up where you left off.
 - Use the engpod-style player: central Play/Pause, previous/next, ±10 seconds, seeking, tap-to-cycle speed, loop, auto next, and a 15/30/45/60-minute sleep timer. Episode changes keep playing without a page reload.
 - Read the conversation, Key Vocabulary, and Supplementary Vocabulary in one transcript card, with pinyin, English, and pronunciation clips when the source provides them.
 - Practise **24 original starter lessons** with English translations, pinyin and **288 included pronunciation clips**, starting at 1× speed.
-- Learn with **47 full Mandarin Ori Princess episodes** from Asia Animation Channel without leaving the app. Every episode has its own Chinese phrase, pinyin, English meaning, Key Vocabulary, Supplementary Vocabulary, three-pass listening checklist, and saved notebook. The video remains visible while the lesson pane scrolls on desktop and mobile.
+- Learn with **47 full Mandarin Ori Princess episodes** from Asia Animation Channel without leaving the app. Every episode includes 24 timestamped lines recovered from its on-screen Mandarin captions, pinyin, English translations, Key Vocabulary, Supplementary Vocabulary, a three-pass listening checklist, and a saved notebook. The video remains visible while the lesson pane scrolls on desktop and mobile.
 - Use one saved light or dark theme across Podcast, Starter lessons, and Ori Princess.
 - Save progress locally, with light/dark themes and no app account needed.
 

@@ -263,3 +263,21 @@ test("English interface has name-only tabs and embedded Mandarin Ori episodes", 
     assert.equal(item.vietnamese, undefined);
   }
 });
+
+test("every Ori episode has caption-derived transcript and vocabulary study data", async () => {
+  const episodes = JSON.parse(await read("app/data/ori.json"));
+  const learning = JSON.parse(await read("app/data/ori-learning.json"));
+  assert.equal(learning.length, episodes.length);
+  for (const episode of episodes) {
+    const notes = learning.find((item) => item.videoId === episode.videoId);
+    assert.ok(notes, `missing learning data for Ori episode ${episode.id}`);
+    assert.equal(notes.transcript.length, 24, `Ori episode ${episode.id} needs 24 transcript lines`);
+    assert.equal(notes.keyVocabulary.length, 5, `Ori episode ${episode.id} needs five key words`);
+    assert.equal(notes.supplementaryVocabulary.length, 5, `Ori episode ${episode.id} needs five supplementary words`);
+    for (const line of notes.transcript) {
+      assert.ok(Number.isFinite(line.time) && line.time >= 0);
+      assert.match(line.hanzi, /\p{Script=Han}/u);
+      assert.ok(line.pinyin && line.english);
+    }
+  }
+});
