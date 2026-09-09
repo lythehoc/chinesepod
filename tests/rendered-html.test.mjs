@@ -250,7 +250,13 @@ test("English interface has name-only tabs and embedded Mandarin Ori episodes", 
     assert.match(item.videoId, /^[a-zA-Z0-9_-]{11}$/);
     assert.ok(item.title.includes("国语版"));
     assert.equal(new URL(item.url).hostname, "www.youtube.com");
+    assert.ok(item.lessonTitle.trim());
+    assert.ok(item.pinyin.trim());
+    assert.ok(item.english.trim());
+    assert.equal(item.words.length, 2);
+    for (const word of item.words) assert.ok(word.hanzi.trim() && word.pinyin.trim() && word.english.trim());
   }
+  assert.equal(new Set(ori.map((item) => item.lessonTitle)).size, ori.length);
   for (const lesson of catalog) for (const item of [...lesson.dialogue, ...lesson.vocabulary]) {
     assert.ok(item.english.trim());
     assert.equal(item.vietnamese, undefined);

@@ -11,10 +11,10 @@ learn with English explanations, and pick up where you left off.
 ## Highlights
 
 - Browse **1,920 ChinesePod episodes** across five levels, with search and completion filters.
-- Use the engpod-style player: central Play/Pause, previous/next, ±10 seconds, seeking, speed, loop and sleep timer.
+- Use the engpod-style player: central Play/Pause, previous/next, ±10 seconds, seeking, tap-to-cycle speed, loop, auto next, and a 15/30/45/60-minute sleep timer.
 - Read public dialogue and vocabulary previews inside each episode, with pronunciation clips.
 - Practise **24 original starter lessons** with English translations, pinyin and **288 included pronunciation clips**, starting at 1× speed.
-- Watch **47 full Mandarin Ori Princess episodes** from Asia Animation Channel without leaving the app; keep a listening notebook for each episode.
+- Learn with **47 full Mandarin Ori Princess episodes** from Asia Animation Channel without leaving the app. Every episode has its own Chinese title phrase, pinyin, English meaning, title vocabulary, three-pass listening checklist, and saved notebook.
 - Save progress locally, with light/dark themes and no app account needed.
 
 ChinesePod audio includes Mandarin conversations and English teaching. Public study previews and YouTube videos are served by their publishers and depend on

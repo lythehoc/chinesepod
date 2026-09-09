@@ -18,7 +18,7 @@ type SleepTimer = { until: number | null; remaining: number };
 type Session = { lessonId: number; initialLine: number; autoplay: boolean; revision: number };
 const DEFAULTS: Preferences = { theme: "light", pinyin: true, english: true, rate: 1, loop: false, autoplayNext: false, level: "All", completion: "all" };
 const STORAGE = { settings: "mandarinsteps:settings-v2", completed: "mandarinsteps:completed-v1", resume: "mandarinsteps:resume-v1" };
-const RATES = [0.65, 0.85, 1, 1.15];
+const RATES = [0.75, 1, 1.25, 1.5, 2];
 
 function readStored(key: string): unknown {
   try { return JSON.parse(localStorage.getItem(key) ?? "null"); } catch { return null; }
