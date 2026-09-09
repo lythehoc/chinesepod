@@ -236,7 +236,6 @@ function LessonView({ lesson, session, preferences, ready, completed, onComplete
           </div>
         </section>
         <aside className="language-note"><span className="note-symbol" lang="zh-Hans" aria-hidden="true">记</span><div><span className="section-kicker">LANGUAGE NOTE</span><h3>{lesson.note.title}</h3><p>{lesson.note.body}</p></div></aside>
-        <div className="lesson-footer"><p>Listen, say it aloud, then try without the hints.</p><button className={`finish-button ${completed ? "is-finished" : ""}`} onClick={onCompleted} aria-pressed={completed}>{completed ? "✓ Lesson finished" : "Mark as finished"}</button></div>
       </div>
     </div>
     <section className="player" aria-label="Mandarin sentence player">

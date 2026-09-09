@@ -31,12 +31,6 @@ npm run dev
 
 Open http://localhost:3000. Run `npm run lint` and `npm test` to validate changes.
 
-## GitHub Pages
-
-Published at **https://lythehoc.github.io/chinesepod/**.
-Pushes to `main` run checks and deploy `out/` through GitHub Actions.
-The build automatically uses the repository’s base path. No backend or API key is required.
-
 ## Credits
 
 - Recorded audio and public lesson previews: [ChinesePod](https://www.chinesepod.com).

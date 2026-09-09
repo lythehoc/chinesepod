@@ -139,10 +139,6 @@ p { line-height: 1.6; }
 .note-symbol { flex: 0 0 36px; width: 36px; height: 39px; display: grid; place-items: center; border: 1px solid var(--line); border-radius: 9px; color: var(--accent-strong); font-size: 23px; font-family: serif; }
 .language-note h3 { font-size: 16px; margin: 6px 0; }
 .language-note p { margin: 0; color: var(--muted); font-size: 13px; }
-.lesson-footer { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-top: 20px; }
-.lesson-footer p { color: var(--muted); font-size: 11px; }
-.finish-button { min-height: 42px; padding: 8px 14px; border: 1px solid var(--accent); border-radius: 10px; background: transparent; color: var(--accent-strong); font-size: 11px; white-space: nowrap; }
-.finish-button.is-finished { background: var(--accent-soft); }
 .player { z-index: 30; padding: 0 28px max(10px, env(safe-area-inset-bottom)); border-top: 1px solid var(--line); background: var(--surface); box-shadow: 0 -12px 32px #00000005; }
 .progress-wrap { min-height: 22px; display: grid; grid-template-columns: 18px minmax(0, 1fr) 18px; align-items: center; gap: 8px; }
 .progress-time { color: var(--muted); font: 10px monospace; }
@@ -237,8 +233,6 @@ p { line-height: 1.6; }
   .vocab-block { grid-template-columns: 1fr; }
   .language-note { gap: 12px; padding: 19px 16px; margin-top: 16px; }
   .language-note p { font-size: 12px; }
-  .lesson-footer { flex-direction: column; gap: 4px; text-align: center; }
-  .finish-button { width: 100%; }
   .player { padding: 0 12px max(7px, env(safe-area-inset-bottom)); }
   .player-main { flex-direction: column; gap: 2px; padding-top: 4px; }
   .transport { gap: 12px; }
