@@ -268,9 +268,9 @@ test("poetry and modern songs have complete bilingual study material", async () 
   const culture = JSON.parse(await read("app/data/culture.json"));
   const audio = JSON.parse(await read("app/data/starter-audio.json"));
   assert.equal(culture.filter(({ kind }) => kind === "poem").length, 30);
-  assert.equal(culture.filter(({ kind }) => kind === "song").length, 25);
+  assert.equal(culture.filter(({ kind }) => kind === "song").length, 50);
   assert.equal(new Set(culture.map(({ id }) => id)).size, culture.length);
-  assert.equal(new Set(culture.filter(({ kind }) => kind === "song").map(({ videoId }) => videoId)).size, 25);
+  assert.equal(new Set(culture.filter(({ kind }) => kind === "song").map(({ videoId }) => videoId)).size, 50);
   for (const item of culture) {
     assertText(item.title, `${item.id}.title`);
     assertText(item.pinyinTitle, `${item.id}.pinyinTitle`);

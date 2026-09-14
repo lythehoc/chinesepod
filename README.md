@@ -17,7 +17,7 @@ pick up where you left off.
 - Practise **24 original starter lessons** with English translations, pinyin and **288 included pronunciation clips**, starting at 1× speed.
 - Learn with **47 full Mandarin Ori Princess episodes** from Asia Animation Channel without leaving the app. Every episode includes 24 timestamped lines recovered from its on-screen Mandarin captions, pinyin, English translations, Key Vocabulary, Supplementary Vocabulary, a three-pass listening checklist, and a saved notebook. The video remains visible while the lesson pane scrolls on desktop and mobile.
 - Read **30 classical Chinese poems** line by line with pinyin, English meaning, key vocabulary, and included Mandarin pronunciation.
-- Learn from **25 modern Mandarin songs**, including music by Hebe Tien, G.E.M., Accusefive, Jay Chou, JJ Lin, Mayday, Zhou Shen, Jolin Tsai, Ronghao Li, Crowd Lu, and WeiBird. YouTube uploads play inside the site, with reusable vocabulary and original practice phrases for each song.
+- Learn from **50 modern Mandarin songs**, including music by Hebe Tien, G.E.M., Accusefive, Jay Chou, JJ Lin, Mayday, Zhou Shen, Jolin Tsai, LaLa Hsu, A-Lin, Sodagreen, and WeiBird. YouTube uploads play inside the site, with reusable vocabulary and original practice phrases for each song.
 - Use one saved light or dark theme across every learning tab.
 - Save progress locally, with light/dark themes and no app account needed.
 
