@@ -34,7 +34,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: "Mandarin Steps — A little Chinese, every day.",
   description:
-    "Learn Mandarin with podcasts, starter lessons, Ori Princess, classical Chinese poetry, and modern Mandarin songs.",
+    "Learn Mandarin with podcasts, Ori Princess, classical Chinese poetry, and modern Mandarin songs.",
   referrer: "strict-origin-when-cross-origin",
   manifest: `${assetBase}/manifest.webmanifest`,
   icons: {
@@ -45,14 +45,14 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Mandarin Steps — A little Chinese, every day.",
     description:
-      "Learn Mandarin with podcasts, starter lessons, Ori Princess, classical Chinese poetry, and modern Mandarin songs.",
+      "Learn Mandarin with podcasts, Ori Princess, classical Chinese poetry, and modern Mandarin songs.",
     type: "website",
   },
   twitter: {
     card: "summary",
     title: "Mandarin Steps — A little Chinese, every day.",
     description:
-      "Learn Mandarin with podcasts, starter lessons, Ori Princess, classical Chinese poetry, and modern Mandarin songs.",
+      "Learn Mandarin with podcasts, Ori Princess, classical Chinese poetry, and modern Mandarin songs.",
   },
 };
 

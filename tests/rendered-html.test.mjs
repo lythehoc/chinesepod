@@ -5,18 +5,12 @@ import ts from "typescript";
 
 const root = new URL("../", import.meta.url);
 const read = (path) => readFile(new URL(path, root), "utf8");
-const catalog = JSON.parse(await read("app/data/lessons.json"));
-
 // Execute the same search helpers used by the app without requiring a Next loader.
-const { outputText } = ts.transpileModule(await read("app/lib/lessons.ts"), {
+const { outputText } = ts.transpileModule(await read("app/lib/search.ts"), {
   compilerOptions: { module: ts.ModuleKind.ESNext, target: ts.ScriptTarget.ES2022 },
 });
-const searchModule = outputText.replace(
-  /import\s+lessonData\s+from\s+["']\.\.\/data\/lessons\.json["'];?/,
-  `const lessonData = ${JSON.stringify(catalog)};`,
-);
-const { normalizeSearch, matchesLesson } = await import(
-  `data:text/javascript;base64,${Buffer.from(searchModule).toString("base64")}`
+const { normalizeSearch } = await import(
+  `data:text/javascript;base64,${Buffer.from(outputText).toString("base64")}`
 );
 
 function decodeEntities(value) {
@@ -45,8 +39,6 @@ function htmlTags(html, name) {
 }
 
 const han = /\p{Script=Han}/u;
-const tone = /[āáǎàēéěèīíǐìōóǒòūúǔùǖǘǚǜ]/i;
-
 function assertText(value, label) {
   assert.equal(typeof value, "string", `${label} must be text`);
   assert.ok(value.trim(), `${label} must not be empty`);
@@ -60,40 +52,6 @@ function assertBilingual(item, label) {
   assert.match(item.english, /[a-z]/i, `${label} needs a English translation`);
 }
 
-test("contains 24 complete original Mandarin lessons across all three learning levels", () => {
-  assert.equal(catalog.length, 24);
-  assert.equal(new Set(catalog.map(({ id }) => id)).size, catalog.length);
-  assert.deepEqual(
-    [...new Set(catalog.map(({ level }) => level))].sort(),
-    ["Beginner", "Everyday", "Foundations"],
-  );
-
-  for (const lesson of catalog) {
-    const label = `Lesson ${lesson.id}`;
-    assert.ok(Number.isInteger(lesson.id) && lesson.id > 0, `${label} needs a stable positive ID`);
-    for (const key of ["title", "description", "hanzi", "pinyin"]) assertText(lesson[key], `${label}.${key}`);
-    assert.match(lesson.hanzi, han);
-    assert.match(lesson.pinyin, tone, `${label} title should demonstrate tone-marked pinyin`);
-    assert.ok(lesson.dialogue.length >= 4, `${label} needs at least four dialogue lines`);
-    assert.ok(lesson.vocabulary.length >= 4, `${label} needs at least four vocabulary items`);
-    assertText(lesson.note.title, `${label}.note.title`);
-    assertText(lesson.note.body, `${label}.note.body`);
-
-    for (const [index, line] of lesson.dialogue.entries()) {
-      assertBilingual(line, `${label} line ${index + 1}`);
-      assertText(line.speaker, `${label} line ${index + 1}.speaker`);
-      assert.match(line.pinyin, tone, `${label} line ${index + 1} needs tone marks`);
-    }
-    for (const [index, word] of lesson.vocabulary.entries()) {
-      assertBilingual(word, `${label} word ${index + 1}`);
-    }
-    // Neutral-tone words may legitimately have no accent; every lesson must
-    // nevertheless include tone-marked vocabulary for pronunciation practice.
-    assert.ok(lesson.vocabulary.some(({ pinyin }) => tone.test(pinyin)));
-  }
-  assert.doesNotMatch(JSON.stringify(catalog), /archive\.org|englishpod|transcript_id|"mp3"/i);
-});
-
 test("search normalizes tone marks, capitalization, punctuation, and Mandarin ü input", () => {
   assert.equal(normalizeSearch("Nǐ hǎo!"), normalizeSearch("nihao"));
   assert.equal(normalizeSearch("  NI HAO  "), normalizeSearch("nǐ-hǎo"));
@@ -105,40 +63,6 @@ test("search normalizes tone marks, capitalization, punctuation, and Mandarin ü
   assert.equal(normalizeSearch("Điện thoại"), normalizeSearch("dien thoai"));
 });
 
-test("search finds Chinese, pinyin, English, vocabulary, dialogue, levels, and lesson numbers", () => {
-  const lesson = {
-    id: 91,
-    title: "Walking home",
-    hanzi: "回家",
-    pinyin: "Huí jiā",
-    level: "Beginner",
-    description: "A short walk after class.",
-    dialogue: [
-      { speaker: "A", hanzi: "你好吗？", pinyin: "Nǐ hǎo ma?", english: "How are you?" },
-    ],
-    vocabulary: [
-      { hanzi: "女孩", pinyin: "nǚhái", english: "girl" },
-      { hanzi: "绿茶", pinyin: "lǜchá", english: "green tea" },
-    ],
-    note: { title: "Greetings", body: "Use a question to greet someone." },
-  };
-  for (const query of [
-    "回家", "huijia", "huí jiā", "WALKING", "after class", "Beginner", "91",
-    "你好", "ni hao", "nihao", "HOW ARE YOU", "女孩", "nü hai", "nvhai",
-    "nǚhái", "girl", "绿茶", "lü cha", "lvcha", "lu:cha", "GREEN TEA", "",
-  ]) {
-    assert.equal(matchesLesson(lesson, query), true, `Should match ${JSON.stringify(query)}`);
-  }
-  for (const query of ["airport", "日语", "999", "nu hai", "lu cha"]) {
-    assert.equal(matchesLesson(lesson, query), false, `Should not match ${JSON.stringify(query)}`);
-  }
-  for (const lesson of catalog) {
-    assert.equal(matchesLesson(lesson, lesson.hanzi), true);
-    assert.equal(matchesLesson(lesson, normalizeSearch(lesson.pinyin)), true);
-    assert.equal(matchesLesson(lesson, lesson.vocabulary[0].english), true);
-  }
-});
-
 test("exports the recorded podcast library with a real audio player", async () => {
   const catalog = JSON.parse(await read("app/data/podcasts.json"));
   const html = await read("out/index.html");
@@ -146,7 +70,7 @@ test("exports the recorded podcast library with a real audio player", async () =
   const visibleText = decodeEntities(rendered.replace(/<[^>]+>/g, " ")).replace(/\s+/g, " ");
   assert.match(visibleText, /Mandarin Steps/);
   assert.match(visibleText, /Podcast/);
-  assert.match(visibleText, /Starter lessons/);
+  assert.doesNotMatch(visibleText, /Starter lessons/);
   assert.match(visibleText, /All 1920 To listen 1920 Finished 0/);
   assert.doesNotMatch(visibleText, /YOUR NEXT LISTEN|Learn Chinese in context|recorded episodes ·/);
   assert.match(rendered, /aria-label="Transcript and vocabulary"/);
@@ -173,25 +97,6 @@ test("the catalog contains unique episodes and valid publisher audio links acros
     assert.equal(new URL(item.audioUrl).protocol, "https:");
     assert.equal(new URL(item.audioUrl).hostname, "anchor.fm");
     assert.equal(new URL(item.sourceUrl).protocol, "https:");
-  }
-});
-
-test("every starter sentence and vocabulary item has a bundled AAC audio file", async () => {
-  const manifest = JSON.parse(await read("app/data/starter-audio.json"));
-  const paths = new Set();
-  for (const lesson of catalog) {
-    for (const item of [...lesson.dialogue, ...lesson.vocabulary]) {
-      const path = manifest[item.hanzi];
-      assert.match(path ?? "", /^\/audio\/starter\/[a-f0-9]+\.m4a$/);
-      paths.add(path);
-    }
-  }
-  assert.equal(paths.size, 288);
-  for (const path of paths) {
-    const bytes = await readFile(new URL(`out${path}`, root));
-    assert.ok(bytes.length > 4500, `Audio must not be empty: ${path}`);
-    assert.ok(bytes.includes(Buffer.from("ftyp")), `M4A container missing: ${path}`);
-    assert.ok(bytes.includes(Buffer.from("mdat")), `Audio data missing: ${path}`);
   }
 });
 
@@ -227,7 +132,7 @@ test("exports safe local icons and metadata for both local and GitHub Pages buil
 });
 
 test("the current app no longer references the previous audio and transcript sources", async () => {
-  for (const file of ["app/page.tsx", "app/layout.tsx", "app/lib/lessons.ts"]) {
+  for (const file of ["app/page.tsx", "app/layout.tsx", "app/lib/search.ts"]) {
     assert.doesNotMatch(
       await read(file),
       /archive\.org|englishpod|engpod|\/transcripts\/|\.mp3\b|episodes\.json|logo\.jpg|og\.png/i,
@@ -243,7 +148,8 @@ test("English interface has name-only tabs and embedded Mandarin Ori episodes", 
   const nav = html.match(/<nav[^>]*>[\s\S]*?<\/nav>/)?.[0];
   assert.ok(nav);
   assert.doesNotMatch(nav, /\d/);
-  for (const label of ["Podcast", "Starter lessons", "Ori Princess", "Poetry &amp; songs"]) assert.ok(nav.includes(label));
+  for (const label of ["Podcast", "Ori Princess", "Poetry &amp; songs"]) assert.ok(nav.includes(label));
+  assert.doesNotMatch(nav, /Starter lessons/);
   const ori = JSON.parse(await read("app/data/ori.json"));
   assert.ok(ori.length >= 40);
   assert.equal(new Set(ori.map((item) => item.videoId)).size, ori.length);
@@ -258,19 +164,17 @@ test("English interface has name-only tabs and embedded Mandarin Ori episodes", 
     for (const word of item.words) assert.ok(word.hanzi.trim() && word.pinyin.trim() && word.english.trim());
   }
   assert.equal(new Set(ori.map((item) => item.lessonTitle)).size, ori.length);
-  for (const lesson of catalog) for (const item of [...lesson.dialogue, ...lesson.vocabulary]) {
-    assert.ok(item.english.trim());
-    assert.equal(item.vietnamese, undefined);
-  }
 });
 
 test("poetry and modern songs have complete bilingual study material", async () => {
   const culture = JSON.parse(await read("app/data/culture.json"));
-  const audio = JSON.parse(await read("app/data/starter-audio.json"));
+  const audio = JSON.parse(await read("app/data/mandarin-audio.json"));
   assert.equal(culture.filter(({ kind }) => kind === "poem").length, 30);
   assert.equal(culture.filter(({ kind }) => kind === "song").length, 50);
   assert.equal(new Set(culture.map(({ id }) => id)).size, culture.length);
   assert.equal(new Set(culture.filter(({ kind }) => kind === "song").map(({ videoId }) => videoId)).size, 50);
+  const expectedAudio = new Set(culture.flatMap((item) => [...item.lines, ...item.vocabulary].map(({ hanzi }) => hanzi)));
+  assert.equal(Object.keys(audio).length, expectedAudio.size);
   for (const item of culture) {
     assertText(item.title, `${item.id}.title`);
     assertText(item.pinyinTitle, `${item.id}.pinyinTitle`);
@@ -279,7 +183,7 @@ test("poetry and modern songs have complete bilingual study material", async () 
     assert.ok(item.vocabulary.length >= 4);
     for (const [index, line] of [...item.lines, ...item.vocabulary].entries()) {
       assertBilingual(line, `${item.id} entry ${index + 1}`);
-      assert.match(audio[line.hanzi] ?? "", /^\/audio\/starter\/[a-f0-9]+\.m4a$/, `${line.hanzi} needs bundled audio`);
+      assert.match(audio[line.hanzi] ?? "", /^\/audio\/mandarin\/[a-f0-9]+\.m4a$/, `${line.hanzi} needs bundled audio`);
     }
     if (item.kind === "song") assert.match(item.videoId, /^[\w-]{11}$/);
   }

@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import episodes from "../data/ori.json";
 import learningData from "../data/ori-learning.json";
-import { normalizeSearch } from "../lib/lessons";
+import { normalizeSearch } from "../lib/search";
 import { UiIcon } from "./icons";
 
 const STORAGE = "chinesepod:ori-study-v2";

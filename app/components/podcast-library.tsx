@@ -5,7 +5,7 @@ import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties }
 import SleepTimerButton from "./sleep-timer-button";
 import EpisodeStudy from "./episode-study";
 import podcastData from "../data/podcasts.json";
-import { normalizeSearch } from "../lib/lessons";
+import { normalizeSearch } from "../lib/search";
 import { MediaIcon, UiIcon } from "./icons";
 
 type Episode = (typeof podcastData)[number];

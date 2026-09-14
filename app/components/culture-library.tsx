@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import cultureData from "../data/culture.json";
-import { useStarterAudio } from "../lib/use-starter-audio";
+import { useMandarinAudio } from "../lib/use-mandarin-audio";
 import { MediaIcon, UiIcon } from "./icons";
 
 type Theme = "light" | "dark";
@@ -61,7 +61,7 @@ export default function CultureLibrary({ theme, onToggleTheme }: { theme: Theme;
     const next = sameKind[(index + direction + sameKind.length) % sameKind.length];
     setSelectedId(next.id);
   }, [item]);
-  const speech = useStarterAudio({ lessonId: 1000, lines: item.lines, rate: 1, loop: false, autoplayNext: false, onNext: () => navigate(1) });
+  const speech = useMandarinAudio({ lessonId: 1000, lines: item.lines, rate: 1, loop: false, autoplayNext: false, onNext: () => navigate(1) });
   const { stop: stopSpeech, seekLine: resetSpeechLine } = speech;
   useEffect(() => { stopSpeech(); resetSpeechLine(0); }, [item.id, stopSpeech, resetSpeechLine]);
 
