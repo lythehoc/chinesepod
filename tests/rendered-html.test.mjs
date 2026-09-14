@@ -267,10 +267,10 @@ test("English interface has name-only tabs and embedded Mandarin Ori episodes", 
 test("poetry and modern songs have complete bilingual study material", async () => {
   const culture = JSON.parse(await read("app/data/culture.json"));
   const audio = JSON.parse(await read("app/data/starter-audio.json"));
-  assert.equal(culture.filter(({ kind }) => kind === "poem").length, 10);
-  assert.equal(culture.filter(({ kind }) => kind === "song").length, 5);
+  assert.equal(culture.filter(({ kind }) => kind === "poem").length, 20);
+  assert.equal(culture.filter(({ kind }) => kind === "song").length, 15);
   assert.equal(new Set(culture.map(({ id }) => id)).size, culture.length);
-  assert.equal(new Set(culture.filter(({ kind }) => kind === "song").map(({ videoId }) => videoId)).size, 5);
+  assert.equal(new Set(culture.filter(({ kind }) => kind === "song").map(({ videoId }) => videoId)).size, 15);
   for (const item of culture) {
     assertText(item.title, `${item.id}.title`);
     assertText(item.pinyinTitle, `${item.id}.pinyinTitle`);
