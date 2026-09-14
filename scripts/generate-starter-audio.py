@@ -11,7 +11,11 @@ import struct
 from pathlib import Path
 
 lessons = json.loads(Path('app/data/lessons.json').read_text())
-texts = dict.fromkeys(row['hanzi'] for lesson in lessons for row in lesson['dialogue'] + lesson['vocabulary'])
+culture = json.loads(Path('app/data/culture.json').read_text())
+texts = dict.fromkeys([
+    *(row['hanzi'] for lesson in lessons for row in lesson['dialogue'] + lesson['vocabulary']),
+    *(row['hanzi'] for item in culture for row in item['lines'] + item['vocabulary']),
+])
 output = Path('public/audio/starter')
 output.mkdir(parents=True, exist_ok=True)
 manifest = {}

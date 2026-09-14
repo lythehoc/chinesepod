@@ -8,6 +8,7 @@ import { useStarterAudio } from "./lib/use-starter-audio";
 import SleepTimerButton from "./components/sleep-timer-button";
 import OriLibrary from "./components/ori-library";
 import PodcastLibrary from "./components/podcast-library";
+import CultureLibrary from "./components/culture-library";
 
 type CompletionFilter = "all" | "unfinished" | "finished";
 type Theme = "light" | "dark";
@@ -33,7 +34,7 @@ function record(value: unknown): Record<string, unknown> {
 }
 
 export default function Home() {
-  const [mode, setMode] = useState<"recordings" | "practice" | "ori">("recordings");
+  const [mode, setMode] = useState<"recordings" | "practice" | "ori" | "culture">("recordings");
   const [theme, setTheme] = useState<Theme>("light");
   const [themeReady, setThemeReady] = useState(false);
   useEffect(() => {
@@ -47,7 +48,7 @@ export default function Home() {
   }, []);
   useEffect(() => { if (themeReady) { document.documentElement.dataset.theme = theme; localStorage.setItem(THEME_KEY, theme); } }, [theme, themeReady]);
   const toggleTheme = () => setTheme((value) => value === "light" ? "dark" : "light");
-  return <div className="workspace"><nav className="course-switcher" aria-label="Chinese learning library"><div className="course-tabs"><button aria-pressed={mode === "recordings"} onClick={() => setMode("recordings")}>Podcast</button><button aria-pressed={mode === "practice"} onClick={() => setMode("practice")}>Starter lessons</button><button aria-pressed={mode === "ori"} onClick={() => setMode("ori")}>Ori Princess</button></div></nav>{mode === "recordings" ? <PodcastLibrary theme={theme} onToggleTheme={toggleTheme} /> : mode === "practice" ? <StarterCourse theme={theme} onToggleTheme={toggleTheme} /> : <OriLibrary theme={theme} onToggleTheme={toggleTheme} />}</div>;
+  return <div className="workspace"><nav className="course-switcher" aria-label="Chinese learning library"><div className="course-tabs"><button aria-pressed={mode === "recordings"} onClick={() => setMode("recordings")}>Podcast</button><button aria-pressed={mode === "practice"} onClick={() => setMode("practice")}>Starter lessons</button><button aria-pressed={mode === "ori"} onClick={() => setMode("ori")}>Ori Princess</button><button aria-pressed={mode === "culture"} onClick={() => setMode("culture")}>Poetry &amp; songs</button></div></nav>{mode === "recordings" ? <PodcastLibrary theme={theme} onToggleTheme={toggleTheme} /> : mode === "practice" ? <StarterCourse theme={theme} onToggleTheme={toggleTheme} /> : mode === "ori" ? <OriLibrary theme={theme} onToggleTheme={toggleTheme} /> : <CultureLibrary theme={theme} onToggleTheme={toggleTheme} />}</div>;
 }
 
 function StarterCourse({ theme, onToggleTheme }: { theme: Theme; onToggleTheme: () => void }) {

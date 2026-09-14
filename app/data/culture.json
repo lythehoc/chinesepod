@@ -1,0 +1,184 @@
+[
+  {
+    "id": "jing-ye-si", "kind": "poem", "title": "静夜思", "pinyinTitle": "Jìng yè sī", "englishTitle": "Quiet Night Thoughts", "creator": "李白 · Li Bai", "period": "Tang dynasty",
+    "lines": [
+      {"hanzi":"床前明月光","pinyin":"Chuáng qián míng yuè guāng","english":"Bright moonlight before my bed."},
+      {"hanzi":"疑是地上霜","pinyin":"Yí shì dì shàng shuāng","english":"I wonder if it is frost on the ground."},
+      {"hanzi":"举头望明月","pinyin":"Jǔ tóu wàng míng yuè","english":"I raise my head and gaze at the bright moon."},
+      {"hanzi":"低头思故乡","pinyin":"Dī tóu sī gùxiāng","english":"I lower my head and think of home."}
+    ],
+    "vocabulary": [
+      {"hanzi":"明月","pinyin":"míngyuè","english":"bright moon"},{"hanzi":"霜","pinyin":"shuāng","english":"frost"},{"hanzi":"举头","pinyin":"jǔ tóu","english":"raise one’s head"},{"hanzi":"故乡","pinyin":"gùxiāng","english":"hometown"}
+    ]
+  },
+  {
+    "id": "chun-xiao", "kind": "poem", "title": "春晓", "pinyinTitle": "Chūn xiǎo", "englishTitle": "Spring Morning", "creator": "孟浩然 · Meng Haoran", "period": "Tang dynasty",
+    "lines": [
+      {"hanzi":"春眠不觉晓","pinyin":"Chūn mián bù jué xiǎo","english":"Sleeping in spring, I do not notice dawn."},
+      {"hanzi":"处处闻啼鸟","pinyin":"Chùchù wén tí niǎo","english":"Everywhere I hear birds calling."},
+      {"hanzi":"夜来风雨声","pinyin":"Yè lái fēngyǔ shēng","english":"In the night came the sound of wind and rain."},
+      {"hanzi":"花落知多少","pinyin":"Huā luò zhī duōshao","english":"How many flowers have fallen?"}
+    ],
+    "vocabulary": [
+      {"hanzi":"春眠","pinyin":"chūn mián","english":"spring sleep"},{"hanzi":"处处","pinyin":"chùchù","english":"everywhere"},{"hanzi":"风雨","pinyin":"fēngyǔ","english":"wind and rain"},{"hanzi":"花落","pinyin":"huā luò","english":"flowers fall"}
+    ]
+  },
+  {
+    "id": "deng-guan-que-lou", "kind": "poem", "title": "登鹳雀楼", "pinyinTitle": "Dēng Guànquè Lóu", "englishTitle": "On the Stork Tower", "creator": "王之涣 · Wang Zhihuan", "period": "Tang dynasty",
+    "lines": [
+      {"hanzi":"白日依山尽","pinyin":"Bái rì yī shān jìn","english":"The white sun disappears behind the mountains."},
+      {"hanzi":"黄河入海流","pinyin":"Huáng Hé rù hǎi liú","english":"The Yellow River flows into the sea."},
+      {"hanzi":"欲穷千里目","pinyin":"Yù qióng qiān lǐ mù","english":"To see a thousand miles farther,"},
+      {"hanzi":"更上一层楼","pinyin":"Gèng shàng yì céng lóu","english":"climb one more floor."}
+    ],
+    "vocabulary": [
+      {"hanzi":"白日","pinyin":"bái rì","english":"the sun"},{"hanzi":"黄河","pinyin":"Huáng Hé","english":"Yellow River"},{"hanzi":"千里","pinyin":"qiān lǐ","english":"a thousand miles"},{"hanzi":"一层楼","pinyin":"yì céng lóu","english":"one floor"}
+    ]
+  },
+  {
+    "id": "yong-e", "kind": "poem", "title": "咏鹅", "pinyinTitle": "Yǒng é", "englishTitle": "Ode to the Goose", "creator": "骆宾王 · Luo Binwang", "period": "Tang dynasty",
+    "lines": [
+      {"hanzi":"鹅，鹅，鹅","pinyin":"É, é, é","english":"Goose, goose, goose,"},
+      {"hanzi":"曲项向天歌","pinyin":"Qū xiàng xiàng tiān gē","english":"bending its neck to sing to the sky."},
+      {"hanzi":"白毛浮绿水","pinyin":"Bái máo fú lǜ shuǐ","english":"White feathers float on green water."},
+      {"hanzi":"红掌拨清波","pinyin":"Hóng zhǎng bō qīng bō","english":"Red feet paddle through clear ripples."}
+    ],
+    "vocabulary": [
+      {"hanzi":"鹅","pinyin":"é","english":"goose"},{"hanzi":"白毛","pinyin":"bái máo","english":"white feathers"},{"hanzi":"绿水","pinyin":"lǜ shuǐ","english":"green water"},{"hanzi":"清波","pinyin":"qīng bō","english":"clear ripples"}
+    ]
+  },
+  {
+    "id": "min-nong", "kind": "poem", "title": "悯农", "pinyinTitle": "Mǐn nóng", "englishTitle": "Compassion for Farmers", "creator": "李绅 · Li Shen", "period": "Tang dynasty",
+    "lines": [
+      {"hanzi":"锄禾日当午","pinyin":"Chú hé rì dāng wǔ","english":"Hoeing grain beneath the midday sun,"},
+      {"hanzi":"汗滴禾下土","pinyin":"Hàn dī hé xià tǔ","english":"sweat falls onto the soil below."},
+      {"hanzi":"谁知盘中餐","pinyin":"Shéi zhī pán zhōng cān","english":"Who knows that the food on our plates"},
+      {"hanzi":"粒粒皆辛苦","pinyin":"Lìlì jiē xīnkǔ","english":"comes from a farmer’s hard work, grain by grain?"}
+    ],
+    "vocabulary": [
+      {"hanzi":"锄禾","pinyin":"chú hé","english":"hoe the crops"},{"hanzi":"汗滴","pinyin":"hàn dī","english":"drops of sweat"},{"hanzi":"盘中餐","pinyin":"pán zhōng cān","english":"food on the plate"},{"hanzi":"辛苦","pinyin":"xīnkǔ","english":"hard work"}
+    ]
+  },
+  {
+    "id": "jiang-xue", "kind": "poem", "title": "江雪", "pinyinTitle": "Jiāng xuě", "englishTitle": "River Snow", "creator": "柳宗元 · Liu Zongyuan", "period": "Tang dynasty",
+    "lines": [
+      {"hanzi":"千山鸟飞绝","pinyin":"Qiān shān niǎo fēi jué","english":"Across a thousand mountains, no bird flies."},
+      {"hanzi":"万径人踪灭","pinyin":"Wàn jìng rén zōng miè","english":"On ten thousand paths, no human trace remains."},
+      {"hanzi":"孤舟蓑笠翁","pinyin":"Gū zhōu suō lì wēng","english":"In a lone boat, an old man in a straw cloak,"},
+      {"hanzi":"独钓寒江雪","pinyin":"Dú diào hán jiāng xuě","english":"fishes alone in the snowy, cold river."}
+    ],
+    "vocabulary": [
+      {"hanzi":"千山","pinyin":"qiān shān","english":"a thousand mountains"},{"hanzi":"人踪","pinyin":"rén zōng","english":"human footprints"},{"hanzi":"孤舟","pinyin":"gū zhōu","english":"lone boat"},{"hanzi":"独钓","pinyin":"dú diào","english":"fish alone"}
+    ]
+  },
+  {
+    "id": "xiang-si", "kind": "poem", "title": "相思", "pinyinTitle": "Xiāngsī", "englishTitle": "Longing", "creator": "王维 · Wang Wei", "period": "Tang dynasty",
+    "lines": [
+      {"hanzi":"红豆生南国","pinyin":"Hóngdòu shēng nánguó","english":"Red beans grow in the southern land."},
+      {"hanzi":"春来发几枝","pinyin":"Chūn lái fā jǐ zhī","english":"How many branches appear when spring comes?"},
+      {"hanzi":"愿君多采撷","pinyin":"Yuàn jūn duō cǎixié","english":"I hope you gather many of them."},
+      {"hanzi":"此物最相思","pinyin":"Cǐ wù zuì xiāngsī","english":"This little thing carries the deepest longing."}
+    ],
+    "vocabulary": [
+      {"hanzi":"红豆","pinyin":"hóngdòu","english":"red bean"},{"hanzi":"南国","pinyin":"nánguó","english":"the south"},{"hanzi":"采撷","pinyin":"cǎixié","english":"pick; gather"},{"hanzi":"相思","pinyin":"xiāngsī","english":"longing for someone"}
+    ]
+  },
+  {
+    "id": "zao-fa-bai-di-cheng", "kind": "poem", "title": "早发白帝城", "pinyinTitle": "Zǎo fā Báidì Chéng", "englishTitle": "Leaving Baidi at Dawn", "creator": "李白 · Li Bai", "period": "Tang dynasty",
+    "lines": [
+      {"hanzi":"朝辞白帝彩云间","pinyin":"Zhāo cí Báidì cǎi yún jiān","english":"At dawn I leave Baidi among the colored clouds."},
+      {"hanzi":"千里江陵一日还","pinyin":"Qiān lǐ Jiānglíng yí rì huán","english":"A thousand miles to Jiangling, returned in one day."},
+      {"hanzi":"两岸猿声啼不住","pinyin":"Liǎng àn yuán shēng tí bú zhù","english":"From both banks, gibbons call without pause."},
+      {"hanzi":"轻舟已过万重山","pinyin":"Qīng zhōu yǐ guò wàn chóng shān","english":"My light boat has passed ten thousand mountains."}
+    ],
+    "vocabulary": [
+      {"hanzi":"彩云","pinyin":"cǎiyún","english":"colored clouds"},{"hanzi":"一日","pinyin":"yí rì","english":"one day"},{"hanzi":"两岸","pinyin":"liǎng àn","english":"both riverbanks"},{"hanzi":"轻舟","pinyin":"qīng zhōu","english":"light boat"}
+    ]
+  },
+  {
+    "id": "feng-qiao-ye-bo", "kind": "poem", "title": "枫桥夜泊", "pinyinTitle": "Fēngqiáo yè bó", "englishTitle": "Night Mooring at Maple Bridge", "creator": "张继 · Zhang Ji", "period": "Tang dynasty",
+    "lines": [
+      {"hanzi":"月落乌啼霜满天","pinyin":"Yuè luò wū tí shuāng mǎn tiān","english":"The moon sets; crows cry; frost fills the sky."},
+      {"hanzi":"江枫渔火对愁眠","pinyin":"Jiāng fēng yú huǒ duì chóu mián","english":"River maples and fishing lights face my troubled sleep."},
+      {"hanzi":"姑苏城外寒山寺","pinyin":"Gūsū chéng wài Hánshān Sì","english":"Outside Gusu city stands Cold Mountain Temple."},
+      {"hanzi":"夜半钟声到客船","pinyin":"Yèbàn zhōng shēng dào kè chuán","english":"At midnight its bell reaches the traveler’s boat."}
+    ],
+    "vocabulary": [
+      {"hanzi":"月落","pinyin":"yuè luò","english":"moonset"},{"hanzi":"渔火","pinyin":"yú huǒ","english":"fishing lights"},{"hanzi":"夜半","pinyin":"yèbàn","english":"midnight"},{"hanzi":"钟声","pinyin":"zhōng shēng","english":"sound of a bell"}
+    ]
+  },
+  {
+    "id": "you-zi-yin", "kind": "poem", "title": "游子吟", "pinyinTitle": "Yóuzǐ yín", "englishTitle": "Song of the Traveling Son", "creator": "孟郊 · Meng Jiao", "period": "Tang dynasty",
+    "lines": [
+      {"hanzi":"慈母手中线","pinyin":"Cí mǔ shǒu zhōng xiàn","english":"Thread in a loving mother’s hand,"},
+      {"hanzi":"游子身上衣","pinyin":"Yóuzǐ shēn shàng yī","english":"clothes for her traveling son."},
+      {"hanzi":"临行密密缝","pinyin":"Lín xíng mìmì féng","english":"Before he leaves, she sews stitch after stitch,"},
+      {"hanzi":"意恐迟迟归","pinyin":"Yì kǒng chíchí guī","english":"afraid that he may return very late."},
+      {"hanzi":"谁言寸草心","pinyin":"Shéi yán cùn cǎo xīn","english":"Who says the heart of a blade of grass"},
+      {"hanzi":"报得三春晖","pinyin":"Bào dé sān chūn huī","english":"can repay the warmth of spring sunshine?"}
+    ],
+    "vocabulary": [
+      {"hanzi":"慈母","pinyin":"cí mǔ","english":"loving mother"},{"hanzi":"游子","pinyin":"yóuzǐ","english":"traveler away from home"},{"hanzi":"临行","pinyin":"lín xíng","english":"before leaving"},{"hanzi":"报答","pinyin":"bàodá","english":"repay; return a kindness"}
+    ]
+  },
+  {
+    "id": "xiao-xing-yun", "kind": "song", "title": "小幸运", "pinyinTitle": "Xiǎo xìngyùn", "englishTitle": "A Little Happiness", "creator": "田馥甄 · Hebe Tien", "period": "Mandopop · 2015", "videoId": "_sQSXwdtxlY",
+    "lines": [
+      {"hanzi":"小幸运","pinyin":"xiǎo xìngyùn","english":"a small piece of good fortune"},
+      {"hanzi":"青春","pinyin":"qīngchūn","english":"youth"},
+      {"hanzi":"相遇","pinyin":"xiāngyù","english":"to meet by chance"},
+      {"hanzi":"遇见好朋友是生活中的小幸运","pinyin":"Yùjiàn hǎo péngyou shì shēnghuó zhōng de xiǎo xìngyùn","english":"Meeting a good friend is one of life’s little pieces of luck."}
+    ],
+    "vocabulary": [
+      {"hanzi":"幸运","pinyin":"xìngyùn","english":"fortunate; luck"},{"hanzi":"遇见","pinyin":"yùjiàn","english":"meet"},{"hanzi":"留住","pinyin":"liúzhù","english":"keep; hold on to"},{"hanzi":"勇气","pinyin":"yǒngqì","english":"courage"}
+    ]
+  },
+  {
+    "id": "re-ai-105", "kind": "song", "title": "热爱105°C的你", "pinyinTitle": "Rè’ài yìbǎi língwǔ dù de nǐ", "englishTitle": "You Who Love at 105°C", "creator": "阿肆 · A Si", "period": "Mandopop · 2019", "videoId": "_FVvA1lUkQ8",
+    "lines": [
+      {"hanzi":"热爱","pinyin":"rè’ài","english":"to love passionately"},
+      {"hanzi":"笑容","pinyin":"xiàoróng","english":"smile"},
+      {"hanzi":"耀眼","pinyin":"yàoyǎn","english":"dazzling"},
+      {"hanzi":"保持热爱，你也可以发出耀眼的光","pinyin":"Bǎochí rè’ài, nǐ yě kěyǐ fāchū yàoyǎn de guāng","english":"Keep your passion and you can shine brightly too."}
+    ],
+    "vocabulary": [
+      {"hanzi":"热爱","pinyin":"rè’ài","english":"love passionately"},{"hanzi":"笑容","pinyin":"xiàoróng","english":"smile"},{"hanzi":"阳光","pinyin":"yángguāng","english":"sunlight"},{"hanzi":"耀眼","pinyin":"yàoyǎn","english":"dazzling"}
+    ]
+  },
+  {
+    "id": "ai-ren-cuo-guo", "kind": "song", "title": "爱人错过", "pinyinTitle": "Àirén cuòguò", "englishTitle": "Somewhere in Time", "creator": "告五人 · Accusefive", "period": "Mandopop · 2019", "videoId": "6D79CYTxvOM",
+    "lines": [
+      {"hanzi":"爱人","pinyin":"àirén","english":"lover; loved one"},
+      {"hanzi":"错过","pinyin":"cuòguò","english":"to miss; let pass"},
+      {"hanzi":"遇见","pinyin":"yùjiàn","english":"to meet"},
+      {"hanzi":"别让害怕使你错过重要的人","pinyin":"Bié ràng hàipà shǐ nǐ cuòguò zhòngyào de rén","english":"Do not let fear make you miss someone important."}
+    ],
+    "vocabulary": [
+      {"hanzi":"肯定","pinyin":"kěndìng","english":"certain; definitely"},{"hanzi":"以前","pinyin":"yǐqián","english":"before; ago"},{"hanzi":"擦肩而过","pinyin":"cā jiān ér guò","english":"brush past each other"},{"hanzi":"道歉","pinyin":"dàoqiàn","english":"apologize"}
+    ]
+  },
+  {
+    "id": "dao-xiang", "kind": "song", "title": "稻香", "pinyinTitle": "Dàoxiāng", "englishTitle": "Rice Field", "creator": "周杰伦 · Jay Chou", "period": "Mandopop · 2008", "videoId": "sHD_z90ZKV0",
+    "lines": [
+      {"hanzi":"稻香","pinyin":"dàoxiāng","english":"the scent of rice"},
+      {"hanzi":"家乡","pinyin":"jiāxiāng","english":"hometown"},
+      {"hanzi":"童年","pinyin":"tóngnián","english":"childhood"},
+      {"hanzi":"稻香让我想起家乡和快乐的童年","pinyin":"Dàoxiāng ràng wǒ xiǎngqǐ jiāxiāng hé kuàilè de tóngnián","english":"The scent of rice reminds me of home and a happy childhood."}
+    ],
+    "vocabulary": [
+      {"hanzi":"稻田","pinyin":"dàotián","english":"rice field"},{"hanzi":"家乡","pinyin":"jiāxiāng","english":"hometown"},{"hanzi":"童年","pinyin":"tóngnián","english":"childhood"},{"hanzi":"珍惜","pinyin":"zhēnxī","english":"cherish"}
+    ]
+  },
+  {
+    "id": "ru-guo-ke-yi", "kind": "song", "title": "如果可以", "pinyinTitle": "Rúguǒ kěyǐ", "englishTitle": "Red Scarf", "creator": "韦礼安 · WeiBird", "period": "Mandopop · 2021", "videoId": "8MG--WuNW1Y",
+    "lines": [
+      {"hanzi":"如果可以","pinyin":"rúguǒ kěyǐ","english":"if it were possible"},
+      {"hanzi":"回到过去","pinyin":"huídào guòqù","english":"go back to the past"},
+      {"hanzi":"命运","pinyin":"mìngyùn","english":"fate"},
+      {"hanzi":"如果可以，我想回到我们第一次相遇的地方","pinyin":"Rúguǒ kěyǐ, wǒ xiǎng huídào wǒmen dì-yī cì xiāngyù de dìfang","english":"If I could, I would return to the place where we first met."}
+    ],
+    "vocabulary": [
+      {"hanzi":"如果","pinyin":"rúguǒ","english":"if"},{"hanzi":"回到","pinyin":"huídào","english":"return to"},{"hanzi":"相遇","pinyin":"xiāngyù","english":"meet"},{"hanzi":"命运","pinyin":"mìngyùn","english":"fate"}
+    ]
+  }
+]

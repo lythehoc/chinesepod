@@ -5,8 +5,9 @@ A little Chinese, every day.
 [Learn online](https://lythehoc.github.io/chinesepod/)
 
 `chinesepod` is a phone-friendly Mandarin listening library with recorded
-podcasts, starter lessons, and Ori Princess episodes. Read Chinese and pinyin,
-learn with English explanations, and pick up where you left off.
+podcasts, starter lessons, Ori Princess episodes, classical poetry, and modern
+Mandarin songs. Read Chinese and pinyin, learn with English explanations, and
+pick up where you left off.
 
 ## Highlights
 
@@ -15,7 +16,9 @@ learn with English explanations, and pick up where you left off.
 - Read the conversation, Key Vocabulary, and Supplementary Vocabulary in one transcript card, with pinyin, English, and pronunciation clips when the source provides them.
 - Practise **24 original starter lessons** with English translations, pinyin and **288 included pronunciation clips**, starting at 1× speed.
 - Learn with **47 full Mandarin Ori Princess episodes** from Asia Animation Channel without leaving the app. Every episode includes 24 timestamped lines recovered from its on-screen Mandarin captions, pinyin, English translations, Key Vocabulary, Supplementary Vocabulary, a three-pass listening checklist, and a saved notebook. The video remains visible while the lesson pane scrolls on desktop and mobile.
-- Use one saved light or dark theme across Podcast, Starter lessons, and Ori Princess.
+- Read **10 classical Chinese poems** line by line with pinyin, English meaning, key vocabulary, and included Mandarin pronunciation.
+- Learn from **5 modern Mandarin songs** by Hebe Tien, A Si, Accusefive, Jay Chou, and WeiBird. Official YouTube uploads play inside the site, with reusable vocabulary and original practice phrases for each song.
+- Use one saved light or dark theme across every learning tab.
 - Save progress locally, with light/dark themes and no app account needed.
 
 ChinesePod audio includes Mandarin conversations and English teaching. Public study previews and YouTube videos are served by their publishers and depend on source availability.
@@ -37,6 +40,7 @@ Open http://localhost:3000. Run `npm run lint` and `npm test` to validate change
   Podcast metadata comes from its public [beginner](https://anchor.fm/s/109bf914/podcast/rss)
   and [intermediate](https://anchor.fm/s/317bc3a8/podcast/rss) feeds.
 - Ori Princess: [Asia Animation Channel’s Mandarin playlist](https://www.youtube.com/playlist?list=PLfyJ-JCO9sSmsJxDSd1aATOSE2sUX2BBr).
+- Classical poem texts: [Chinese Wikisource](https://zh.wikisource.org/wiki/Portal:%E8%AF%97%E6%AD%8C). Modern songs are embedded from official artist, label, and soundtrack YouTube uploads.
 - Original starter lessons use pre-generated Tingting Mandarin speech.
 - [Patrick Hand](https://fonts.google.com/specimen/Patrick+Hand), under the included
   [SIL Open Font License](public/fonts/PatrickHand-OFL.txt).

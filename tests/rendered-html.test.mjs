@@ -56,7 +56,7 @@ function assertBilingual(item, label) {
   for (const key of ["hanzi", "pinyin", "english"]) assertText(item[key], `${label}.${key}`);
   assert.match(item.hanzi, han, `${label} needs Chinese characters`);
   assert.doesNotMatch(item.pinyin, han, `${label} needs a separate pinyin reading`);
-  assert.match(item.pinyin, /[a-zü]/i, `${label} needs readable pinyin`);
+  assert.match(item.pinyin, /[a-züāáǎàēéěèīíǐìōóǒòūúǔùǖǘǚǜ]/i, `${label} needs readable pinyin`);
   assert.match(item.english, /[a-z]/i, `${label} needs a English translation`);
 }
 
@@ -243,7 +243,7 @@ test("English interface has name-only tabs and embedded Mandarin Ori episodes", 
   const nav = html.match(/<nav[^>]*>[\s\S]*?<\/nav>/)?.[0];
   assert.ok(nav);
   assert.doesNotMatch(nav, /\d/);
-  for (const label of ["Podcast", "Starter lessons", "Ori Princess"]) assert.ok(nav.includes(label));
+  for (const label of ["Podcast", "Starter lessons", "Ori Princess", "Poetry &amp; songs"]) assert.ok(nav.includes(label));
   const ori = JSON.parse(await read("app/data/ori.json"));
   assert.ok(ori.length >= 40);
   assert.equal(new Set(ori.map((item) => item.videoId)).size, ori.length);
@@ -262,6 +262,29 @@ test("English interface has name-only tabs and embedded Mandarin Ori episodes", 
     assert.ok(item.english.trim());
     assert.equal(item.vietnamese, undefined);
   }
+});
+
+test("poetry and modern songs have complete bilingual study material", async () => {
+  const culture = JSON.parse(await read("app/data/culture.json"));
+  const audio = JSON.parse(await read("app/data/starter-audio.json"));
+  assert.equal(culture.filter(({ kind }) => kind === "poem").length, 10);
+  assert.equal(culture.filter(({ kind }) => kind === "song").length, 5);
+  assert.equal(new Set(culture.map(({ id }) => id)).size, culture.length);
+  assert.equal(new Set(culture.filter(({ kind }) => kind === "song").map(({ videoId }) => videoId)).size, 5);
+  for (const item of culture) {
+    assertText(item.title, `${item.id}.title`);
+    assertText(item.pinyinTitle, `${item.id}.pinyinTitle`);
+    assertText(item.englishTitle, `${item.id}.englishTitle`);
+    assert.ok(item.lines.length >= 4);
+    assert.ok(item.vocabulary.length >= 4);
+    for (const [index, line] of [...item.lines, ...item.vocabulary].entries()) {
+      assertBilingual(line, `${item.id} entry ${index + 1}`);
+      assert.match(audio[line.hanzi] ?? "", /^\/audio\/starter\/[a-f0-9]+\.m4a$/, `${line.hanzi} needs bundled audio`);
+    }
+    if (item.kind === "song") assert.match(item.videoId, /^[\w-]{11}$/);
+  }
+  const html = await read("out/index.html");
+  assert.match(html, /Poetry &amp; songs/);
 });
 
 test("every Ori episode has caption-derived transcript and vocabulary study data", async () => {

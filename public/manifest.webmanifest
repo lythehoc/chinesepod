@@ -1,7 +1,7 @@
 {
   "name": "Mandarin Steps \u2014 A little Chinese, every day.",
   "short_name": "Mandarin Steps",
-  "description": "Learn Chinese with pinyin, English translations and recorded audio.",
+  "description": "Learn Mandarin with podcasts, lessons, animation, classical poetry, and modern songs.",
   "start_url": "./",
   "display": "standalone",
   "background_color": "#0d0e0f",
